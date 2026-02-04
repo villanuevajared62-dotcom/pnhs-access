@@ -14,7 +14,7 @@ import {
   Bell,
   TrendingUp,
   Clock,
-  User,
+  User as UserIcon, // aliased icon
 } from 'lucide-react'
 import { getUserFromStorage, removeUserFromStorage, type User } from '@/lib/auth'
 
@@ -104,14 +104,12 @@ export default function StudentDashboard() {
               { icon: Award, label: 'My Grades' },
               { icon: Calendar, label: 'Schedule' },
               { icon: FileText, label: 'Assignments' },
-              { icon: User, label: 'Profile' },
+              { icon: UserIcon, label: 'Profile' }, // use alias
             ].map((item, index) => (
               <button
                 key={index}
                 className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${
-                  item.active
-                    ? 'bg-white/20 text-white'
-                    : 'hover:bg-white/10 text-purple-100'
+                  item.active ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-purple-100'
                 } ${!sidebarOpen && 'justify-center'}`}
               >
                 <item.icon className="w-5 h-5 flex-shrink-0" />

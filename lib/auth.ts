@@ -1,3 +1,5 @@
+// lib/auth.ts
+
 export interface User {
   id: string
   username: string
@@ -18,12 +20,19 @@ export interface AuthResponse {
   message?: string
 }
 
-// Mock database - In production, use a real database
-export const users = [
+/**
+ * Utility: check if code is running on client
+ */
+export const isClient = (): boolean => {
+  return typeof window !== 'undefined'
+}
+
+// Mock database (OK for demo / school project)
+const users = [
   {
     id: '1',
     username: 'admin',
-    password: 'admin123', // In production, use hashed passwords
+    password: 'admin123',
     email: 'admin@pnhs.edu.ph',
     role: 'admin' as const,
     fullName: 'Administrator',
@@ -58,9 +67,16 @@ export const users = [
   },
 ]
 
-export function authenticateUser(credentials: LoginCredentials): AuthResponse {
+/**
+ * Authenticate user (pure function — server safe)
+ */
+export function authenticateUser(
+  credentials: LoginCredentials
+): AuthResponse {
   const user = users.find(
-    (u) => u.username === credentials.username && u.password === credentials.password
+    (u) =>
+      u.username === credentials.username &&
+      u.password === credentials.password
   )
 
   if (!user) {
@@ -71,31 +87,33 @@ export function authenticateUser(credentials: LoginCredentials): AuthResponse {
   }
 
   const { password, ...userWithoutPassword } = user
+
   return {
     success: true,
     user: userWithoutPassword,
   }
 }
 
+/**
+ * CLIENT-ONLY helpers (safe for Vercel build)
+ */
 export function getUserFromStorage(): User | null {
-  if (typeof window === 'undefined') return null
-  
-  const userStr = localStorage.getItem('pnhs_user')
-  if (!userStr) return null
-  
+  if (!isClient()) return null
+
   try {
-    return JSON.parse(userStr)
+    const userStr = window.localStorage.getItem('pnhs_user')
+    return userStr ? (JSON.parse(userStr) as User) : null
   } catch {
     return null
   }
 }
 
 export function saveUserToStorage(user: User): void {
-  if (typeof window === 'undefined') return
-  localStorage.setItem('pnhs_user', JSON.stringify(user))
+  if (!isClient()) return
+  window.localStorage.setItem('pnhs_user', JSON.stringify(user))
 }
 
 export function removeUserFromStorage(): void {
-  if (typeof window === 'undefined') return
-  localStorage.removeItem('pnhs_user')
+  if (!isClient()) return
+  window.localStorage.removeItem('pnhs_user')
 }

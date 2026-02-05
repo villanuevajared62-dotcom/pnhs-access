@@ -5,9 +5,9 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'PNHS-ACCESS | Pantabangan National High School',
-  description: 'Academic Comprehensive Connectivity Enhanced Student System',
-  keywords: 'PNHS, Pantabangan NHS, Student Portal, Education System',
+  title: 'PNHS ACCESS | Pantabangan National High School',
+  description: 'Academic Content & Community Enhancement System - Empowering education through technology',
+  keywords: 'PNHS, Pantabangan NHS, Student Portal, Education System, ACCESS Portal, Nueva Ecija',
 }
 
 export default function RootLayout({

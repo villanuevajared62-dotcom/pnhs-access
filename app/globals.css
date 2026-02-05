@@ -9,25 +9,25 @@
   }
 
   body {
-    @apply bg-gradient-to-br from-blue-50 via-white to-blue-50;
+    @apply bg-gradient-to-br from-green-50 via-yellow-50 to-green-50;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-pnhs-primary hover:bg-pnhs-dark text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg;
+    @apply bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200;
   }
 
   .btn-secondary {
-    @apply bg-pnhs-secondary hover:bg-pnhs-primary text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200;
+    @apply bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200;
   }
 
   .input-field {
-    @apply w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-pnhs-primary focus:outline-none transition-colors;
+    @apply w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none;
   }
 
   .card {
-    @apply bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200;
+    @apply bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-2xl transition-all duration-200 border-2 border-green-100;
   }
 }
 
@@ -37,14 +37,29 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #f1f5f1;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3b82f6;
+  background: linear-gradient(to bottom, #16a34a, #65a30d);
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #1e40af;
+  background: linear-gradient(to bottom, #15803d, #4d7c0f);
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Animation delays */
+.delay-150 {
+  animation-delay: 150ms;
+}
+
+/* Custom gradient text */
+.gradient-text {
+  @apply bg-gradient-to-r from-green-600 to-yellow-600 bg-clip-text text-transparent;
 }

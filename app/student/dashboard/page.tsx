@@ -14,9 +14,16 @@ import {
   Bell,
   TrendingUp,
   Clock,
-  User as UserIcon, // aliased icon
+  User,
 } from 'lucide-react'
 import { getUserFromStorage, removeUserFromStorage, type User } from '@/lib/auth'
+
+// Type for navigation items
+type NavItem = {
+  icon: React.ComponentType<{ className?: string }>
+  label: string
+  active?: boolean
+}
 
 export default function StudentDashboard() {
   const router = useRouter()
@@ -41,8 +48,8 @@ export default function StudentDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-16 h-16 border-4 border-pnhs-primary border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen flex items-center justify-center bg-green-50">
+        <div className="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>
       </div>
     )
   }
@@ -63,145 +70,162 @@ export default function StudentDashboard() {
   ]
 
   const stats = [
-    { label: 'Overall GPA', value: '89.8', icon: Award, color: 'bg-yellow-500' },
-    { label: 'Attendance', value: '95%', icon: TrendingUp, color: 'bg-green-500' },
-    { label: 'Enrolled Subjects', value: '8', icon: BookOpen, color: 'bg-blue-500' },
-    { label: 'Pending Tasks', value: '3', icon: FileText, color: 'bg-orange-500' },
+    { label: 'Overall GPA', value: '89.8', icon: Award, color: 'bg-lime-600' },
+    { label: 'Attendance', value: '95%', icon: TrendingUp, color: 'bg-teal-600' },
+    { label: 'Enrolled Subjects', value: '8', icon: BookOpen, color: 'bg-green-600' },
+    { label: 'Pending Tasks', value: '3', icon: FileText, color: 'bg-emerald-600' },
+  ]
+
+  const navItems: NavItem[] = [
+    { icon: BookOpen, label: 'Dashboard', active: true },
+    { icon: Award, label: 'My Grades' },
+    { icon: Calendar, label: 'Schedule' },
+    { icon: FileText, label: 'Assignments' },
+    { icon: User, label: 'Profile' },
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-lime-50">
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full bg-gradient-to-b from-purple-700 to-purple-600 text-white transition-all duration-300 z-50 ${
-          sidebarOpen ? 'w-64' : 'w-20'
+        className={`fixed top-0 left-0 h-full bg-gradient-to-b from-green-700 to-green-600 text-white transition-all duration-300 z-50 shadow-2xl ${
+          sidebarOpen ? 'w-72' : 'w-20'
         }`}
       >
         <div className="p-6">
-          <div className="flex items-center justify-between mb-8">
-            <div className={`flex items-center space-x-3 ${!sidebarOpen && 'justify-center'}`}>
-              <div className="flex items-center justify-center w-10 h-10 bg-white/20 rounded-lg">
-                <GraduationCap className="w-6 h-6" />
+          <div className="flex items-center justify-between mb-10">
+            <div className={`flex items-center gap-3 ${!sidebarOpen && 'justify-center w-full'}`}>
+              <div
+                className={`flex items-center justify-center rounded-xl overflow-hidden shadow-lg bg-white/10 border border-white/20 ${
+                  sidebarOpen ? 'w-12 h-12' : 'w-10 h-10'
+                } relative`}
+              >
+                <img
+                  src="/pnhs-logo.png"
+                  alt="PNHS Logo"
+                  className="w-full h-full object-contain p-1.5"
+                />
+                <GraduationCap className="absolute w-7 h-7 text-white/40" />
               </div>
+
               {sidebarOpen && (
-                <div>
-                  <h1 className="font-bold text-lg">PNHS</h1>
-                  <p className="text-xs text-purple-200">Student Portal</p>
+                <div className="flex flex-col">
+                  <h1 className="font-bold text-xl tracking-tight">PNHS</h1>
+                  <p className="text-xs text-green-200">Student Portal</p>
                 </div>
               )}
             </div>
+
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="p-2 hover:bg-white/10 rounded-lg transition-colors"
             >
-              {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
 
-          <nav className="space-y-2">
-            {[
-              { icon: BookOpen, label: 'Dashboard', active: true },
-              { icon: Award, label: 'My Grades' },
-              { icon: Calendar, label: 'Schedule' },
-              { icon: FileText, label: 'Assignments' },
-              { icon: UserIcon, label: 'Profile' }, // use alias
-            ].map((item, index) => (
+          <nav className="space-y-1.5">
+            {navItems.map((item, index) => (
               <button
                 key={index}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${
-                  item.active ? 'bg-white/20 text-white' : 'hover:bg-white/10 text-purple-100'
-                } ${!sidebarOpen && 'justify-center'}`}
+                className={`w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl transition-all ${
+                  item.active
+                    ? 'bg-white/20 shadow-inner font-semibold'
+                    : 'hover:bg-white/10 text-green-100'
+                } ${!sidebarOpen && 'justify-center px-0'}`}
               >
-                <item.icon className="w-5 h-5 flex-shrink-0" />
-                {sidebarOpen && <span className="font-medium">{item.label}</span>}
+                <item.icon className="w-6 h-6 flex-shrink-0" />
+                {sidebarOpen && <span>{item.label}</span>}
               </button>
             ))}
           </nav>
         </div>
 
-        <div className="absolute bottom-0 w-full p-6 border-t border-white/20">
+        <div className="absolute bottom-0 w-full p-6 border-t border-white/15">
           <button
             onClick={handleLogout}
-            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors text-purple-100 ${
-              !sidebarOpen && 'justify-center'
+            className={`w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl hover:bg-white/10 transition-colors text-green-100 ${
+              !sidebarOpen && 'justify-center px-0'
             }`}
           >
-            <LogOut className="w-5 h-5 flex-shrink-0" />
-            {sidebarOpen && <span className="font-medium">Logout</span>}
+            <LogOut className="w-6 h-6 flex-shrink-0" />
+            {sidebarOpen && <span>Logout</span>}
           </button>
         </div>
       </aside>
 
-      {/* Main Content */}
-      <div className={`transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-20'}`}>
-        {/* Top Bar */}
-        <header className="bg-white shadow-sm sticky top-0 z-40">
-          <div className="px-8 py-4">
+      {/* Main content */}
+      <div className={`transition-all duration-300 ${sidebarOpen ? 'ml-72' : 'ml-20'}`}>
+        <header className="bg-white/90 backdrop-blur-sm shadow-sm sticky top-0 z-40 border-b border-green-100">
+          <div className="px-6 lg:px-10 py-5">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Student Dashboard</h1>
-                <p className="text-gray-600">Welcome back, {user?.fullName}!</p>
+                <h1 className="text-2xl lg:text-3xl font-bold text-green-800">Student Dashboard</h1>
+                <p className="text-green-600 mt-1">
+                  Welcome back, {user?.fullName ?? 'Student'}!
+                </p>
               </div>
-              <div className="flex items-center space-x-4">
-                <button className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                  <Bell className="w-6 h-6 text-gray-600" />
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+              <div className="flex items-center space-x-5">
+                <button className="relative p-2 hover:bg-gray-100 rounded-full transition-colors">
+                  <Bell className="w-6 h-6 text-gray-700" />
+                  <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
                 </button>
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-700 rounded-full flex items-center justify-center text-white font-bold">
-                    {user?.fullName.charAt(0)}
-                  </div>
+                <div className="w-12 h-12 bg-gradient-to-br from-green-600 to-lime-500 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-md">
+                  {user?.fullName?.charAt(0) ?? 'S'}
                 </div>
               </div>
             </div>
           </div>
         </header>
 
-        {/* Dashboard Content */}
-        <main className="p-8">
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {stats.map((stat, index) => (
-              <div key={index} className="card">
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`${stat.color} p-3 rounded-lg`}>
-                    <stat.icon className="w-6 h-6 text-white" />
+        <main className="p-6 lg:p-10">
+          {/* Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            {stats.map((stat, i) => (
+              <div
+                key={i}
+                className="bg-white rounded-2xl shadow-md p-6 border border-green-100 hover:border-lime-400 transition-all duration-300"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className={`${stat.color} p-4 rounded-xl`}>
+                    <stat.icon className="w-7 h-7 text-white" />
                   </div>
                 </div>
-                <h3 className="text-gray-600 text-sm font-medium mb-1">{stat.label}</h3>
-                <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                <h3 className="text-sm font-medium text-gray-600 mb-1">{stat.label}</h3>
+                <p className="text-3xl font-bold text-lime-800">{stat.value}</p>
               </div>
             ))}
           </div>
 
+          {/* Subjects & Schedule */}
           <div className="grid lg:grid-cols-2 gap-8">
             {/* My Subjects */}
-            <div className="card">
+            <div className="bg-white rounded-2xl shadow-md p-7 border border-green-100">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900">My Subjects</h2>
-                <button className="text-purple-600 hover:text-purple-700 font-semibold text-sm">
+                <h2 className="text-xl font-bold text-green-800">My Subjects</h2>
+                <button className="text-lime-600 hover:text-lime-800 font-medium text-sm">
                   View All
                 </button>
               </div>
               <div className="space-y-4">
-                {subjects.map((subject, index) => (
+                {subjects.map((sub, i) => (
                   <div
-                    key={index}
-                    className="p-4 border border-gray-200 rounded-lg hover:border-purple-500 transition-colors"
+                    key={i}
+                    className="p-5 border border-gray-200 rounded-xl hover:border-lime-400 transition-colors"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <div>
-                        <h3 className="font-bold text-gray-900">{subject.name}</h3>
-                        <p className="text-sm text-gray-600">{subject.teacher}</p>
+                        <h3 className="font-bold text-gray-900">{sub.name}</h3>
+                        <p className="text-sm text-gray-600">{sub.teacher}</p>
                       </div>
                       <div className="text-right">
-                        <div className="text-2xl font-bold text-purple-600">{subject.grade}</div>
+                        <div className="text-2xl font-bold text-lime-700">{sub.grade}</div>
                         <div
-                          className={`text-xs font-semibold ${
-                            subject.status === 'excellent' ? 'text-green-600' : 'text-blue-600'
+                          className={`text-xs font-semibold mt-1 ${
+                            sub.status === 'excellent' ? 'text-green-600' : 'text-teal-600'
                           }`}
                         >
-                          {subject.status.toUpperCase()}
+                          {sub.status.toUpperCase()}
                         </div>
                       </div>
                     </div>
@@ -211,65 +235,34 @@ export default function StudentDashboard() {
             </div>
 
             {/* Today's Schedule */}
-            <div className="card">
+            <div className="bg-white rounded-2xl shadow-md p-7 border border-green-100">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900">Today's Schedule</h2>
-                <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold">
+                <h2 className="text-xl font-bold text-green-800">Today's Schedule</h2>
+                <span className="px-4 py-1.5 bg-lime-100 text-lime-700 rounded-full text-sm font-semibold">
                   Wednesday
                 </span>
               </div>
-              <div className="space-y-3">
-                {schedule.map((item, index) => (
+              <div className="space-y-4">
+                {schedule.map((item, i) => (
                   <div
-                    key={index}
-                    className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-purple-50 transition-colors"
+                    key={i}
+                    className="flex items-center justify-between p-5 border border-gray-200 rounded-xl hover:bg-lime-50 transition-colors"
                   >
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
-                        <BookOpen className="w-6 h-6 text-white" />
+                    <div className="flex items-center space-x-4">
+                      <div className="w-14 h-14 bg-gradient-to-br from-lime-500 to-green-600 rounded-xl flex items-center justify-center">
+                        <BookOpen className="w-7 h-7 text-white" />
                       </div>
                       <div>
                         <p className="font-medium text-gray-900">{item.subject}</p>
-                        <div className="flex items-center space-x-2 text-sm text-gray-600">
-                          <Clock className="w-3 h-3" />
+                        <div className="flex items-center space-x-2 text-sm text-gray-600 mt-1">
+                          <Clock className="w-4 h-4" />
                           <span>{item.time}</span>
                         </div>
                       </div>
                     </div>
-                    <span className="text-sm text-gray-600">{item.room}</span>
+                    <span className="text-sm font-medium text-gray-700">{item.room}</span>
                   </div>
                 ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Recent Announcements */}
-          <div className="mt-8 card">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Announcements</h2>
-            <div className="space-y-4">
-              <div className="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="font-bold text-gray-900">Midterm Examinations</h3>
-                    <p className="text-gray-600 mt-1">
-                      Midterm exams will be conducted from February 15-20, 2026. Please review your
-                      schedules.
-                    </p>
-                  </div>
-                  <span className="text-xs text-gray-500">2 days ago</span>
-                </div>
-              </div>
-              <div className="p-4 bg-green-50 border-l-4 border-green-500 rounded-lg">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="font-bold text-gray-900">School Foundation Day</h3>
-                    <p className="text-gray-600 mt-1">
-                      Join us in celebrating PNHS Foundation Day on February 25, 2026. Various
-                      activities planned!
-                    </p>
-                  </div>
-                  <span className="text-xs text-gray-500">5 days ago</span>
-                </div>
               </div>
             </div>
           </div>

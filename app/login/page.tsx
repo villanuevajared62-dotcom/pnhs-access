@@ -1,47 +1,103 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { GraduationCap, Lock, User, AlertCircle, Eye, EyeOff, BookOpen } from 'lucide-react'
-import { authenticateUser, saveUserToStorage } from '@/lib/auth'
+import { useState } from "react";
+import Link from "next/link";
+import { Lock, User, AlertCircle, Eye, EyeOff, BookOpen } from "lucide-react";
+import { saveUserToStorage } from "@/lib/auth";
 
 export default function LoginPage() {
-  const router = useRouter()
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-  })
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
+    username: "",
+    password: "",
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    console.log("🔐 Starting login for:", formData.username);
 
-    const result = authenticateUser(formData)
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-    if (result.success && result.user) {
-      saveUserToStorage(result.user)
-      
-      // Redirect based on role
-      if (result.user.role === 'admin') {
-        router.push('/admin/dashboard')
-      } else if (result.user.role === 'teacher') {
-        router.push('/teacher/dashboard')
-      } else {
-        router.push('/student/dashboard')
+      console.log("📡 Response status:", res.status);
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ message: "Login failed" }));
+        console.log("❌ Login failed:", err.message);
+        setError(err.message || "Invalid username or password");
+        setLoading(false);
+        return;
       }
-    } else {
-      setError(result.message || 'Login failed')
-      setLoading(false)
+
+      const result = await res.json();
+      console.log("✅ Login successful:", result.user);
+
+      if (!result.user || !result.user.role) {
+        console.log("❌ Invalid user data in response");
+        setError("Invalid response from server");
+        setLoading(false);
+        return;
+      }
+
+      // Save to localStorage
+      saveUserToStorage(result.user);
+      console.log("💾 User saved to localStorage");
+
+      // Wait for server session cookie to be available (poll /api/auth/session)
+      // This replaces the fragile fixed timeout and prevents middleware race conditions.
+      const waitForSession = async (timeout = 3000, interval = 200) => {
+        const start = Date.now();
+        while (Date.now() - start < timeout) {
+          try {
+            const s = await fetch("/api/auth/session", {
+              credentials: "include",
+            });
+            if (s.ok) {
+              const d = await s.json().catch(() => null);
+              if (d?.authenticated) return true;
+            }
+          } catch (e) {
+            /* ignore and retry */
+          }
+          await new Promise((r) => setTimeout(r, interval));
+        }
+        return false;
+      };
+
+      const sessionReady = await waitForSession();
+      if (!sessionReady) {
+        console.warn(
+          "⚠️ Session cookie not confirmed within timeout — proceeding anyway",
+        );
+      }
+
+      // Determine redirect path
+      const redirectPath =
+        result.user.role === "admin"
+          ? "/admin/dashboard"
+          : result.user.role === "teacher"
+            ? "/teacher/dashboard"
+            : "/student/dashboard";
+
+      console.log("🎯 Redirecting to:", redirectPath);
+
+      // Force hard redirect with window.location
+      window.location.href = redirectPath;
+    } catch (e) {
+      console.error("💥 Network error:", e);
+      setError("Network error. Please check your connection.");
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-yellow-50 to-green-50 flex items-center justify-center px-4 py-8 sm:py-12">
@@ -62,34 +118,48 @@ export default function LoginPage() {
             <div className="w-48 h-48 xl:w-64 xl:h-64 mx-auto mb-6 relative">
               <div className="absolute inset-0 bg-gradient-to-br from-green-600 to-yellow-500 rounded-full blur-2xl opacity-30 animate-pulse"></div>
               <div className="relative w-full h-full rounded-full shadow-2xl overflow-hidden">
-                <img 
-                  src="/pnhs-logo.png" 
-                  alt="PNHS Logo" 
+                <img
+                  src="/pnhs-logo.png"
+                  alt="PNHS Logo"
                   className="w-full h-full object-contain"
                 />
               </div>
             </div>
           </div>
-          
+
           <div className="space-y-4">
             <h1 className="text-4xl xl:text-5xl font-bold text-green-800 leading-tight">
-              Pantabangan National<br />High School
+              Pantabangan National
+              <br />
+              High School
             </h1>
             <div className="h-1 w-32 bg-gradient-to-r from-green-600 to-yellow-500 mx-auto rounded-full"></div>
-            <p className="text-xl text-green-700 font-semibold">ACCESS Portal</p>
+            <p className="text-xl text-green-700 font-semibold">
+              ACCESS Portal
+            </p>
             <p className="text-gray-600 max-w-md mx-auto text-lg">
               Villarica, Pantabangan, Nueva Ecija
             </p>
-            <p className="text-sm text-gray-500 italic">Est. 1996 • R.A. 7746</p>
+            <p className="text-sm text-gray-500 italic">
+              Est. 1996 • R.A. 7746
+            </p>
           </div>
 
           <div className="flex items-center space-x-3 text-green-700 mt-8">
             <div className="flex -space-x-2">
-              <div className="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center text-white font-bold border-2 border-white">A</div>
-              <div className="w-10 h-10 rounded-full bg-yellow-500 flex items-center justify-center text-white font-bold border-2 border-white">C</div>
-              <div className="w-10 h-10 rounded-full bg-green-700 flex items-center justify-center text-white font-bold border-2 border-white">C</div>
+              <div className="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center text-white font-bold border-2 border-white">
+                A
+              </div>
+              <div className="w-10 h-10 rounded-full bg-yellow-500 flex items-center justify-center text-white font-bold border-2 border-white">
+                C
+              </div>
+              <div className="w-10 h-10 rounded-full bg-green-700 flex items-center justify-center text-white font-bold border-2 border-white">
+                C
+              </div>
             </div>
-            <span className="font-semibold">Academic Content & Community Enhancement System</span>
+            <span className="font-semibold">
+              Academic Content & Community Enhancement System
+            </span>
           </div>
         </div>
 
@@ -100,21 +170,27 @@ export default function LoginPage() {
             <div className="w-24 h-24 mx-auto mb-4 relative">
               <div className="absolute inset-0 bg-gradient-to-br from-green-600 to-yellow-500 rounded-full blur-xl opacity-40"></div>
               <div className="relative w-full h-full rounded-full shadow-xl overflow-hidden">
-                <img 
-                  src="/pnhs-logo.png" 
-                  alt="PNHS Logo" 
+                <img
+                  src="/pnhs-logo.png"
+                  alt="PNHS Logo"
                   className="w-full h-full object-contain"
                 />
               </div>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-green-800 mb-1">PNHS ACCESS</h1>
-            <p className="text-gray-600 text-sm sm:text-base">Pantabangan National High School</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-green-800 mb-1">
+              PNHS ACCESS
+            </h1>
+            <p className="text-gray-600 text-sm sm:text-base">
+              Pantabangan National High School
+            </p>
           </div>
 
           {/* Login Card */}
           <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 sm:p-8 border border-green-100">
             <div className="mb-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-green-800 mb-2">Welcome Back!</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-green-800 mb-2">
+                Welcome Back!
+              </h2>
               <p className="text-gray-600">Please sign in to continue</p>
             </div>
 
@@ -124,7 +200,9 @@ export default function LoginPage() {
                 <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-xl flex items-start space-x-3 animate-shake">
                   <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-red-700 font-semibold text-sm">Login Failed</p>
+                    <p className="text-red-700 font-semibold text-sm">
+                      Login Failed
+                    </p>
                     <p className="text-red-600 text-sm">{error}</p>
                   </div>
                 </div>
@@ -132,7 +210,10 @@ export default function LoginPage() {
 
               {/* Username Field */}
               <div>
-                <label htmlFor="username" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label
+                  htmlFor="username"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
                   Username
                 </label>
                 <div className="relative group">
@@ -144,7 +225,9 @@ export default function LoginPage() {
                     type="text"
                     required
                     value={formData.username}
-                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, username: e.target.value })
+                    }
                     className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none text-gray-800 placeholder-gray-400"
                     placeholder="Enter your username"
                     disabled={loading}
@@ -154,7 +237,10 @@ export default function LoginPage() {
 
               {/* Password Field */}
               <div>
-                <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
                   Password
                 </label>
                 <div className="relative group">
@@ -163,10 +249,12 @@ export default function LoginPage() {
                   </div>
                   <input
                     id="password"
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     required
                     value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
                     className="w-full pl-12 pr-12 py-3.5 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none text-gray-800 placeholder-gray-400"
                     placeholder="Enter your password"
                     disabled={loading}
@@ -214,15 +302,21 @@ export default function LoginPage() {
               <div className="space-y-2 text-sm">
                 <div className="flex items-center justify-between p-2 bg-white/60 rounded-lg">
                   <span className="font-semibold text-gray-700">Admin:</span>
-                  <code className="text-green-700 bg-green-100 px-2 py-1 rounded">admin / admin123</code>
+                  <code className="text-green-700 bg-green-100 px-2 py-1 rounded">
+                    admin / admin123
+                  </code>
                 </div>
                 <div className="flex items-center justify-between p-2 bg-white/60 rounded-lg">
                   <span className="font-semibold text-gray-700">Teacher:</span>
-                  <code className="text-green-700 bg-green-100 px-2 py-1 rounded">teacher1 / teacher123</code>
+                  <code className="text-green-700 bg-green-100 px-2 py-1 rounded">
+                    teacher1 / teacher123
+                  </code>
                 </div>
                 <div className="flex items-center justify-between p-2 bg-white/60 rounded-lg">
                   <span className="font-semibold text-gray-700">Student:</span>
-                  <code className="text-green-700 bg-green-100 px-2 py-1 rounded">student1 / student123</code>
+                  <code className="text-green-700 bg-green-100 px-2 py-1 rounded">
+                    student1 / student123
+                  </code>
                 </div>
               </div>
             </div>
@@ -230,11 +324,13 @@ export default function LoginPage() {
 
           {/* Back to Home */}
           <div className="text-center mt-6">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="inline-flex items-center text-green-700 hover:text-green-900 font-semibold transition-colors group"
             >
-              <span className="transform group-hover:-translate-x-1 transition-transform">←</span>
+              <span className="transform group-hover:-translate-x-1 transition-transform">
+                ←
+              </span>
               <span className="ml-2">Back to Home</span>
             </Link>
           </div>
@@ -243,14 +339,21 @@ export default function LoginPage() {
 
       <style jsx>{`
         @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-5px); }
-          75% { transform: translateX(5px); }
+          0%,
+          100% {
+            transform: translateX(0);
+          }
+          25% {
+            transform: translateX(-5px);
+          }
+          75% {
+            transform: translateX(5px);
+          }
         }
         .animate-shake {
           animation: shake 0.3s ease-in-out;
         }
       `}</style>
     </div>
-  )
+  );
 }

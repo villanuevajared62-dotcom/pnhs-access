@@ -13,14 +13,15 @@ function isMaskedPassword(value: unknown): boolean {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const user = await getSessionUser(req);
   if (!user)
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   const prisma = await prismaPromise;
   const teacherRaw = await prisma.teacher.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: { teacherSubjects: { include: { subject: true } } },
   });
   if (!teacherRaw)
@@ -42,8 +43,9 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const auth = await requireAdmin(req);
   if (!auth.ok)
     return NextResponse.json({ message: "Admin only" }, { status: 403 });
@@ -73,7 +75,7 @@ export async function PUT(
     }
 
     const updated = await prisma.teacher.update({
-      where: { id: params.id },
+      where: { id },
       data,
     });
     const out = { ...updated, password: undefined };
@@ -89,8 +91,9 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const auth = await requireAdmin(req);
   if (!auth.ok)
     return NextResponse.json({ message: "Admin only" }, { status: 403 });
@@ -98,7 +101,7 @@ export async function DELETE(
   try {
     const prisma = await prismaPromise;
     await prisma.teacher.update({
-      where: { id: params.id },
+      where: { id },
       data: { deletedAt: new Date() },
     });
     await prisma.auditLog.create({
@@ -107,7 +110,7 @@ export async function DELETE(
         actorRole: auth.user?.role || null,
         action: "soft-delete",
         resource: "Teacher",
-        resourceId: params.id,
+        resourceId: id,
         metadata: null,
       },
     });

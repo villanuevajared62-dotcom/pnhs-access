@@ -4,15 +4,16 @@ import { getSessionUser } from "@/lib/server-session";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const user = await getSessionUser(req);
   if (!user)
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
   try {
     const item = await prisma.attendance.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
     if (!item)
       return NextResponse.json({ message: "Not found" }, { status: 404 });
@@ -43,8 +44,9 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const user = await getSessionUser(req);
   if (!user)
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -54,7 +56,7 @@ export async function PUT(
 
   try {
     const existing = await prisma.attendance.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
     if (!existing)
       return NextResponse.json({ message: "Not found" }, { status: 404 });
@@ -87,7 +89,10 @@ export async function PUT(
     if (updates.date !== undefined) {
       nextDate = new Date(updates.date);
       if (Number.isNaN(nextDate.getTime())) {
-        return NextResponse.json({ message: "Invalid date value" }, { status: 400 });
+        return NextResponse.json(
+          { message: "Invalid date value" },
+          { status: 400 },
+        );
       }
       const today = new Date();
       today.setHours(23, 59, 59, 999);
@@ -104,12 +109,18 @@ export async function PUT(
     // Student/class changes are restricted to admins.
     const isAdmin = user.role === "admin";
     const updated = await prisma.attendance.update({
-      where: { id: params.id },
+      where: { id },
       data: {
-        status: updates.status ? String(updates.status).toLowerCase() : existing.status,
+        status: updates.status
+          ? String(updates.status).toLowerCase()
+          : existing.status,
         date: nextDate ?? existing.date,
-        classId: isAdmin ? updates.classId ?? existing.classId : existing.classId,
-        studentId: isAdmin ? updates.studentId ?? existing.studentId : existing.studentId,
+        classId: isAdmin
+          ? (updates.classId ?? existing.classId)
+          : existing.classId,
+        studentId: isAdmin
+          ? (updates.studentId ?? existing.studentId)
+          : existing.studentId,
       },
     });
 
@@ -125,8 +136,9 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const user = await getSessionUser(req);
   if (!user)
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -136,7 +148,7 @@ export async function DELETE(
 
   try {
     const existing = await prisma.attendance.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
     if (!existing)
       return NextResponse.json({ message: "Not found" }, { status: 404 });
@@ -152,7 +164,7 @@ export async function DELETE(
       }
     }
 
-    await prisma.attendance.delete({ where: { id: params.id } });
+    await prisma.attendance.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (e) {
     console.error(e);

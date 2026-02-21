@@ -4,9 +4,10 @@ import { tasksDB } from "@/lib/db-store";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const user = await getSessionUser(req);
     if (!user || user.role !== "teacher") {
       return NextResponse.json(
@@ -15,7 +16,6 @@ export async function PUT(
       );
     }
 
-    const { id } = params;
     const body = await req.json();
 
     const taskIndex = tasksDB.findIndex((t) => t.id === id);
@@ -36,9 +36,10 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const user = await getSessionUser(req);
     if (!user || user.role !== "teacher") {
       return NextResponse.json(
@@ -46,8 +47,6 @@ export async function DELETE(
         { status: 403 },
       );
     }
-
-    const { id } = params;
     const taskIndex = tasksDB.findIndex((t) => t.id === id);
     if (taskIndex === -1) {
       return NextResponse.json({ error: "Task not found" }, { status: 404 });

@@ -9,12 +9,13 @@ import {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const auth = await requireAdmin(req);
   if (!auth.ok)
     return NextResponse.json({ message: "Admin only" }, { status: 403 });
-  const user = getAuthUserById(params.id);
+  const user = getAuthUserById(id);
   if (!user)
     return NextResponse.json({ message: "Not found" }, { status: 404 });
   return NextResponse.json(user);
@@ -22,15 +23,16 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const auth = await requireAdmin(req);
   if (!auth.ok)
     return NextResponse.json({ message: "Admin only" }, { status: 403 });
 
   try {
     const body = (await req.json()) as ManageUserUpdate;
-    const result = updateAuthUser(params.id, body);
+    const result = updateAuthUser(id, body);
     if (!result.success || !result.user) {
       return NextResponse.json(
         { message: result.message || "Failed to update user" },
@@ -45,13 +47,14 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const auth = await requireAdmin(req);
   if (!auth.ok)
     return NextResponse.json({ message: "Admin only" }, { status: 403 });
 
-  const result = deleteAuthUser(params.id);
+  const result = deleteAuthUser(id);
   if (!result.success) {
     return NextResponse.json(
       { message: result.message || "Failed to delete user" },

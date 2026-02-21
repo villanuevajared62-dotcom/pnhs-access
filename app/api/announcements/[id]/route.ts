@@ -5,13 +5,14 @@ import { getSessionUser, requireAdmin } from "@/lib/server-session";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const user = await getSessionUser(req);
   if (!user)
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   const item = await prisma.announcement.findUnique({
-    where: { id: params.id },
+    where: { id },
   });
   if (!item || item.deletedAt)
     return NextResponse.json({ message: "Not found" }, { status: 404 });
@@ -20,8 +21,9 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const auth = await requireAdmin(req);
   if (!auth.ok)
     return NextResponse.json({ message: "Admin only" }, { status: 403 });
@@ -29,7 +31,7 @@ export async function PUT(
   try {
     const updates = await req.json();
     const updated = await prisma.announcement.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         title: updates.title,
         message: updates.message,
@@ -49,15 +51,16 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const auth = await requireAdmin(req);
   if (!auth.ok)
     return NextResponse.json({ message: "Admin only" }, { status: 403 });
 
   try {
     await prisma.announcement.update({
-      where: { id: params.id },
+      where: { id },
       data: { deletedAt: new Date() },
     });
     await prisma.auditLog.create({
@@ -66,7 +69,7 @@ export async function DELETE(
         actorRole: auth.user?.role || null,
         action: "soft-delete",
         resource: "Announcement",
-        resourceId: params.id,
+        resourceId: id,
         metadata: null,
       },
     });

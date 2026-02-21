@@ -7,11 +7,19 @@ const ATTACHMENT_PREFIX = "ATTACHMENT_META:";
 
 function parseSubmissionRequirements(value?: string | null) {
   if (!value) {
-    return { text: "", attachmentPath: null as string | null, attachmentName: null as string | null };
+    return {
+      text: "",
+      attachmentPath: null as string | null,
+      attachmentName: null as string | null,
+    };
   }
 
   if (!value.startsWith(ATTACHMENT_PREFIX)) {
-    return { text: value, attachmentPath: null as string | null, attachmentName: null as string | null };
+    return {
+      text: value,
+      attachmentPath: null as string | null,
+      attachmentName: null as string | null,
+    };
   }
 
   try {
@@ -26,7 +34,11 @@ function parseSubmissionRequirements(value?: string | null) {
       attachmentName: parsed.attachmentName || null,
     };
   } catch {
-    return { text: value, attachmentPath: null as string | null, attachmentName: null as string | null };
+    return {
+      text: value,
+      attachmentPath: null as string | null,
+      attachmentName: null as string | null,
+    };
   }
 }
 
@@ -85,15 +97,14 @@ function parseDueDateInput(raw?: string) {
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const user = await getSessionUser(req);
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    const { id } = params;
     const body = await req.json();
     const assignment = await db.assignment.findUnique({
       where: { id },
@@ -135,7 +146,9 @@ export async function PUT(
             data: {
               status: body.status || "submitted",
               submittedAt:
-                body.status === "submitted" || !body.status ? new Date() : undefined,
+                body.status === "submitted" || !body.status
+                  ? new Date()
+                  : undefined,
             },
           })
         : await db.submission.create({
@@ -145,7 +158,9 @@ export async function PUT(
               filePath: "",
               status: body.status || "submitted",
               submittedAt:
-                body.status === "submitted" || !body.status ? new Date() : undefined,
+                body.status === "submitted" || !body.status
+                  ? new Date()
+                  : undefined,
             },
           });
 
@@ -208,7 +223,9 @@ export async function PUT(
         ...(body.title !== undefined && { title: body.title }),
         ...(body.subject !== undefined && { subject: body.subject }),
         ...(parsedDueDate !== undefined && { dueDate: parsedDueDate }),
-        ...(body.description !== undefined && { description: body.description }),
+        ...(body.description !== undefined && {
+          description: body.description,
+        }),
         ...(body.status !== undefined && { status: body.status }),
         ...(nextPoints !== undefined && {
           gradingCriteria: nextPoints,
@@ -231,9 +248,10 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const user = await getSessionUser(req);
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -241,8 +259,6 @@ export async function DELETE(
     if (user.role !== "teacher" && user.role !== "admin") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-
-    const { id } = params;
     const assignment = await db.assignment.findUnique({
       where: { id },
       select: { id: true, classId: true },

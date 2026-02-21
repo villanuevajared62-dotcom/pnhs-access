@@ -13,12 +13,13 @@ function isMaskedPassword(value: unknown): boolean {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const user = await getSessionUser(req);
   if (!user)
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  const student = await prisma.student.findUnique({ where: { id: params.id } });
+  const student = await prisma.student.findUnique({ where: { id } });
   if (!student || student.deletedAt)
     return NextResponse.json({ message: "Not found" }, { status: 404 });
   const out = { ...student, password: undefined };
@@ -27,8 +28,9 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const auth = await requireAdmin(req);
   if (!auth.ok)
     return NextResponse.json({ message: "Admin only" }, { status: 403 });
@@ -36,7 +38,7 @@ export async function PUT(
   try {
     const updates = await req.json();
 
-    console.debug("PUT /api/students/", params.id, { updates });
+    console.debug("PUT /api/students/", id, { updates });
 
     const allowed = new Set([
       "name",
@@ -84,10 +86,10 @@ export async function PUT(
         { status: 400 },
       );
 
-    let target = await prisma.student.findUnique({ where: { id: params.id } });
+    let target = await prisma.student.findUnique({ where: { id } });
     if (!target) {
       target = await prisma.student.findFirst({
-        where: { studentId: params.id },
+        where: { studentId: id },
       });
       if (!target) {
         return NextResponse.json(
@@ -203,15 +205,16 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const auth = await requireAdmin(req);
   if (!auth.ok)
     return NextResponse.json({ message: "Admin only" }, { status: 403 });
 
   try {
     await prisma.student.update({
-      where: { id: params.id },
+      where: { id },
       data: { deletedAt: new Date() },
     });
     await prisma.auditLog.create({
@@ -220,7 +223,7 @@ export async function DELETE(
         actorRole: auth.user?.role || null,
         action: "soft-delete",
         resource: "Student",
-        resourceId: params.id,
+        resourceId: id,
         metadata: null,
       },
     });

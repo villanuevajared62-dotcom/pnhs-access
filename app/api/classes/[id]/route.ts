@@ -42,14 +42,15 @@ let classes: Class[] = [
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const user = await getSessionUser(req);
   if (!user)
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
   const item = await prisma.class.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: { _count: { select: { enrollments: true } } },
   });
   if (!item || item.deletedAt)
@@ -65,8 +66,9 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const auth = await requireAdmin(req);
   if (!auth.ok)
     return NextResponse.json({ message: "Admin only" }, { status: 403 });
@@ -86,7 +88,7 @@ export async function PUT(
     };
 
     const updated = await prisma.class.update({
-      where: { id: params.id },
+      where: { id },
       data: updateData,
     });
     return NextResponse.json(updated);
@@ -100,15 +102,16 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const auth = await requireAdmin(req);
   if (!auth.ok)
     return NextResponse.json({ message: "Admin only" }, { status: 403 });
 
   try {
     await prisma.class.update({
-      where: { id: params.id },
+      where: { id },
       data: { deletedAt: new Date() },
     });
     await prisma.auditLog.create({
@@ -117,7 +120,7 @@ export async function DELETE(
         actorRole: auth.user?.role || null,
         action: "soft-delete",
         resource: "Class",
-        resourceId: params.id,
+        resourceId: id,
         metadata: null,
       },
     });
@@ -129,15 +132,16 @@ export async function DELETE(
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const auth = await requireAdmin(req);
   if (!auth.ok)
     return NextResponse.json({ message: "Admin only" }, { status: 403 });
 
   try {
     const cls = await prisma.class.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
     if (!cls || cls.deletedAt)
       return NextResponse.json({ message: "Not found" }, { status: 404 });

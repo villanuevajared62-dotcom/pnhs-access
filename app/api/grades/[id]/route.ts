@@ -4,13 +4,14 @@ import { getSessionUser } from "@/lib/server-session";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const user = await getSessionUser(req);
   if (!user)
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   try {
-    const item = await prisma.grade.findUnique({ where: { id: params.id } });
+    const item = await prisma.grade.findUnique({ where: { id } });
     if (!item)
       return NextResponse.json({ message: "Not found" }, { status: 404 });
 
@@ -39,8 +40,9 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const user = await getSessionUser(req);
   if (!user)
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -50,7 +52,7 @@ export async function PUT(
 
   try {
     const existing = await prisma.grade.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
     if (!existing)
       return NextResponse.json({ message: "Not found" }, { status: 404 });
@@ -68,7 +70,7 @@ export async function PUT(
 
     const updates = await req.json();
     const updated = await prisma.grade.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         studentId: updates.studentId,
         subjectId: updates.subjectId,
@@ -89,8 +91,9 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
   const user = await getSessionUser(req);
   if (!user)
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -100,7 +103,7 @@ export async function DELETE(
 
   try {
     const existing = await prisma.grade.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
     if (!existing)
       return NextResponse.json({ message: "Not found" }, { status: 404 });
@@ -115,7 +118,7 @@ export async function DELETE(
         return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
 
-    await prisma.grade.delete({ where: { id: params.id } });
+    await prisma.grade.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (e) {
     console.error(e);

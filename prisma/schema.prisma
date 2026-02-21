@@ -1,12 +1,12 @@
 // Prisma schema for PNHS ACCESS backend database
-// Using SQLite for quick local activation
+// Using PostgreSQL for Vercel deployment
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

@@ -7,6 +7,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/* =======================
+   CORE MODELS
+======================= */
+
 model User {
   id        String   @id @default(cuid())
   username  String   @unique
@@ -20,6 +24,10 @@ model User {
   teacherProfile Teacher?
   studentProfile Student?
 }
+
+/* =======================
+   STUDENT & TEACHER
+======================= */
 
 model Student {
   id         String   @id @default(cuid())
@@ -51,6 +59,10 @@ model Teacher {
   tasks      Task[]
 }
 
+/* =======================
+   ACADEMIC STRUCTURE
+======================= */
+
 model Class {
   id         String   @id @default(cuid())
   name       String
@@ -62,12 +74,17 @@ model Class {
   room       String?
   createdAt  DateTime @default(now())
 
-  teacher     Teacher     @relation(fields: [teacherId], references: [id])
+  teacher     Teacher       @relation(fields: [teacherId], references: [id])
   enrollments Enrollment[]
   attendance  Attendance[]
   assignments Assignment[]
   grades      Grade[]
+  attendanceTeachers AttendanceTeacher[]  // <- fixed relation
 }
+
+/* =======================
+   ENROLLMENTS
+======================= */
 
 model Enrollment {
   id        String   @id @default(cuid())
@@ -80,6 +97,10 @@ model Enrollment {
 
   @@unique([studentId, classId])
 }
+
+/* =======================
+   GRADES & ATTENDANCE
+======================= */
 
 model Grade {
   id        String   @id @default(cuid())
@@ -110,18 +131,24 @@ model Attendance {
   @@unique([studentId, classId, date])
 }
 
+/* =======================
+   TEACHER ATTENDANCE
+======================= */
+
 model AttendanceTeacher {
   id        String   @id @default(cuid())
   teacherId String
   classId   String
   date      DateTime
-  status    String   // present, absent, late
+  status    String
 
   teacher Teacher @relation(fields: [teacherId], references: [id])
   class   Class   @relation(fields: [classId], references: [id])
-
-  @@unique([teacherId, classId, date])
 }
+
+/* =======================
+   ASSIGNMENTS & TASKS
+======================= */
 
 model Assignment {
   id          String   @id @default(cuid())
@@ -161,6 +188,10 @@ model Task {
   teacher Teacher @relation(fields: [teacherId], references: [id])
 }
 
+/* =======================
+   ANNOUNCEMENTS & LOGS
+======================= */
+
 model Announcement {
   id        String   @id @default(cuid())
   title     String
@@ -181,6 +212,10 @@ model AuditLog {
   metadata   String?
   createdAt  DateTime @default(now())
 }
+
+/* =======================
+   SETTINGS
+======================= */
 
 model Settings {
   id                 String   @id @default(cuid())

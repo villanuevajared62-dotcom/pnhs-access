@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  role      String   // admin, teacher, student
+  name      String
+  email     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  teacherProfile  Teacher?
+  studentProfile  Student?
+}
+
+model Teacher {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  department String?
+  subjectIds String   @default("") // comma-separated subject IDs
+  classes    Class[]
+  grades     Grade[]
+  attendance Attendance[]
+}
+
+model Student {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  studentId   String   @unique
+  gradeLevel  String
+  section     String
+  classId     String?
+  class       Class?   @relation(fields: [classId], references: [id])
+  grades      Grade[]
+  attendance  Attendance[]
+}
+
+model Class {
+  id          String   @id @default(cuid())
+  name        String
+  gradeLevel  String
+  section     String
+  teacherId   String
+  teacher     Teacher  @relation(fields: [teacherId], references: [id])
+  subjectId   String
+  subject     Subject  @relation(fields: [subjectId], references: [id])
+  students    Student[]
+  grades      Grade[]
+  attendance  Attendance[]
+  schedule    String?
+  createdAt   DateTime @default(now())
+}
+
+model Subject {
+  id      String  @id @default(cuid())
+  name    String
+  code    String  @unique
+  classes Class[]
+}
+
+model Grade {
+  id          String   @id @default(cuid())
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  classId     String
+  class       Class    @relation(fields: [classId], references: [id])
+  teacherId   String
+  teacher     Teacher  @relation(fields: [teacherId], references: [id])
+  quarter     Int      // 1, 2, 3, 4
+  score       Float
+  remarks     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Attendance {
+  id        String   @id @default(cuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  classId   String
+  class     Class    @relation(fields: [classId], references: [id])
+  teacherId String
+  teacher   Teacher  @relation(fields: [teacherId], references: [id])
+  date      String   // YYYY-MM-DD
+  status    String   // present, absent, late, excused
+  createdAt DateTime @default(now())
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  authorId  String
+  audience  String   @default("all") // all, teachers, students
+  createdAt DateTime @default(now())
+}

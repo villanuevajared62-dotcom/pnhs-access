@@ -1,15 +1,6 @@
-
 {
-<<<<<<< HEAD
-  "buildCommand": "npx prisma generate && npx prisma db push && next build",
-  "devCommand": "next dev",
-  "installCommand": "npm install",
-  "framework": "nextjs"
-=======
-  "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install",
   "framework": "nextjs",
-  "outputDirectory": ".next"
->>>>>>> abd22b2953a867c47a19ce65745932cb9bbe898c
+  "installCommand": "npm install",
+  "buildCommand": "npx prisma generate && npx prisma db push && npm run build",
+  "devCommand": "npm run dev"
 }

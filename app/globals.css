@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+<<<<<<< HEAD
 :root {
   --primary: #16a34a;
   --primary-dark: #14532d;
@@ -14,10 +15,22 @@
 
 body {
   background: #f8fafc;
+=======
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+  }
+
+  body {
+    @apply bg-gradient-to-br from-green-50 via-yellow-50 to-green-50;
+  }
+>>>>>>> abd22b2953a867c47a19ce65745932cb9bbe898c
 }
 
 @layer components {
   .btn-primary {
+<<<<<<< HEAD
     @apply bg-green-700 hover:bg-green-800 text-white font-semibold py-2.5 px-5 rounded-lg transition-all duration-200 flex items-center gap-2;
   }
   .btn-secondary {
@@ -58,3 +71,53 @@ body {
 ::-webkit-scrollbar-track { background: #f1f5f9; }
 ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+=======
+    @apply bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none;
+  }
+
+  .card {
+    @apply bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-2xl transition-all duration-200 border-2 border-green-100;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #16a34a, #65a30d);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #15803d, #4d7c0f);
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Animation delays */
+.delay-150 {
+  animation-delay: 150ms;
+}
+
+/* Custom gradient text */
+.gradient-text {
+  @apply bg-gradient-to-r from-green-600 to-yellow-600 bg-clip-text text-transparent;
+}
+>>>>>>> abd22b2953a867c47a19ce65745932cb9bbe898c

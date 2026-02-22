@@ -1,5 +1,6 @@
 {
   "name": "pnhs-access",
+<<<<<<< HEAD
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -18,6 +19,26 @@
     "react": "^18",
     "react-dom": "^18",
     "recharts": "^2.12.0"
+=======
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "migrate:data": "node scripts/prisma-migrate-data.js",
+    "start": "next start",
+    "lint": "next lint --dir .",
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.17.0",
+    "@vercel/blob": "^2.3.0",
+    "bcryptjs": "^2.4.3",
+    "lucide-react": "^0.263.1",
+    "next": "^16.1.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+>>>>>>> abd22b2953a867c47a19ce65745932cb9bbe898c
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -26,9 +47,14 @@
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
     "postcss": "^8",
+<<<<<<< HEAD
     "prisma": "^5.10.0",
     "tailwindcss": "^3.3.0",
     "tsx": "^4.7.1",
+=======
+    "prisma": "^5.17.0",
+    "tailwindcss": "^3.3.0",
+>>>>>>> abd22b2953a867c47a19ce65745932cb9bbe898c
     "typescript": "^5"
   }
 }

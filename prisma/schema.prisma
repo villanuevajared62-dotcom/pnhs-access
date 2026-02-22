@@ -1,8 +1,15 @@
+<<<<<<< HEAD
+=======
+// Prisma schema for PNHS ACCESS backend database
+// Using PostgreSQL for Vercel deployment
+
+>>>>>>> abd22b2953a867c47a19ce65745932cb9bbe898c
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
+<<<<<<< HEAD
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
@@ -20,10 +27,86 @@ model User {
   // Relations
   teacherProfile  Teacher?
   studentProfile  Student?
+=======
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// NOTE: SQLite connector does not support Prisma enums or Json types.
+// We use String fields instead and validate values at the application level.
+
+model Announcement {
+  id        String   @id @default(cuid())
+  title     String
+  message   String
+  date      DateTime @default(now())
+  author    String
+  type      String   // was enum AnnouncementType
+  createdAt DateTime @default(now())
+  deletedAt  DateTime?
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  actorRole  String?
+  action     String
+  resource   String
+  resourceId String?
+  metadata   String?  // JSON string
+  createdAt  DateTime @default(now())
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  data      String   // JSON payload of user data
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+
+  @@index([userId])
+}
+
+model Submission {
+  id           String   @id @default(cuid())
+  assignmentId String
+  studentId    String
+  filePath     String
+  submittedAt  DateTime @default(now())
+  status       String   @default("submitted")
+  grade        String?
+  feedback     String?
+
+  assignment   Assignment @relation(fields: [assignmentId], references: [id])
+}
+
+model Student {
+  id         String   @id @default(cuid())
+  name       String
+  email      String
+  gradeLevel String
+  username   String?  @unique
+  password   String?
+  section    String
+  strand     String?
+  gpa        String
+  status     String   // was enum StudentStatus
+  studentId  String
+  deletedAt  DateTime?
+
+  // relations
+  enrollments Enrollment[]
+  assignments Assignment[]
+  grades      Grade[]
+  attendance  Attendance[]
+>>>>>>> abd22b2953a867c47a19ce65745932cb9bbe898c
 }
 
 model Teacher {
   id         String   @id @default(cuid())
+<<<<<<< HEAD
   userId     String   @unique
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   department String?
@@ -82,11 +165,88 @@ model Grade {
   remarks     String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+=======
+  name       String
+  email      String
+  department String
+  subjects   String   @default("[]") // legacy: store array of subjects as JSON string (migrate to relation)
+  students   Int
+  status     String   // was enum TeacherStatus
+  username   String?  @unique
+  password   String?
+  deletedAt  DateTime?
+
+  // new relation fields
+  teacherSubjects TeacherSubject[]
+  classes Class[] @relation("TeacherClasses")
+  tasks Task[] @relation("TeacherTasks")
+}
+
+model Class {
+  id         String   @id @default(cuid())
+  name       String
+  subject    String?  // subject name
+  teacher    String
+  teacherId  String
+  teacherRef Teacher? @relation(fields: [teacherId], references: [id], name: "TeacherClasses")
+  students   Int
+  schedule   String
+  time       String?  // class time (e.g., "8:00 AM - 9:00 AM")
+  room       String
+  gradeLevel String
+  section    String
+  strand     String?
+  deletedAt  DateTime?
+
+  // relations
+  enrollments Enrollment[]
+  attendance  Attendance[]
+  assignments Assignment[]
+}
+
+model Subject {
+  id String @id @default(cuid())
+  name String @unique
+  teacherSubjects TeacherSubject[]
+}
+
+model TeacherSubject {
+  teacherId String
+  subjectId String
+
+  teacher Teacher @relation(fields: [teacherId], references: [id])
+  subject Subject @relation(fields: [subjectId], references: [id])
+
+  @@id([teacherId, subjectId])
+}
+
+// Enrollment / join table for Student <-> Class (many-to-many)
+model Enrollment {
+  id String @id @default(cuid())
+  studentId String
+  classId String
+  createdAt DateTime @default(now())
+
+  student Student @relation(fields: [studentId], references: [id])
+  class Class @relation(fields: [classId], references: [id])
+}
+
+model Grade {
+  id         String   @id @default(cuid())
+  studentId  String
+  subjectId  String
+  grade      String
+  quarter    String
+  remarks    String
+
+  student    Student  @relation(fields: [studentId], references: [id])
+>>>>>>> abd22b2953a867c47a19ce65745932cb9bbe898c
 }
 
 model Attendance {
   id        String   @id @default(cuid())
   studentId String
+<<<<<<< HEAD
   student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   classId   String
   class     Class    @relation(fields: [classId], references: [id])
@@ -104,4 +264,63 @@ model Announcement {
   authorId  String
   audience  String   @default("all") // all, teachers, students
   createdAt DateTime @default(now())
+=======
+  classId   String
+  date      DateTime
+  status    String   // was enum AttendanceStatus
+
+  student   Student  @relation(fields: [studentId], references: [id])
+  class     Class    @relation(fields: [classId], references: [id])
+
+  // Prevent duplicate attendance records for same student/class/date
+  @@unique([studentId, classId, date])
+}
+
+model Task {
+  id         String   @id @default(cuid())
+  task       String
+  deadline   DateTime
+  priority   String
+  class      String
+  description String?
+  teacherId  String
+  completed  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  // relation
+  teacher    Teacher  @relation(fields: [teacherId], references: [id], name: "TeacherTasks")
+}
+
+model Assignment {
+  id         String   @id @default(cuid())
+  title      String
+  subject    String?
+  dueDate    DateTime
+  status     String   @default("published")
+  grade      String?
+  description String?
+
+  // Class-based assignment fields
+  classId        String?
+  gradingCriteria String?
+  submissionRequirements String?
+
+  // Keep studentId optional for backward compatibility
+  studentId  String?
+  createdAt  DateTime @default(now())
+
+  // Relations
+  class      Class?   @relation(fields: [classId], references: [id])
+  student    Student? @relation(fields: [studentId], references: [id])
+  submissions Submission[]
+}
+
+model Settings {
+  id                 String   @id @default(cuid())
+  schoolName         String?
+  schoolYear         String?
+  emailNotifications Boolean  @default(true)
+  smsNotifications   Boolean  @default(false)
+  classNotifications Boolean  @default(true)
+  updatedAt          DateTime @updatedAt
+>>>>>>> abd22b2953a867c47a19ce65745932cb9bbe898c
 }

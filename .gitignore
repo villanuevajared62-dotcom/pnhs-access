@@ -2,7 +2,10 @@
 /node_modules
 /.pnp
 .pnp.js
+<<<<<<< HEAD
 .yarn/install-state.gz
+=======
+>>>>>>> abd22b2953a867c47a19ce65745932cb9bbe898c
 
 # testing
 /coverage
@@ -33,7 +36,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+<<<<<<< HEAD
 
 # prisma
 prisma/dev.db
 prisma/dev.db-journal
+=======
+>>>>>>> abd22b2953a867c47a19ce65745932cb9bbe898c

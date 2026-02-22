@@ -1,0 +1,818 @@
+﻿782: opens=1 closes=0 balance=1
+  >> <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-50 via-yellow-50 to-green-50 px-4">
+783: opens=1 closes=0 balance=2
+  >> <div className="relative">
+785: opens=1 closes=0 balance=3
+  >> <div className="absolute inset-0 flex items-center justify-center">
+787: opens=0 closes=1 balance=2
+  >> </div>
+788: opens=0 closes=1 balance=1
+  >> </div>
+795: opens=0 closes=1 balance=0
+  >> </div>
+850: opens=1 closes=0 balance=1
+  >> <div className="space-y-4 md:space-y-6">
+851: opens=1 closes=0 balance=2
+  >> <div className="flex flex-col gap-4 mb-4 md:mb-6">
+852: opens=1 closes=0 balance=3
+  >> <div>
+859: opens=0 closes=1 balance=2
+  >> </div>
+860: opens=1 closes=0 balance=3
+  >> <div className="flex flex-col sm:flex-row gap-3">
+875: opens=0 closes=1 balance=2
+  >> </div>
+876: opens=0 closes=1 balance=1
+  >> </div>
+878: opens=1 closes=0 balance=2
+  >> <div className="relative mb-4 md:mb-6">
+887: opens=0 closes=1 balance=1
+  >> </div>
+890: opens=1 closes=0 balance=2
+  >> <div className="bg-white/95 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-lg p-8 md:p-12 border border-green-100 text-center">
+891: opens=1 closes=0 balance=3
+  >> <div className="w-16 h-16 md:w-24 md:h-24 mx-auto mb-4 md:mb-6 bg-gradient-to-br from-green-100 to-yellow-100 rounded-full flex items-center justify-center">
+893: opens=0 closes=1 balance=2
+  >> </div>
+902: opens=0 closes=1 balance=1
+  >> </div>
+904: opens=1 closes=0 balance=2
+  >> <div className="grid gap-4 md:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+906: opens=1 closes=0 balance=3
+  >> <div
+910: opens=1 closes=0 balance=4
+  >> <div
+918: opens=0 closes=1 balance=3
+  >> ></div>
+920: opens=1 closes=0 balance=4
+  >> <div className="space-y-3 md:space-y-4">
+921: opens=1 closes=0 balance=5
+  >> <div className="flex items-start justify-between gap-2">
+936: opens=0 closes=1 balance=4
+  >> </div>
+942: opens=1 closes=0 balance=5
+  >> <div className="pt-3 md:pt-4 border-t border-gray-100">
+943: opens=1 closes=0 balance=6
+  >> <div className="flex items-center justify-between text-xs md:text-sm">
+944: opens=1 closes=0 balance=7
+  >> <div className="flex items-center gap-2 text-gray-600 min-w-0 flex-1">
+945: opens=1 closes=0 balance=8
+  >> <div className="w-6 h-6 md:w-8 md:h-8 bg-gradient-to-br from-green-100 to-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
+947: opens=0 closes=1 balance=7
+  >> </div>
+951: opens=0 closes=1 balance=6
+  >> </div>
+962: opens=0 closes=1 balance=5
+  >> </div>
+963: opens=0 closes=1 balance=4
+  >> </div>
+964: opens=0 closes=1 balance=3
+  >> </div>
+965: opens=0 closes=1 balance=2
+  >> </div>
+967: opens=0 closes=1 balance=1
+  >> </div>
+969: opens=0 closes=1 balance=0
+  >> </div>
+974: opens=1 closes=0 balance=1
+  >> <div className="space-y-4 md:space-y-6">
+975: opens=1 closes=0 balance=2
+  >> <div className="flex flex-col gap-4 mb-4 md:mb-6">
+976: opens=1 closes=0 balance=3
+  >> <div>
+983: opens=0 closes=1 balance=2
+  >> </div>
+984: opens=1 closes=0 balance=3
+  >> <div className="flex flex-col sm:flex-row gap-3">
+999: opens=0 closes=1 balance=2
+  >> </div>
+1000: opens=0 closes=1 balance=1
+  >> </div>
+1002: opens=1 closes=0 balance=2
+  >> <div className="grid gap-4 md:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+1004: opens=1 closes=0 balance=3
+  >> <div className="sm:col-span-2 lg:col-span-3 bg-blue-50 rounded-2xl p-8 text-center border-2 border-dashed border-blue-300">
+1010: opens=0 closes=1 balance=2
+  >> </div>
+1013: opens=1 closes=0 balance=3
+  >> <div
+1017: opens=1 closes=0 balance=4
+  >> <div className="flex items-center justify-between mb-3 md:mb-4">
+1018: opens=1 closes=0 balance=5
+  >> <div className="flex-1 min-w-0">
+1025: opens=0 closes=1 balance=4
+  >> </div>
+1026: opens=1 closes=0 balance=5
+  >> <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-green-600 to-yellow-500 rounded-xl flex items-center justify-center text-white font-bold text-sm md:text-base flex-shrink-0 ml-3">
+1028: opens=0 closes=1 balance=4
+  >> </div>
+1029: opens=0 closes=1 balance=3
+  >> </div>
+1031: opens=1 closes=0 balance=4
+  >> <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
+1032: opens=1 closes=0 balance=5
+  >> <div className="flex items-center gap-2 md:gap-3 text-gray-700">
+1037: opens=0 closes=1 balance=4
+  >> </div>
+1038: opens=1 closes=0 balance=5
+  >> <div className="flex items-center gap-2 md:gap-3 text-gray-700">
+1048: opens=0 closes=1 balance=4
+  >> </div>
+1049: opens=1 closes=0 balance=5
+  >> <div className="flex items-center gap-2 md:gap-3 text-gray-700">
+1054: opens=0 closes=1 balance=4
+  >> </div>
+1055: opens=0 closes=1 balance=3
+  >> </div>
+1057: opens=1 closes=0 balance=4
+  >> <div className="flex gap-2">
+1073: opens=0 closes=1 balance=3
+  >> </div>
+1074: opens=0 closes=1 balance=2
+  >> </div>
+1077: opens=0 closes=1 balance=1
+  >> </div>
+1078: opens=0 closes=1 balance=0
+  >> </div>
+1083: opens=1 closes=0 balance=1
+  >> <div className="space-y-4 md:space-y-6">
+1084: opens=1 closes=0 balance=2
+  >> <div className="flex flex-col gap-4 mb-4 md:mb-6">
+1085: opens=1 closes=0 balance=3
+  >> <div>
+1092: opens=0 closes=1 balance=2
+  >> </div>
+1093: opens=1 closes=0 balance=3
+  >> <div className="flex flex-col sm:flex-row gap-3">
+1108: opens=0 closes=1 balance=2
+  >> </div>
+1109: opens=0 closes=1 balance=1
+  >> </div>
+1111: opens=1 closes=0 balance=2
+  >> <div className="flex flex-col gap-3 md:gap-4 mb-4 md:mb-6">
+1112: opens=1 closes=0 balance=3
+  >> <div className="flex-1">
+1113: opens=1 closes=0 balance=4
+  >> <div className="relative">
+1122: opens=0 closes=1 balance=3
+  >> </div>
+1123: opens=0 closes=1 balance=2
+  >> </div>
+1124: opens=1 closes=0 balance=3
+  >> <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+1147: opens=0 closes=1 balance=2
+  >> </div>
+1148: opens=0 closes=1 balance=1
+  >> </div>
+1150: opens=1 closes=0 balance=2
+  >> <div className="bg-white/95 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-lg border border-green-100 overflow-hidden">
+1151: opens=1 closes=0 balance=3
+  >> <div className="overflow-x-auto">
+1201: opens=1 closes=0 balance=4
+  >> <div className="flex gap-2">
+1229: opens=0 closes=1 balance=3
+  >> </div>
+1235: opens=0 closes=1 balance=2
+  >> </div>
+1236: opens=0 closes=1 balance=1
+  >> </div>
+1237: opens=0 closes=1 balance=0
+  >> </div>
+1242: opens=1 closes=0 balance=1
+  >> <div className="space-y-4 md:space-y-6">
+1243: opens=1 closes=0 balance=2
+  >> <div className="flex flex-col gap-4 mb-4 md:mb-6">
+1244: opens=1 closes=0 balance=3
+  >> <div>
+1251: opens=0 closes=1 balance=2
+  >> </div>
+1252: opens=1 closes=0 balance=3
+  >> <div className="flex flex-col sm:flex-row gap-3">
+1267: opens=0 closes=1 balance=2
+  >> </div>
+1268: opens=0 closes=1 balance=1
+  >> </div>
+1270: opens=1 closes=0 balance=2
+  >> <div className="flex flex-col gap-3 md:gap-4 mb-4 md:mb-6">
+1271: opens=1 closes=0 balance=3
+  >> <div className="flex-1">
+1272: opens=1 closes=0 balance=4
+  >> <div className="relative">
+1281: opens=0 closes=1 balance=3
+  >> </div>
+1282: opens=0 closes=1 balance=2
+  >> </div>
+1295: opens=0 closes=1 balance=1
+  >> </div>
+1297: opens=1 closes=0 balance=2
+  >> <div className="bg-white/95 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-lg border border-green-100 overflow-hidden">
+1298: opens=1 closes=0 balance=3
+  >> <div className="overflow-x-auto">
+1365: opens=0 closes=1 balance=2
+  >> </div>
+1366: opens=0 closes=1 balance=1
+  >> </div>
+1367: opens=0 closes=1 balance=0
+  >> </div>
+1372: opens=1 closes=0 balance=1
+  >> <div className="space-y-4 md:space-y-6">
+1373: opens=1 closes=0 balance=2
+  >> <div className="flex flex-col gap-4 mb-4 md:mb-6">
+1374: opens=1 closes=0 balance=3
+  >> <div>
+1381: opens=0 closes=1 balance=2
+  >> </div>
+1382: opens=1 closes=0 balance=3
+  >> <div className="flex gap-3">
+1390: opens=0 closes=1 balance=2
+  >> </div>
+1391: opens=0 closes=1 balance=1
+  >> </div>
+1393: opens=1 closes=0 balance=2
+  >> <div className="flex flex-col gap-3 md:gap-4 mb-4 md:mb-6">
+1394: opens=1 closes=0 balance=3
+  >> <div className="flex-1">
+1395: opens=1 closes=0 balance=4
+  >> <div className="relative">
+1404: opens=0 closes=1 balance=3
+  >> </div>
+1405: opens=0 closes=1 balance=2
+  >> </div>
+1418: opens=0 closes=1 balance=1
+  >> </div>
+1420: opens=1 closes=0 balance=2
+  >> <div className="grid gap-4 md:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+1422: opens=1 closes=0 balance=3
+  >> <div
+1426: opens=1 closes=0 balance=4
+  >> <div className="flex items-start justify-between mb-3 md:mb-4">
+1427: opens=1 closes=0 balance=5
+  >> <div className="flex items-center gap-3 flex-1 min-w-0">
+1428: opens=1 closes=0 balance=6
+  >> <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-green-600 to-yellow-500 rounded-full flex items-center justify-center text-white font-bold text-base md:text-lg flex-shrink-0">
+1430: opens=0 closes=1 balance=5
+  >> </div>
+1431: opens=1 closes=0 balance=6
+  >> <div className="min-w-0 flex-1">
+1443: opens=0 closes=1 balance=5
+  >> </div>
+1444: opens=0 closes=1 balance=4
+  >> </div>
+1445: opens=0 closes=1 balance=3
+  >> </div>
+1447: opens=1 closes=0 balance=4
+  >> <div className="space-y-2 md:space-y-3">
+1448: opens=1 closes=0 balance=5
+  >> <div className="flex justify-between items-center">
+1455: opens=0 closes=1 balance=4
+  >> </div>
+1456: opens=1 closes=0 balance=5
+  >> <div className="flex justify-between items-center">
+1463: opens=0 closes=1 balance=4
+  >> </div>
+1464: opens=1 closes=0 balance=5
+  >> <div className="flex justify-between items-center">
+1479: opens=0 closes=1 balance=4
+  >> </div>
+1480: opens=0 closes=1 balance=3
+  >> </div>
+1482: opens=1 closes=0 balance=4
+  >> <div className="mt-3 md:mt-4 pt-3 md:pt-4 border-t border-gray-100">
+1489: opens=0 closes=1 balance=3
+  >> </div>
+1490: opens=0 closes=1 balance=2
+  >> </div>
+1492: opens=0 closes=1 balance=1
+  >> </div>
+1493: opens=0 closes=1 balance=0
+  >> </div>
+1498: opens=1 closes=0 balance=1
+  >> <div className="space-y-4 md:space-y-6">
+1499: opens=1 closes=0 balance=2
+  >> <div className="mb-4 md:mb-6">
+1506: opens=0 closes=1 balance=1
+  >> </div>
+1508: opens=1 closes=0 balance=2
+  >> <div className="grid gap-4 md:gap-6 lg:grid-cols-2">
+1509: opens=1 closes=0 balance=3
+  >> <div className="bg-white/95 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-lg p-4 md:p-6 border border-green-100">
+1513: opens=1 closes=0 balance=4
+  >> <div className="space-y-3 md:space-y-4">
+1528: opens=1 closes=0 balance=5
+  >> <div key={cls.id}>
+1529: opens=1 closes=0 balance=6
+  >> <div className="flex justify-between items-center mb-2">
+1536: opens=0 closes=1 balance=5
+  >> </div>
+1537: opens=1 closes=0 balance=6
+  >> <div className="w-full bg-gray-200 rounded-full h-2">
+1538: opens=1 closes=0 balance=7
+  >> <div
+1541: opens=0 closes=1 balance=6
+  >> ></div>
+1542: opens=0 closes=1 balance=5
+  >> </div>
+1543: opens=0 closes=1 balance=4
+  >> </div>
+1546: opens=0 closes=1 balance=3
+  >> </div>
+1547: opens=0 closes=1 balance=2
+  >> </div>
+1549: opens=1 closes=0 balance=3
+  >> <div className="bg-white/95 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-lg p-4 md:p-6 border border-green-100">
+1553: opens=1 closes=0 balance=4
+  >> <div className="text-center">
+1554: opens=1 closes=0 balance=5
+  >> <div className="text-5xl md:text-6xl font-bold text-green-600 mb-2">
+1562: opens=0 closes=1 balance=4
+  >> </div>
+1563: opens=1 closes=0 balance=5
+  >> <div className="text-gray-600 text-sm md:text-base">
+1565: opens=0 closes=1 balance=4
+  >> </div>
+1566: opens=1 closes=0 balance=5
+  >> <div className="grid grid-cols-2 gap-3 md:gap-4 mt-4 md:mt-6">
+1567: opens=1 closes=0 balance=6
+  >> <div className="bg-green-50 p-3 md:p-4 rounded-xl">
+1568: opens=1 closes=0 balance=7
+  >> <div className="text-xl md:text-2xl font-bold text-green-600">
+1573: opens=0 closes=1 balance=6
+  >> </div>
+1575: opens=0 closes=1 balance=5
+  >> </div>
+1576: opens=1 closes=0 balance=6
+  >> <div className="bg-red-50 p-3 md:p-4 rounded-xl">
+1577: opens=1 closes=0 balance=7
+  >> <div className="text-xl md:text-2xl font-bold text-red-600">
+1582: opens=0 closes=1 balance=6
+  >> </div>
+1584: opens=0 closes=1 balance=5
+  >> </div>
+1585: opens=0 closes=1 balance=4
+  >> </div>
+1586: opens=0 closes=1 balance=3
+  >> </div>
+1587: opens=0 closes=1 balance=2
+  >> </div>
+1588: opens=0 closes=1 balance=1
+  >> </div>
+1589: opens=0 closes=1 balance=0
+  >> </div>
+1594: opens=1 closes=0 balance=1
+  >> <div className="space-y-4 md:space-y-6">
+1595: opens=1 closes=0 balance=2
+  >> <div className="mb-4 md:mb-6">
+1602: opens=0 closes=1 balance=1
+  >> </div>
+1604: opens=1 closes=0 balance=2
+  >> <div className="space-y-4 md:space-y-6">
+1605: opens=1 closes=0 balance=3
+  >> <div className="bg-white/95 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-lg p-4 md:p-6 border border-green-100">
+1609: opens=1 closes=0 balance=4
+  >> <div className="space-y-4">
+1610: opens=1 closes=0 balance=5
+  >> <div>
+1619: opens=0 closes=1 balance=4
+  >> </div>
+1620: opens=1 closes=0 balance=5
+  >> <div>
+1629: opens=0 closes=1 balance=4
+  >> </div>
+1630: opens=1 closes=0 balance=5
+  >> <div>
+1639: opens=0 closes=1 balance=4
+  >> </div>
+1643: opens=0 closes=1 balance=3
+  >> </div>
+1644: opens=0 closes=1 balance=2
+  >> </div>
+1646: opens=1 closes=0 balance=3
+  >> <div className="bg-white/95 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-lg p-4 md:p-6 border border-green-100">
+1650: opens=1 closes=0 balance=4
+  >> <div className="space-y-3">
+1680: opens=0 closes=1 balance=3
+  >> </div>
+1681: opens=0 closes=1 balance=2
+  >> </div>
+1682: opens=0 closes=1 balance=1
+  >> </div>
+1683: opens=0 closes=1 balance=0
+  >> </div>
+1688: opens=1 closes=0 balance=1
+  >> <div className="space-y-6 md:space-y-8">
+1690: opens=1 closes=0 balance=2
+  >> <div className="bg-gradient-to-r from-green-600 via-green-700 to-yellow-600 rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-8 text-white">
+1691: opens=1 closes=0 balance=3
+  >> <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 md:gap-6">
+1692: opens=1 closes=0 balance=4
+  >> <div className="flex-1">
+1699: opens=1 closes=0 balance=5
+  >> <div className="flex flex-col sm:flex-row flex-wrap gap-3">
+1714: opens=0 closes=1 balance=4
+  >> </div>
+1715: opens=0 closes=1 balance=3
+  >> </div>
+1716: opens=1 closes=0 balance=4
+  >> <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-white/20 to-transparent border-4 border-white/30 flex items-center justify-center mx-auto lg:mx-0">
+1718: opens=0 closes=1 balance=3
+  >> </div>
+1719: opens=0 closes=1 balance=2
+  >> </div>
+1720: opens=0 closes=1 balance=1
+  >> </div>
+1723: opens=1 closes=0 balance=2
+  >> <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+1725: opens=1 closes=0 balance=3
+  >> <div
+1729: opens=1 closes=0 balance=4
+  >> <div className="flex items-center justify-between mb-3 md:mb-4">
+1730: opens=1 closes=0 balance=5
+  >> <div
+1734: opens=0 closes=1 balance=4
+  >> </div>
+1735: opens=1 closes=0 balance=5
+  >> <div className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
+1737: opens=0 closes=1 balance=4
+  >> </div>
+1738: opens=0 closes=1 balance=3
+  >> </div>
+1745: opens=0 closes=1 balance=2
+  >> </div>
+1747: opens=0 closes=1 balance=1
+  >> </div>
+1750: opens=1 closes=0 balance=2
+  >> <div className="grid gap-6 md:gap-8 lg:grid-cols-2">
+1752: opens=1 closes=0 balance=3
+  >> <div className="bg-white/95 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-lg p-4 md:p-6 border border-green-100">
+1753: opens=1 closes=0 balance=4
+  >> <div className="flex items-center justify-between mb-4 md:mb-6">
+1754: opens=1 closes=0 balance=5
+  >> <div>
+1761: opens=0 closes=1 balance=4
+  >> </div>
+1769: opens=0 closes=1 balance=3
+  >> </div>
+1770: opens=1 closes=0 balance=4
+  >> <div className="space-y-3 md:space-y-4">
+1772: opens=1 closes=0 balance=5
+  >> <div
+1776: opens=1 closes=0 balance=6
+  >> <div className="flex items-start justify-between mb-2 gap-3">
+1777: opens=1 closes=0 balance=7
+  >> <div className="flex-1 min-w-0">
+1781: opens=1 closes=0 balance=8
+  >> <div className="flex flex-wrap items-center gap-2 md:gap-4 mt-2">
+1788: opens=0 closes=1 balance=7
+  >> </div>
+1789: opens=0 closes=1 balance=6
+  >> </div>
+1790: opens=1 closes=0 balance=7
+  >> <div className="text-right flex-shrink-0">
+1791: opens=1 closes=0 balance=8
+  >> <div className="text-xs md:text-sm font-semibold text-green-700">
+1793: opens=0 closes=1 balance=7
+  >> </div>
+1794: opens=1 closes=0 balance=8
+  >> <div className="text-xs text-gray-500">
+1796: opens=0 closes=1 balance=7
+  >> </div>
+1797: opens=0 closes=1 balance=6
+  >> </div>
+1798: opens=0 closes=1 balance=5
+  >> </div>
+1799: opens=0 closes=1 balance=4
+  >> </div>
+1801: opens=0 closes=1 balance=3
+  >> </div>
+1802: opens=0 closes=1 balance=2
+  >> </div>
+1805: opens=1 closes=0 balance=3
+  >> <div className="bg-white/95 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-lg p-4 md:p-6 border border-green-100">
+1806: opens=1 closes=0 balance=4
+  >> <div className="flex items-center justify-between mb-4 md:mb-6">
+1807: opens=1 closes=0 balance=5
+  >> <div>
+1814: opens=0 closes=1 balance=4
+  >> </div>
+1822: opens=0 closes=1 balance=3
+  >> </div>
+1823: opens=1 closes=0 balance=4
+  >> <div className="space-y-3">
+1827: opens=1 closes=0 balance=5
+  >> <div
+1831: opens=1 closes=0 balance=6
+  >> <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
+1838: opens=1 closes=0 balance=7
+  >> <div className="min-w-0 flex-1">
+1842: opens=1 closes=0 balance=8
+  >> <div className="flex flex-wrap items-center gap-2 mt-1">
+1857: opens=0 closes=1 balance=7
+  >> </div>
+1858: opens=0 closes=1 balance=6
+  >> </div>
+1859: opens=0 closes=1 balance=5
+  >> </div>
+1860: opens=1 closes=0 balance=6
+  >> <div className="flex items-center gap-2 ml-2 flex-shrink-0">
+1873: opens=0 closes=1 balance=5
+  >> </div>
+1874: opens=0 closes=1 balance=4
+  >> </div>
+1876: opens=0 closes=1 balance=3
+  >> </div>
+1877: opens=0 closes=1 balance=2
+  >> </div>
+1878: opens=0 closes=1 balance=1
+  >> </div>
+1881: opens=1 closes=0 balance=2
+  >> <div className="bg-white/95 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-lg p-4 md:p-6 border border-green-100">
+1882: opens=1 closes=0 balance=3
+  >> <div className="flex items-center justify-between mb-4 md:mb-6">
+1883: opens=1 closes=0 balance=4
+  >> <div>
+1890: opens=0 closes=1 balance=3
+  >> </div>
+1898: opens=0 closes=1 balance=2
+  >> </div>
+1899: opens=1 closes=0 balance=3
+  >> <div className="space-y-3 md:space-y-4">
+1901: opens=1 closes=0 balance=4
+  >> <div className="text-center py-6 md:py-8">
+1906: opens=0 closes=1 balance=3
+  >> </div>
+1909: opens=1 closes=0 balance=4
+  >> <div
+1920: opens=1 closes=0 balance=5
+  >> <div className="flex items-start justify-between">
+1921: opens=1 closes=0 balance=6
+  >> <div className="flex-1 min-w-0">
+1928: opens=1 closes=0 balance=7
+  >> <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-sm text-gray-500 mt-3">
+1943: opens=0 closes=1 balance=6
+  >> </div>
+1944: opens=0 closes=1 balance=5
+  >> </div>
+1945: opens=0 closes=1 balance=4
+  >> </div>
+1946: opens=0 closes=1 balance=3
+  >> </div>
+1949: opens=0 closes=1 balance=2
+  >> </div>
+1950: opens=0 closes=1 balance=1
+  >> </div>
+1951: opens=0 closes=1 balance=0
+  >> </div>
+1956: opens=1 closes=0 balance=1
+  >> <div className="min-h-screen bg-gradient-to-br from-green-50 via-yellow-50 to-green-50">
+1959: opens=1 closes=0 balance=2
+  >> <div
+1971: opens=1 closes=0 balance=3
+  >> <div className="p-4 md:p-6">
+1972: opens=1 closes=0 balance=4
+  >> <div
+1975: opens=1 closes=0 balance=5
+  >> <div
+1978: opens=1 closes=0 balance=6
+  >> <div className="w-10 h-10 md:w-12 md:h-12 rounded-full shadow-lg overflow-hidden bg-white p-1">
+1984: opens=0 closes=1 balance=5
+  >> </div>
+1986: opens=1 closes=0 balance=6
+  >> <div>
+1989: opens=0 closes=1 balance=5
+  >> </div>
+1991: opens=0 closes=1 balance=4
+  >> </div>
+2000: opens=0 closes=1 balance=3
+  >> </div>
+2003: opens=1 closes=0 balance=4
+  >> <div className="flex items-center gap-3 p-3 bg-white/5 rounded-xl mb-4 md:mb-6">
+2004: opens=1 closes=0 balance=5
+  >> <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-full flex items-center justify-center text-white font-bold text-lg md:text-xl flex-shrink-0">
+2006: opens=0 closes=1 balance=4
+  >> </div>
+2007: opens=1 closes=0 balance=5
+  >> <div className="min-w-0 flex-1">
+2014: opens=0 closes=1 balance=4
+  >> </div>
+2015: opens=0 closes=1 balance=3
+  >> </div>
+2043: opens=0 closes=1 balance=2
+  >> </div>
+2045: opens=1 closes=0 balance=3
+  >> <div className="absolute bottom-0 w-full p-4 md:p-6 border-t border-white/10">
+2055: opens=0 closes=1 balance=2
+  >> </div>
+2059: opens=1 closes=0 balance=3
+  >> <div
+2063: opens=1 closes=0 balance=4
+  >> <div className="px-4 md:px-6 lg:px-8 py-3 md:py-4">
+2064: opens=1 closes=0 balance=5
+  >> <div className="flex items-center justify-between gap-3">
+2072: opens=1 closes=0 balance=6
+  >> <div className="flex-1 max-w-md md:max-w-2xl mx-2 md:mx-4">
+2073: opens=1 closes=0 balance=7
+  >> <div className="relative">
+2082: opens=0 closes=1 balance=6
+  >> </div>
+2083: opens=0 closes=1 balance=5
+  >> </div>
+2085: opens=1 closes=0 balance=6
+  >> <div className="flex items-center gap-2 md:gap-3">
+2095: opens=1 closes=0 balance=7
+  >> <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-green-600 to-yellow-500 rounded-full flex items-center justify-center text-white font-bold text-sm md:text-base">
+2097: opens=0 closes=1 balance=6
+  >> </div>
+2098: opens=0 closes=1 balance=5
+  >> </div>
+2099: opens=0 closes=1 balance=4
+  >> </div>
+2100: opens=0 closes=1 balance=3
+  >> </div>
+2104: opens=1 closes=0 balance=4
+  >> <div className="mb-4 md:mb-6">
+2112: opens=0 closes=1 balance=3
+  >> </div>
+2118: opens=1 closes=0 balance=4
+  >> <div className="flex flex-col md:flex-row items-center justify-between text-xs md:text-sm text-gray-600 gap-2">
+2126: opens=0 closes=1 balance=3
+  >> </div>
+2128: opens=0 closes=1 balance=2
+  >> </div>
+2132: opens=1 closes=0 balance=3
+  >> <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+2133: opens=1 closes=0 balance=4
+  >> <div className="bg-white rounded-xl md:rounded-2xl shadow-2xl max-w-md w-full p-4 md:p-6">
+2134: opens=1 closes=0 balance=5
+  >> <div className="flex justify-between items-center mb-4 md:mb-6">
+2144: opens=0 closes=1 balance=4
+  >> </div>
+2146: opens=1 closes=0 balance=5
+  >> <div className="space-y-4">
+2147: opens=1 closes=0 balance=6
+  >> <div>
+2164: opens=0 closes=1 balance=5
+  >> </div>
+2166: opens=1 closes=0 balance=6
+  >> <div>
+2181: opens=0 closes=1 balance=5
+  >> </div>
+2183: opens=1 closes=0 balance=6
+  >> <div>
+2201: opens=0 closes=1 balance=5
+  >> </div>
+2203: opens=1 closes=0 balance=6
+  >> <div className="flex flex-col sm:flex-row gap-3 pt-4">
+2216: opens=0 closes=1 balance=5
+  >> </div>
+2217: opens=0 closes=1 balance=4
+  >> </div>
+2218: opens=0 closes=1 balance=3
+  >> </div>
+2219: opens=0 closes=1 balance=2
+  >> </div>
+2224: opens=1 closes=0 balance=3
+  >> <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+2225: opens=1 closes=0 balance=4
+  >> <div className="bg-white rounded-xl md:rounded-2xl shadow-2xl max-w-md w-full p-4 md:p-6">
+2226: opens=1 closes=0 balance=5
+  >> <div className="flex justify-between items-center mb-4 md:mb-6">
+2231: opens=0 closes=1 balance=4
+  >> </div>
+2233: opens=1 closes=0 balance=5
+  >> <div className="space-y-4">
+2234: opens=1 closes=0 balance=6
+  >> <div>
+2243: opens=0 closes=1 balance=5
+  >> </div>
+2245: opens=1 closes=0 balance=6
+  >> <div>
+2259: opens=0 closes=1 balance=5
+  >> </div>
+2261: opens=1 closes=0 balance=6
+  >> <div>
+2269: opens=0 closes=1 balance=5
+  >> </div>
+2271: opens=1 closes=0 balance=6
+  >> <div>
+2282: opens=0 closes=1 balance=5
+  >> </div>
+2284: opens=1 closes=0 balance=6
+  >> <div>
+2291: opens=0 closes=1 balance=5
+  >> </div>
+2293: opens=1 closes=0 balance=6
+  >> <div className="flex gap-3 justify-end">
+2296: opens=0 closes=1 balance=5
+  >> </div>
+2297: opens=0 closes=1 balance=4
+  >> </div>
+2298: opens=0 closes=1 balance=3
+  >> </div>
+2299: opens=0 closes=1 balance=2
+  >> </div>
+2304: opens=1 closes=0 balance=3
+  >> <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+2305: opens=1 closes=0 balance=4
+  >> <div className="bg-white rounded-xl md:rounded-2xl shadow-2xl max-w-3xl w-full p-4 md:p-6 max-h-[90vh] overflow-y-auto">
+2306: opens=1 closes=0 balance=5
+  >> <div className="flex justify-between items-center mb-4 md:mb-6">
+2316: opens=0 closes=1 balance=4
+  >> </div>
+2318: opens=1 closes=0 balance=5
+  >> <div className="space-y-4">
+2319: opens=1 closes=0 balance=6
+  >> <div className="flex gap-2 flex-col sm:flex-row">
+2334: opens=1 closes=0 balance=7
+  >> <div className="flex items-center gap-3">
+2347: opens=0 closes=1 balance=6
+  >> </div>
+2348: opens=0 closes=1 balance=5
+  >> </div>
+2350: opens=1 closes=0 balance=6
+  >> <div className="bg-gray-50 p-3 rounded-lg">
+2351: opens=1 closes=0 balance=7
+  >> <div className="text-sm text-gray-600">
+2353: opens=0 closes=1 balance=6
+  >> </div>
+2354: opens=0 closes=1 balance=5
+  >> </div>
+2356: opens=1 closes=0 balance=6
+  >> <div className="overflow-x-auto">
+2391: opens=0 closes=1 balance=5
+  >> </div>
+2392: opens=0 closes=1 balance=4
+  >> </div>
+2393: opens=0 closes=1 balance=3
+  >> </div>
+2394: opens=0 closes=1 balance=2
+  >> </div>
+2399: opens=1 closes=0 balance=3
+  >> <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+2400: opens=1 closes=0 balance=4
+  >> <div className="bg-white rounded-xl md:rounded-2xl shadow-2xl max-w-2xl w-full p-4 md:p-6 max-h-[90vh] overflow-y-auto">
+2401: opens=1 closes=0 balance=5
+  >> <div className="flex justify-between items-center mb-4 md:mb-6">
+2411: opens=0 closes=1 balance=4
+  >> </div>
+2413: opens=1 closes=0 balance=5
+  >> <div className="space-y-4">
+2414: opens=1 closes=0 balance=6
+  >> <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl text-center">
+2417: opens=0 closes=1 balance=5
+  >> </div>
+2419: opens=1 closes=0 balance=6
+  >> <div className="grid grid-cols-3 gap-3">
+2420: opens=1 closes=0 balance=7
+  >> <div className="p-3 bg-green-50 rounded-xl text-center">
+2423: opens=0 closes=1 balance=6
+  >> </div>
+2424: opens=1 closes=0 balance=7
+  >> <div className="p-3 bg-yellow-50 rounded-xl text-center">
+2427: opens=0 closes=1 balance=6
+  >> </div>
+2428: opens=1 closes=0 balance=7
+  >> <div className="p-3 bg-red-50 rounded-xl text-center">
+2431: opens=0 closes=1 balance=6
+  >> </div>
+2432: opens=0 closes=1 balance=5
+  >> </div>
+2434: opens=1 closes=0 balance=6
+  >> <div>
+2436: opens=1 closes=0 balance=7
+  >> <div className="space-y-2">
+2438: opens=1 closes=0 balance=8
+  >> <div key={rec.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+2439: opens=1 closes=0 balance=9
+  >> <div className="flex items-center gap-3">
+2440: opens=1 closes=0 balance=10
+  >> <div className={`w-2 h-2 rounded-full ${rec.status === "present" ? "bg-green-500" : rec.status === "late" ? "bg-yellow-500" : "bg-red-500"}`} />
+2442: opens=0 closes=1 balance=9
+  >> </div>
+2444: opens=1 closes=0 balance=10
+  >> <div className="flex items-center gap-2">
+2454: opens=0 closes=1 balance=9
+  >> </div>
+2455: opens=0 closes=1 balance=8
+  >> </div>
+2457: opens=0 closes=1 balance=7
+  >> </div>
+2458: opens=0 closes=1 balance=6
+  >> </div>
+2460: opens=1 closes=0 balance=7
+  >> <div className="pt-3">
+2462: opens=1 closes=0 balance=8
+  >> <div className="flex gap-2 items-center">
+2482: opens=0 closes=1 balance=7
+  >> </div>
+2483: opens=0 closes=1 balance=6
+  >> </div>
+2484: opens=0 closes=1 balance=5
+  >> </div>
+2485: opens=0 closes=1 balance=4
+  >> </div>
+2486: opens=0 closes=1 balance=3
+  >> </div>
+2488: opens=0 closes=1 balance=2
+  >> </div>
+
+FINAL balance: 2

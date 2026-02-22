@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import Link from 'next/link'
 import { GraduationCap, Users, BookOpen, Shield, ChevronRight, Lock, Award, TrendingUp, CheckCircle, Sparkles } from 'lucide-react'
 

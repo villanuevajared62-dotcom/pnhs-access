@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 // NOTE: SQLite connector does not support Prisma enums or Json types.
@@ -58,6 +58,7 @@ model Submission {
   feedback     String?
 
   assignment   Assignment @relation(fields: [assignmentId], references: [id])
+  student      Student    @relation(fields: [studentId], references: [id])
 }
 
 model Student {
@@ -79,6 +80,7 @@ model Student {
   assignments Assignment[]
   grades      Grade[]
   attendance  Attendance[]
+  submissions Submission[]
 }
 
 model Teacher {

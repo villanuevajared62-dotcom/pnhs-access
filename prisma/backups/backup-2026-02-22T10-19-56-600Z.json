@@ -1,0 +1,3051 @@
+{
+  "Subject": [],
+  "Teacher": [
+    {
+      "id": "cmlgw5pts0000ly3nsisw7kqd",
+      "name": "jared a villanueva",
+      "email": "jared69gmail.com",
+      "department": "english",
+      "subjects": "[]",
+      "students": 0,
+      "status": "active",
+      "username": "Jared",
+      "password": "$2a$10$k6G9Y7lLsemmL161xxOZL.d0htjj4s3UvvXIk9S.sn.hHgV79uosi",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlr9neqb000tvd85werf89x4",
+      "name": "Lady Jane Benigno",
+      "email": "lady.benigno@pnhs.edu.ph",
+      "department": "Research",
+      "subjects": "[]",
+      "students": 0,
+      "status": "active",
+      "username": "lady",
+      "password": "$2a$10$Kc8jz2vCfQFIOfVhyhdCTuNQFSDV4lpOHT6.FoDGq4hklRySe32cS",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlr9oivd000uvd85p8a82cwy",
+      "name": "Angeline Villa",
+      "email": "angeline.villa@pnhs.edu.ph",
+      "department": "Science",
+      "subjects": "[]",
+      "students": 0,
+      "status": "active",
+      "username": "angeline",
+      "password": "$2a$10$PhKSSQ58U9tD8ycnGJHCauR7NBOpWrmaoms/Fr2fxW//YorlJ1to6",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlr9plqe000vvd85zw8btuyq",
+      "name": "Kristine Lagao-Lazo",
+      "email": "kristine.lagao@pnhs.edu.ph",
+      "department": "English",
+      "subjects": "[]",
+      "students": 0,
+      "status": "active",
+      "username": "kristine",
+      "password": "$2a$10$tlEyVnHM94Iiq3J0dOWhNeX2SRFj2UYupMl06uWLPg1CD8Ob.Ba.K",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlr9ql7h000wvd85af6iswkm",
+      "name": "Norielyn Viernes",
+      "email": "norielyn.viernes@pnhs.edu.ph",
+      "department": "Business",
+      "subjects": "[]",
+      "students": 0,
+      "status": "active",
+      "username": "norielyn",
+      "password": "$2a$10$OjVpEobLJ926YsPPa3iVsegtw8EgOvUY1YXX9j6atHoSHO8zFDtf6",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlr9ro24000xvd85eobsfirs",
+      "name": "Arlene Viernes",
+      "email": "arlene.viernes@pnhs.edu.ph",
+      "department": "Research",
+      "subjects": "[]",
+      "students": 0,
+      "status": "active",
+      "username": "arlene",
+      "password": "$2a$10$0tOzBvmY5M2zIrzP85Sv/uzYrUCv2e/rc/sGa2Sd13s7Jn8DkeYsi",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlr9sjxz000yvd85akl1ltd8",
+      "name": "Rona Uera",
+      "email": "rona.uera@pnhs.edu.ph",
+      "department": "Philosophy",
+      "subjects": "[]",
+      "students": 0,
+      "status": "active",
+      "username": "rona",
+      "password": "$2a$10$CtVc045mCsclUln/jp/MP.1H.LlgtwEnQN1UGmcDopBL3NmtY1E.i",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlr9vl1j0011vd85da9ounsy",
+      "name": "Ruth Montiel",
+      "email": "ruth.montiel@pnhs.edu.ph",
+      "department": "Physical Education",
+      "subjects": "[]",
+      "students": 0,
+      "status": "active",
+      "username": "ruth",
+      "password": "$2a$10$pU9IUzxnbmMY3toyybcXYeeFZLP9CZqn6PxeGCA1i0bRdAAiqjLoi",
+      "deletedAt": null
+    }
+  ],
+  "Student": [
+    {
+      "id": "cmlguc6uu000011oabhsa77b3",
+      "name": "Villanueva Jared A.",
+      "email": "jaredlang@gmail.com",
+      "gradeLevel": "Grade 7",
+      "username": "jared",
+      "password": "$2a$10$yBMOCtQM2eCvUiVk5kkUdexC0fq.l03qnOtMd/So8ac7MUrqbiGLi",
+      "section": "E",
+      "strand": null,
+      "gpa": "78",
+      "status": "active",
+      "studentId": "071973",
+      "deletedAt": "2026-02-17T23:46:29.189Z"
+    },
+    {
+      "id": "cmlkxrwfo0002r0vjxxrqjnaz",
+      "name": "jared a villanueva",
+      "email": "jared69gmail.com",
+      "gradeLevel": "Grade 10",
+      "username": "jaredd",
+      "password": "$2a$10$W.wRqWfoEWZg6tl0yngwvO1HBoJ2eIoTSoPC0HBWytPoxTbBpgNTC",
+      "section": "A",
+      "strand": null,
+      "gpa": "",
+      "status": "active",
+      "studentId": "21234567890",
+      "deletedAt": "2026-02-18T18:28:27.273Z"
+    },
+    {
+      "id": "cmlr93hmd000evd85mxgi3rmm",
+      "name": "Heart Ayson",
+      "email": "heart.ayson@pnhs.edu.ph",
+      "gradeLevel": "Grade 12",
+      "username": "hearta",
+      "password": "$2a$10$J5i73DDudnH589Vv7gC.g.p6c7AAZJlLTpyQ0aX96X7eXcn5gyWru",
+      "section": "A",
+      "strand": null,
+      "gpa": "0",
+      "status": "active",
+      "studentId": "",
+      "deletedAt": "2026-02-17T23:46:34.025Z"
+    },
+    {
+      "id": "cmlr96blo000jvd85kgttd6oq",
+      "name": "Heart Ayson",
+      "email": "heart.ayson@pnhs.edu.ph",
+      "gradeLevel": "Grade 12",
+      "username": "heart",
+      "password": "$2a$10$WzeAeUtZ2EZ5UyqnzNAQzOPamiTtBgOV28m42XV3SxPenn87.V/Tq",
+      "section": "A",
+      "strand": "STEM",
+      "gpa": "0",
+      "status": "active",
+      "studentId": "2026-12-001",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlr97nqc000kvd85olf0q2gi",
+      "name": "Andrhea Alawi",
+      "email": "andrhea.alawi@pnhs.edu.ph",
+      "gradeLevel": "Grade 12",
+      "username": "andrheaa",
+      "password": "$2a$10$LhGiqguCTu8gBLG2iSmEzeB9X6beNVsmIpCfMuVgYkxl1rcvlJqre",
+      "section": "A",
+      "strand": "STEM",
+      "gpa": "0",
+      "status": "active",
+      "studentId": "2026-12-002",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlr98ysb000lvd85o883rume",
+      "name": "Ehra Aquino",
+      "email": "ehra.aquino@pnhs.edu.ph",
+      "gradeLevel": "Grade 12",
+      "username": "ehraa",
+      "password": "$2a$10$bOqFAA7.27pHo4zKmlcQHurMWvabMSPa4TKDZ3k7bew6ED9QhbCmW",
+      "section": "A",
+      "strand": "STEM",
+      "gpa": "0",
+      "status": "active",
+      "studentId": "2026-12-003",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlr9a9p4000mvd85xie42hbx",
+      "name": "Jana Reign Barcelo",
+      "email": "jana.barcelo@pnhs.edu.ph",
+      "gradeLevel": "Grade 12",
+      "username": "janab",
+      "password": "$2a$10$wOEiKWf..i50Yz0acY02iua72SPqlillQBEDJrsD59IA1v8Kx/6J6",
+      "section": "A",
+      "strand": "STEM",
+      "gpa": "0",
+      "status": "active",
+      "studentId": "2026-12-004",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlr9c0p9000nvd85u1h80ztc",
+      "name": "Roma Baydid",
+      "email": "roma.baydid@pnhs.edu.ph",
+      "gradeLevel": "Grade 12",
+      "username": "romab",
+      "password": "$2a$10$nTdpR9kUXnLIEvciVQTfx.sE.EodEUvKdsrz3gWjQc4ulhoqqX/GS",
+      "section": "A",
+      "strand": "STEM",
+      "gpa": "0",
+      "status": "active",
+      "studentId": "2026-12-005",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlr9dwv5000ovd853pixdf3q",
+      "name": "Lira Mae Buliong",
+      "email": "lira.buliong@pnhs.edu.ph",
+      "gradeLevel": "Grade 12",
+      "username": "lirab",
+      "password": "$2a$10$1d1kkGReH70fpbUtZQEBR.fZE0GhUul4uwomdHXp6eOQDs.W0RLiK",
+      "section": "A",
+      "strand": "STEM",
+      "gpa": "0",
+      "status": "active",
+      "studentId": "2026-12-006",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlr9f5cm000pvd85f5ero7ej",
+      "name": "Kyn Leander Agustin",
+      "email": "kyn.agustin@pnhs.edu.ph",
+      "gradeLevel": "Grade 12",
+      "username": "kyna",
+      "password": "$2a$10$ZNNMOZtonhzfCfZDpX7azO1fbBLtj02xZOxt1fsRBWzSEwX079DyW",
+      "section": "A",
+      "strand": "STEM",
+      "gpa": "0",
+      "status": "active",
+      "studentId": "2026-12-007",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlr9gzwd000qvd85n5yqxs1v",
+      "name": "Yzra Emmanuel Balao-od ",
+      "email": "yzra.balaood@pnhs.edu.ph",
+      "gradeLevel": "Grade 12",
+      "username": "yzrab",
+      "password": "$2a$10$cZU.j.J98OGsXe3SwlPzmOpzR40FLDWXasaX.J5pTpeZcnFxqMh3u",
+      "section": "A",
+      "strand": "STEM",
+      "gpa": "0",
+      "status": "active",
+      "studentId": "2026-12-008",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlr9i187000rvd85ttx5v11z",
+      "name": "Gian Lemuel Batino",
+      "email": "gian.batino@pnhs.edu.ph",
+      "gradeLevel": "Grade 12",
+      "username": "gianb",
+      "password": "$2a$10$kRbU27QxInLUtp9w1IU6b.keJWRV13mJLSu0LliKUy9vMyrT8EGmG",
+      "section": "A",
+      "strand": "STEM",
+      "gpa": "0",
+      "status": "active",
+      "studentId": "2026-12-009",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlr9kbmk000svd85x2876gow",
+      "name": "King Leoneil Butlig",
+      "email": "king.butlig@pnhs.edu.ph",
+      "gradeLevel": "Grade 12",
+      "username": "kingb",
+      "password": "$2a$10$wSfO/NPUgkpFY9G9yiII4.zdMDxrZLd7IW36IetdrIq/dLIjXCVCq",
+      "section": "A",
+      "strand": "STEM",
+      "gpa": "0",
+      "status": "active",
+      "studentId": "2026-12-010",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlsd8rk80002tzhy87tirnhl",
+      "name": "jared",
+      "email": "jaredlang@gmail.com",
+      "gradeLevel": "Grade 12",
+      "username": "jareddd",
+      "password": "$2a$10$mja0ocuHo91VCRrBT1o.5exZZe5.cpPsfz5Nrgg/DBAtkZn2DuysW",
+      "section": "B",
+      "strand": "HUMSS",
+      "gpa": "0",
+      "status": "active",
+      "studentId": "",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlwie9zo000s13hnfberk6qo",
+      "name": "jajajajajja",
+      "email": "lolo05@gmail.com",
+      "gradeLevel": "Grade 12",
+      "username": "qwertyuiop",
+      "password": "$2a$10$AZAEIRgagJy3LReorzupRuUMAcZkmtxgn3EEbjtGgPN3dNrhsEWiW",
+      "section": "B",
+      "strand": "GAS",
+      "gpa": "0",
+      "status": "active",
+      "studentId": "",
+      "deletedAt": null
+    }
+  ],
+  "Class": [
+    {
+      "id": "cmlgw7vv20001ly3nfommgu67",
+      "name": "grade 7 english",
+      "subject": null,
+      "teacher": "jared a villanueva",
+      "teacherId": "cmlgw5pts0000ly3nsisw7kqd",
+      "students": 8,
+      "schedule": "mon/fri 10:AM",
+      "time": null,
+      "room": "101",
+      "gradeLevel": "Grade 12",
+      "section": "STEM",
+      "strand": null,
+      "deletedAt": "2026-02-19T06:36:31.799Z"
+    },
+    {
+      "id": "cmlt1tkf20002j0wfsz2b4ha4",
+      "name": "Grade 12- Research",
+      "subject": null,
+      "teacher": "Lady Jane Benigno",
+      "teacherId": "cmlr9neqb000tvd85werf89x4",
+      "students": 10,
+      "schedule": "Mon to Fri 7:30 AM - 8:30 AM",
+      "time": null,
+      "room": "",
+      "gradeLevel": "Grade 12",
+      "section": "A",
+      "strand": "STEM",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlughx1r001zwxc0vznv0620",
+      "name": "G",
+      "subject": null,
+      "teacher": "jared a villanueva",
+      "teacherId": "cmlgw5pts0000ly3nsisw7kqd",
+      "students": 1,
+      "schedule": "mon to fri 8am/10am",
+      "time": null,
+      "room": "",
+      "gradeLevel": "Grade 12",
+      "section": "A",
+      "strand": "HUMSS",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlwi4y86000213hncmcu3rm5",
+      "name": "Grade 12 - Research",
+      "subject": null,
+      "teacher": "Lady Jane Benigno",
+      "teacherId": "cmlr9neqb000tvd85werf89x4",
+      "students": 1,
+      "schedule": "Mon to Fri 8:30 AM - 9:30 AM",
+      "time": null,
+      "room": "",
+      "gradeLevel": "Grade 12",
+      "section": "B",
+      "strand": "HUMSS",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlwi4ycd000e13hne4r2lgtf",
+      "name": "Grade 12 - Research",
+      "subject": null,
+      "teacher": "Lady Jane Benigno",
+      "teacherId": "cmlr9neqb000tvd85werf89x4",
+      "students": 10,
+      "schedule": "Mon to Fri 8:30 AM - 9:30 AM",
+      "time": null,
+      "room": "",
+      "gradeLevel": "Grade 12",
+      "section": "B",
+      "strand": "STEM",
+      "deletedAt": "2026-02-21T15:57:12.609Z"
+    },
+    {
+      "id": "cmlwiez0e000u13hns47jm1nt",
+      "name": "Grade 10 - english",
+      "subject": null,
+      "teacher": "jared a villanueva",
+      "teacherId": "cmlgw5pts0000ly3nsisw7kqd",
+      "students": 1,
+      "schedule": "Mon to Fri 8:00 AM - 9:00 AM",
+      "time": null,
+      "room": "",
+      "gradeLevel": "Grade 12",
+      "section": "B",
+      "strand": "GAS",
+      "deletedAt": null
+    }
+  ],
+  "TeacherSubject": [],
+  "Enrollment": [
+    {
+      "id": "cmlt1tkfd0003j0wfmasim72b",
+      "studentId": "cmlr96blo000jvd85kgttd6oq",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "createdAt": "2026-02-19T05:56:57.386Z"
+    },
+    {
+      "id": "cmlt1tkfd0004j0wfcr6bhdbu",
+      "studentId": "cmlr97nqc000kvd85olf0q2gi",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "createdAt": "2026-02-19T05:56:57.386Z"
+    },
+    {
+      "id": "cmlt1tkfd0005j0wfn7f8f516",
+      "studentId": "cmlr98ysb000lvd85o883rume",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "createdAt": "2026-02-19T05:56:57.386Z"
+    },
+    {
+      "id": "cmlt1tkfd0006j0wfbn1fcbgo",
+      "studentId": "cmlr9a9p4000mvd85xie42hbx",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "createdAt": "2026-02-19T05:56:57.386Z"
+    },
+    {
+      "id": "cmlt1tkfd0007j0wfg4br66st",
+      "studentId": "cmlr9c0p9000nvd85u1h80ztc",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "createdAt": "2026-02-19T05:56:57.386Z"
+    },
+    {
+      "id": "cmlt1tkfd0008j0wf9gu3wsyj",
+      "studentId": "cmlr9dwv5000ovd853pixdf3q",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "createdAt": "2026-02-19T05:56:57.386Z"
+    },
+    {
+      "id": "cmlt1tkfd0009j0wfvn6frf4f",
+      "studentId": "cmlr9f5cm000pvd85f5ero7ej",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "createdAt": "2026-02-19T05:56:57.386Z"
+    },
+    {
+      "id": "cmlt1tkfd000aj0wfuqdz5107",
+      "studentId": "cmlr9gzwd000qvd85n5yqxs1v",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "createdAt": "2026-02-19T05:56:57.386Z"
+    },
+    {
+      "id": "cmlt1tkfd000bj0wftt6bphms",
+      "studentId": "cmlr9i187000rvd85ttx5v11z",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "createdAt": "2026-02-19T05:56:57.386Z"
+    },
+    {
+      "id": "cmlt1tkfd000cj0wfadif7buu",
+      "studentId": "cmlr9kbmk000svd85x2876gow",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "createdAt": "2026-02-19T05:56:57.386Z"
+    },
+    {
+      "id": "cmlughx290020wxc0rwf19deb",
+      "studentId": "cmlsd8rk80002tzhy87tirnhl",
+      "classId": "cmlughx1r001zwxc0vznv0620",
+      "createdAt": "2026-02-20T05:35:34.304Z"
+    },
+    {
+      "id": "cmlwi4ya0000313hnhgl3zw7n",
+      "studentId": "cmlr96blo000jvd85kgttd6oq",
+      "classId": "cmlwi4y86000213hncmcu3rm5",
+      "createdAt": "2026-02-21T15:57:00.936Z"
+    },
+    {
+      "id": "cmlwi4ya0000413hn3wc1yl31",
+      "studentId": "cmlr97nqc000kvd85olf0q2gi",
+      "classId": "cmlwi4y86000213hncmcu3rm5",
+      "createdAt": "2026-02-21T15:57:00.936Z"
+    },
+    {
+      "id": "cmlwi4ya0000513hnx9wzxedv",
+      "studentId": "cmlr98ysb000lvd85o883rume",
+      "classId": "cmlwi4y86000213hncmcu3rm5",
+      "createdAt": "2026-02-21T15:57:00.936Z"
+    },
+    {
+      "id": "cmlwi4ya0000613hn0458rxan",
+      "studentId": "cmlr9a9p4000mvd85xie42hbx",
+      "classId": "cmlwi4y86000213hncmcu3rm5",
+      "createdAt": "2026-02-21T15:57:00.936Z"
+    },
+    {
+      "id": "cmlwi4ya0000713hn8qxhcrqo",
+      "studentId": "cmlr9c0p9000nvd85u1h80ztc",
+      "classId": "cmlwi4y86000213hncmcu3rm5",
+      "createdAt": "2026-02-21T15:57:00.936Z"
+    },
+    {
+      "id": "cmlwi4ya0000813hn34r0hr9u",
+      "studentId": "cmlr9dwv5000ovd853pixdf3q",
+      "classId": "cmlwi4y86000213hncmcu3rm5",
+      "createdAt": "2026-02-21T15:57:00.936Z"
+    },
+    {
+      "id": "cmlwi4ya0000913hn355ymkk9",
+      "studentId": "cmlr9f5cm000pvd85f5ero7ej",
+      "classId": "cmlwi4y86000213hncmcu3rm5",
+      "createdAt": "2026-02-21T15:57:00.936Z"
+    },
+    {
+      "id": "cmlwi4ya0000a13hn9is7s5y9",
+      "studentId": "cmlr9gzwd000qvd85n5yqxs1v",
+      "classId": "cmlwi4y86000213hncmcu3rm5",
+      "createdAt": "2026-02-21T15:57:00.936Z"
+    },
+    {
+      "id": "cmlwi4ya0000b13hn47z7nueu",
+      "studentId": "cmlr9i187000rvd85ttx5v11z",
+      "classId": "cmlwi4y86000213hncmcu3rm5",
+      "createdAt": "2026-02-21T15:57:00.936Z"
+    },
+    {
+      "id": "cmlwi4ya0000c13hnxbf4xjsa",
+      "studentId": "cmlr9kbmk000svd85x2876gow",
+      "classId": "cmlwi4y86000213hncmcu3rm5",
+      "createdAt": "2026-02-21T15:57:00.936Z"
+    },
+    {
+      "id": "cmlwi4yck000f13hnnuiqdlvg",
+      "studentId": "cmlr96blo000jvd85kgttd6oq",
+      "classId": "cmlwi4ycd000e13hne4r2lgtf",
+      "createdAt": "2026-02-21T15:57:01.028Z"
+    },
+    {
+      "id": "cmlwi4yck000g13hncjqe9lx0",
+      "studentId": "cmlr97nqc000kvd85olf0q2gi",
+      "classId": "cmlwi4ycd000e13hne4r2lgtf",
+      "createdAt": "2026-02-21T15:57:01.028Z"
+    },
+    {
+      "id": "cmlwi4yck000h13hn1g2lang5",
+      "studentId": "cmlr98ysb000lvd85o883rume",
+      "classId": "cmlwi4ycd000e13hne4r2lgtf",
+      "createdAt": "2026-02-21T15:57:01.028Z"
+    },
+    {
+      "id": "cmlwi4yck000i13hnl9x13hxv",
+      "studentId": "cmlr9a9p4000mvd85xie42hbx",
+      "classId": "cmlwi4ycd000e13hne4r2lgtf",
+      "createdAt": "2026-02-21T15:57:01.028Z"
+    },
+    {
+      "id": "cmlwi4yck000j13hnlkuabufq",
+      "studentId": "cmlr9c0p9000nvd85u1h80ztc",
+      "classId": "cmlwi4ycd000e13hne4r2lgtf",
+      "createdAt": "2026-02-21T15:57:01.028Z"
+    },
+    {
+      "id": "cmlwi4yck000k13hn074zv8wp",
+      "studentId": "cmlr9dwv5000ovd853pixdf3q",
+      "classId": "cmlwi4ycd000e13hne4r2lgtf",
+      "createdAt": "2026-02-21T15:57:01.028Z"
+    },
+    {
+      "id": "cmlwi4yck000l13hnxwj47315",
+      "studentId": "cmlr9f5cm000pvd85f5ero7ej",
+      "classId": "cmlwi4ycd000e13hne4r2lgtf",
+      "createdAt": "2026-02-21T15:57:01.028Z"
+    },
+    {
+      "id": "cmlwi4yck000m13hnbf84sy7n",
+      "studentId": "cmlr9gzwd000qvd85n5yqxs1v",
+      "classId": "cmlwi4ycd000e13hne4r2lgtf",
+      "createdAt": "2026-02-21T15:57:01.028Z"
+    },
+    {
+      "id": "cmlwi4yck000n13hndos5s819",
+      "studentId": "cmlr9i187000rvd85ttx5v11z",
+      "classId": "cmlwi4ycd000e13hne4r2lgtf",
+      "createdAt": "2026-02-21T15:57:01.028Z"
+    },
+    {
+      "id": "cmlwi4yck000o13hnfbco53sd",
+      "studentId": "cmlr9kbmk000svd85x2876gow",
+      "classId": "cmlwi4ycd000e13hne4r2lgtf",
+      "createdAt": "2026-02-21T15:57:01.028Z"
+    },
+    {
+      "id": "cmlwiez0l000v13hng3s1ni14",
+      "studentId": "cmlwie9zo000s13hnfberk6qo",
+      "classId": "cmlwiez0e000u13hns47jm1nt",
+      "createdAt": "2026-02-21T16:04:48.453Z"
+    }
+  ],
+  "Assignment": [
+    {
+      "id": "cmluhqpo30004r3hi07k5ntn0",
+      "title": "SIS",
+      "subject": "RESEARCH",
+      "dueDate": "2026-02-20T06:10:00.000Z",
+      "status": "published",
+      "grade": null,
+      "description": null,
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "gradingCriteria": null,
+      "submissionRequirements": null,
+      "studentId": null,
+      "createdAt": "2026-02-20T06:10:24.241Z"
+    },
+    {
+      "id": "cmluiu4qk000kr3hi2elz81pu",
+      "title": "PPUKE",
+      "subject": "RESEARCH",
+      "dueDate": "2026-02-20T06:40:00.000Z",
+      "status": "published",
+      "grade": null,
+      "description": "DAPAT MALINAW",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "gradingCriteria": "38",
+      "submissionRequirements": "ATTACHMENT_META:{\"text\":\"\",\"attachmentPath\":\"/uploads/assignments/1771569663330_cmlr9neqb000tvd85werf89x4_Screenshot__2_.png\",\"attachmentName\":\"Screenshot (2).png\"}",
+      "studentId": null,
+      "createdAt": "2026-02-20T06:41:03.355Z"
+    }
+  ],
+  "Submission": [
+    {
+      "id": "cmluhqpon0005r3hif80g24lj",
+      "assignmentId": "cmluhqpo30004r3hi07k5ntn0",
+      "studentId": "cmlr96blo000jvd85kgttd6oq",
+      "filePath": "/uploads/submissions/cmluhqpo30004r3hi07k5ntn0_cmlr96blo000jvd85kgttd6oq_1771585871502.png",
+      "submittedAt": "2026-02-20T11:11:11.526Z",
+      "status": "graded",
+      "grade": "95",
+      "feedback": "Good job"
+    },
+    {
+      "id": "cmluhqpon0006r3hizlfggze8",
+      "assignmentId": "cmluhqpo30004r3hi07k5ntn0",
+      "studentId": "cmlr97nqc000kvd85olf0q2gi",
+      "filePath": "",
+      "submittedAt": "2026-02-20T06:10:24.263Z",
+      "status": "pending",
+      "grade": null,
+      "feedback": null
+    },
+    {
+      "id": "cmluhqpon0007r3hi7f9xb97y",
+      "assignmentId": "cmluhqpo30004r3hi07k5ntn0",
+      "studentId": "cmlr98ysb000lvd85o883rume",
+      "filePath": "",
+      "submittedAt": "2026-02-20T06:10:24.263Z",
+      "status": "pending",
+      "grade": null,
+      "feedback": null
+    },
+    {
+      "id": "cmluhqpon0008r3his9ee860a",
+      "assignmentId": "cmluhqpo30004r3hi07k5ntn0",
+      "studentId": "cmlr9a9p4000mvd85xie42hbx",
+      "filePath": "",
+      "submittedAt": "2026-02-20T06:10:24.263Z",
+      "status": "pending",
+      "grade": null,
+      "feedback": null
+    },
+    {
+      "id": "cmluhqpon0009r3hi9z6ecknc",
+      "assignmentId": "cmluhqpo30004r3hi07k5ntn0",
+      "studentId": "cmlr9c0p9000nvd85u1h80ztc",
+      "filePath": "",
+      "submittedAt": "2026-02-20T06:10:24.263Z",
+      "status": "pending",
+      "grade": null,
+      "feedback": null
+    },
+    {
+      "id": "cmluhqpon000ar3hijt1w4epo",
+      "assignmentId": "cmluhqpo30004r3hi07k5ntn0",
+      "studentId": "cmlr9dwv5000ovd853pixdf3q",
+      "filePath": "",
+      "submittedAt": "2026-02-20T06:10:24.263Z",
+      "status": "pending",
+      "grade": null,
+      "feedback": null
+    },
+    {
+      "id": "cmluhqpon000br3hi7kt3z5tv",
+      "assignmentId": "cmluhqpo30004r3hi07k5ntn0",
+      "studentId": "cmlr9f5cm000pvd85f5ero7ej",
+      "filePath": "",
+      "submittedAt": "2026-02-20T06:10:24.263Z",
+      "status": "pending",
+      "grade": null,
+      "feedback": null
+    },
+    {
+      "id": "cmluhqpon000cr3his5t9f825",
+      "assignmentId": "cmluhqpo30004r3hi07k5ntn0",
+      "studentId": "cmlr9gzwd000qvd85n5yqxs1v",
+      "filePath": "",
+      "submittedAt": "2026-02-20T06:10:24.263Z",
+      "status": "pending",
+      "grade": null,
+      "feedback": null
+    },
+    {
+      "id": "cmluhqpon000dr3higevmjqpq",
+      "assignmentId": "cmluhqpo30004r3hi07k5ntn0",
+      "studentId": "cmlr9i187000rvd85ttx5v11z",
+      "filePath": "",
+      "submittedAt": "2026-02-20T06:10:24.263Z",
+      "status": "pending",
+      "grade": null,
+      "feedback": null
+    },
+    {
+      "id": "cmluhqpon000er3hi9z3fnpjv",
+      "assignmentId": "cmluhqpo30004r3hi07k5ntn0",
+      "studentId": "cmlr9kbmk000svd85x2876gow",
+      "filePath": "",
+      "submittedAt": "2026-02-20T06:10:24.263Z",
+      "status": "pending",
+      "grade": null,
+      "feedback": null
+    },
+    {
+      "id": "cmluiu4qy000lr3hi5qexdzno",
+      "assignmentId": "cmluiu4qk000kr3hi2elz81pu",
+      "studentId": "cmlr96blo000jvd85kgttd6oq",
+      "filePath": "",
+      "submittedAt": "2026-02-20T06:42:17.029Z",
+      "status": "pending",
+      "grade": null,
+      "feedback": null
+    },
+    {
+      "id": "cmluiu4qy000mr3hijp465hcp",
+      "assignmentId": "cmluiu4qk000kr3hi2elz81pu",
+      "studentId": "cmlr97nqc000kvd85olf0q2gi",
+      "filePath": "",
+      "submittedAt": "2026-02-20T06:41:03.370Z",
+      "status": "pending",
+      "grade": null,
+      "feedback": null
+    },
+    {
+      "id": "cmluiu4qy000nr3hiwx9apvih",
+      "assignmentId": "cmluiu4qk000kr3hi2elz81pu",
+      "studentId": "cmlr98ysb000lvd85o883rume",
+      "filePath": "",
+      "submittedAt": "2026-02-20T06:41:03.370Z",
+      "status": "pending",
+      "grade": null,
+      "feedback": null
+    },
+    {
+      "id": "cmluiu4qy000or3hiuxc7fxqq",
+      "assignmentId": "cmluiu4qk000kr3hi2elz81pu",
+      "studentId": "cmlr9a9p4000mvd85xie42hbx",
+      "filePath": "",
+      "submittedAt": "2026-02-20T06:41:03.370Z",
+      "status": "pending",
+      "grade": null,
+      "feedback": null
+    },
+    {
+      "id": "cmluiu4qy000pr3hidtlo8i4q",
+      "assignmentId": "cmluiu4qk000kr3hi2elz81pu",
+      "studentId": "cmlr9c0p9000nvd85u1h80ztc",
+      "filePath": "",
+      "submittedAt": "2026-02-20T06:41:03.370Z",
+      "status": "pending",
+      "grade": null,
+      "feedback": null
+    },
+    {
+      "id": "cmluiu4qy000qr3hiu4n2fhxn",
+      "assignmentId": "cmluiu4qk000kr3hi2elz81pu",
+      "studentId": "cmlr9dwv5000ovd853pixdf3q",
+      "filePath": "",
+      "submittedAt": "2026-02-20T06:41:03.370Z",
+      "status": "pending",
+      "grade": null,
+      "feedback": null
+    },
+    {
+      "id": "cmluiu4qy000rr3hirby9478z",
+      "assignmentId": "cmluiu4qk000kr3hi2elz81pu",
+      "studentId": "cmlr9f5cm000pvd85f5ero7ej",
+      "filePath": "",
+      "submittedAt": "2026-02-20T06:41:03.370Z",
+      "status": "pending",
+      "grade": null,
+      "feedback": null
+    },
+    {
+      "id": "cmluiu4qy000sr3hix02jck68",
+      "assignmentId": "cmluiu4qk000kr3hi2elz81pu",
+      "studentId": "cmlr9gzwd000qvd85n5yqxs1v",
+      "filePath": "",
+      "submittedAt": "2026-02-20T06:41:03.370Z",
+      "status": "pending",
+      "grade": null,
+      "feedback": null
+    },
+    {
+      "id": "cmluiu4qy000tr3hi0bfyqxkf",
+      "assignmentId": "cmluiu4qk000kr3hi2elz81pu",
+      "studentId": "cmlr9i187000rvd85ttx5v11z",
+      "filePath": "",
+      "submittedAt": "2026-02-20T06:41:03.370Z",
+      "status": "pending",
+      "grade": null,
+      "feedback": null
+    },
+    {
+      "id": "cmluiu4qy000ur3hiylhilgoc",
+      "assignmentId": "cmluiu4qk000kr3hi2elz81pu",
+      "studentId": "cmlr9kbmk000svd85x2876gow",
+      "filePath": "",
+      "submittedAt": "2026-02-20T06:41:03.370Z",
+      "status": "pending",
+      "grade": null,
+      "feedback": null
+    }
+  ],
+  "Grade": [
+    {
+      "id": "cmlgwgx4h0002ly3njiswmgyh",
+      "studentId": "cmlguc6uu000011oabhsa77b3",
+      "subjectId": "general",
+      "grade": "69",
+      "quarter": "Q2",
+      "remarks": "Updated by teacher"
+    },
+    {
+      "id": "cmlgwgx630003ly3nmjutogme",
+      "studentId": "cmlguc6uu000011oabhsa77b3",
+      "subjectId": "general",
+      "grade": "69",
+      "quarter": "Q2",
+      "remarks": "Updated by teacher"
+    },
+    {
+      "id": "cmlgwgx670004ly3nuf9uteqd",
+      "studentId": "cmlguc6uu000011oabhsa77b3",
+      "subjectId": "general",
+      "grade": "69",
+      "quarter": "Q2",
+      "remarks": "Updated by teacher"
+    },
+    {
+      "id": "cmlgwgxow0005ly3nuzqy79dv",
+      "studentId": "cmlguc6uu000011oabhsa77b3",
+      "subjectId": "general",
+      "grade": "69",
+      "quarter": "Q2",
+      "remarks": "Updated by teacher"
+    },
+    {
+      "id": "cmlgwnlko0006ly3nfkhlmc62",
+      "studentId": "cmlguc6uu000011oabhsa77b3",
+      "subjectId": "general",
+      "grade": "69",
+      "quarter": "Q2",
+      "remarks": "Updated by teacher"
+    },
+    {
+      "id": "cmlt3adku00071390st1r4lwm",
+      "studentId": "cmlr96blo000jvd85kgttd6oq",
+      "subjectId": "general",
+      "grade": "78",
+      "quarter": "Q2",
+      "remarks": "Updated by teacher"
+    },
+    {
+      "id": "cmlub1art000swxc0iw5v0067",
+      "studentId": "cmlr96blo000jvd85kgttd6oq",
+      "subjectId": "general",
+      "grade": "78",
+      "quarter": "Q2",
+      "remarks": "Updated by teacher"
+    },
+    {
+      "id": "cmlufrp4v001hwxc0mmqcgowm",
+      "studentId": "cmlr96blo000jvd85kgttd6oq",
+      "subjectId": "general",
+      "grade": "78",
+      "quarter": "Q2",
+      "remarks": "Updated by teacher"
+    },
+    {
+      "id": "cmlufrpho001jwxc0f5n7rjh0",
+      "studentId": "cmlr96blo000jvd85kgttd6oq",
+      "subjectId": "general",
+      "grade": "78",
+      "quarter": "Q2",
+      "remarks": "Updated by teacher"
+    },
+    {
+      "id": "cmluizqz2000yr3hip1cfpmcs",
+      "studentId": "cmlr96blo000jvd85kgttd6oq",
+      "subjectId": "general",
+      "grade": "78",
+      "quarter": "Q2",
+      "remarks": "Updated by teacher"
+    },
+    {
+      "id": "cmlutzfku001cr3hinh3sup4x",
+      "studentId": "cmlr96blo000jvd85kgttd6oq",
+      "subjectId": "general",
+      "grade": "78",
+      "quarter": "Q2",
+      "remarks": "Updated by teacher"
+    },
+    {
+      "id": "cmluu8yhh001gr3hi7rnjqh9m",
+      "studentId": "cmlr96blo000jvd85kgttd6oq",
+      "subjectId": "general",
+      "grade": "78",
+      "quarter": "Q2",
+      "remarks": "Updated by teacher"
+    },
+    {
+      "id": "cmluupsz6001jr3hidegotngv",
+      "studentId": "cmlr97nqc000kvd85olf0q2gi",
+      "subjectId": "general",
+      "grade": "78",
+      "quarter": "Q2",
+      "remarks": "Updated by teacher"
+    },
+    {
+      "id": "cmluur9mh001lr3hidkia18ul",
+      "studentId": "cmlr98ysb000lvd85o883rume",
+      "subjectId": "general",
+      "grade": "69",
+      "quarter": "Q2",
+      "remarks": "Updated by teacher"
+    }
+  ],
+  "Attendance": [
+    {
+      "id": "cmlg1d4ar0004w6kw7upjiz6a",
+      "studentId": "cmlg1c4bc0000w6kwd0z4g7y2",
+      "classId": "cmlg1cngr0002w6kwv6al8kzx",
+      "date": "2026-02-10T03:23:08.537Z",
+      "status": "present"
+    },
+    {
+      "id": "cmlg1dj800005w6kwbnpuhfy9",
+      "studentId": "cmlg1c4bc0000w6kwd0z4g7y2",
+      "classId": "cmlg1cngr0002w6kwv6al8kzx",
+      "date": "2026-02-10T00:00:00.000Z",
+      "status": "present"
+    },
+    {
+      "id": "cmluazn4i0008wxc09nkdye6i",
+      "studentId": "cmlr96blo000jvd85kgttd6oq",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "date": "2026-02-19T16:00:00.000Z",
+      "status": "present"
+    },
+    {
+      "id": "cmluazn52000awxc022cytymm",
+      "studentId": "cmlr98ysb000lvd85o883rume",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "date": "2026-02-19T16:00:00.000Z",
+      "status": "present"
+    },
+    {
+      "id": "cmluazn58000cwxc0fnec70as",
+      "studentId": "cmlr97nqc000kvd85olf0q2gi",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "date": "2026-02-19T16:00:00.000Z",
+      "status": "absent"
+    },
+    {
+      "id": "cmluazn59000ewxc0yklk5ekc",
+      "studentId": "cmlr9dwv5000ovd853pixdf3q",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "date": "2026-02-19T16:00:00.000Z",
+      "status": "present"
+    },
+    {
+      "id": "cmluazn90000iwxc032g7ghwh",
+      "studentId": "cmlr9c0p9000nvd85u1h80ztc",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "date": "2026-02-19T16:00:00.000Z",
+      "status": "present"
+    },
+    {
+      "id": "cmluazn5c000gwxc0u94u0yh0",
+      "studentId": "cmlr9a9p4000mvd85xie42hbx",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "date": "2026-02-19T16:00:00.000Z",
+      "status": "present"
+    },
+    {
+      "id": "cmluaznfj000kwxc0m3bififb",
+      "studentId": "cmlr9gzwd000qvd85n5yqxs1v",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "date": "2026-02-19T16:00:00.000Z",
+      "status": "present"
+    },
+    {
+      "id": "cmluaznfk000mwxc02orlqrdl",
+      "studentId": "cmlr9f5cm000pvd85f5ero7ej",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "date": "2026-02-19T16:00:00.000Z",
+      "status": "present"
+    },
+    {
+      "id": "cmluaznhg000owxc03wcw512b",
+      "studentId": "cmlr9kbmk000svd85x2876gow",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "date": "2026-02-19T16:00:00.000Z",
+      "status": "present"
+    },
+    {
+      "id": "cmluaznhi000qwxc02izrljgu",
+      "studentId": "cmlr9i187000rvd85ttx5v11z",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "date": "2026-02-19T16:00:00.000Z",
+      "status": "present"
+    },
+    {
+      "id": "cmlxjni4s0009o2sqtmopmb7v",
+      "studentId": "cmlr97nqc000kvd85olf0q2gi",
+      "classId": "cmlt1tkf20002j0wfsz2b4ha4",
+      "date": "2026-02-21T16:00:00.000Z",
+      "status": "present"
+    }
+  ],
+  "Task": [],
+  "Session": [
+    {
+      "id": "cmlntzrb10000yxs66rtz5i8u",
+      "userId": "1",
+      "token": "4957202417642b980f3e269ffc714d50d22382dcd130d7caa2fe9c5c0e163edc",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-15T14:18:57.135Z\"}",
+      "createdAt": "2026-02-15T14:18:58.429Z",
+      "expiresAt": "2026-02-15T18:18:58.362Z",
+      "revoked": true
+    },
+    {
+      "id": "cmlnubsnc0001yxs63ea7gd7c",
+      "userId": "1",
+      "token": "295bb36db3b304e14a83e6fdbc1361aedb76e306476c255b8346728e6f14e587",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-15T14:28:18.664Z\"}",
+      "createdAt": "2026-02-15T14:28:20.040Z",
+      "expiresAt": "2026-02-15T18:28:20.010Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlnun0df0002yxs6zagnlz7t",
+      "userId": "cmlguc6uu000011oabhsa77b3",
+      "token": "f8347e20d45defc0c2d4e9198d5e6217a10e2f9437fda811e2dc89f56a3ce61e",
+      "data": "{\"id\":\"cmlguc6uu000011oabhsa77b3\",\"username\":\"jared\",\"email\":\"jaredlang@gmail.com\",\"role\":\"student\",\"fullName\":\"Villanueva Jared A.\",\"createdAt\":\"2026-02-15T14:37:03.257Z\"}",
+      "createdAt": "2026-02-15T14:37:03.267Z",
+      "expiresAt": "2026-02-15T18:37:03.264Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlnuvaca0000pvgysjskuena",
+      "userId": "1",
+      "token": "4f2e45740c9919ecdf7e7554276b44cc92de1299396cf0b4a75555548a1ba44d",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-15T14:43:28.444Z\"}",
+      "createdAt": "2026-02-15T14:43:29.434Z",
+      "expiresAt": "2026-02-15T18:43:29.416Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlnuw8cy0001pvgyccppkirq",
+      "userId": "1",
+      "token": "ed99bf50bc0607c1ae3317c9aeaae04127f8439d45506968575ea635bcc50c9e",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-15T14:44:12.066Z\"}",
+      "createdAt": "2026-02-15T14:44:13.519Z",
+      "expiresAt": "2026-02-15T18:44:13.509Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlnuwnjm0002pvgyoy1wqg5i",
+      "userId": "1",
+      "token": "0b80124f937acb348f6925352c58951fa65cbb91f8d13a42b3b3a9ecfb04f27a",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-15T14:44:12.066Z\"}",
+      "createdAt": "2026-02-15T14:44:33.202Z",
+      "expiresAt": "2026-02-15T18:44:33.196Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlnux1or0003pvgymflsaziv",
+      "userId": "cmlguc6uu000011oabhsa77b3",
+      "token": "e862679efec474a6e217ffca9aa9f3f0b34a92dfbcd6f4c273e433185bc8021e",
+      "data": "{\"id\":\"cmlguc6uu000011oabhsa77b3\",\"username\":\"jared\",\"email\":\"jaredlang@gmail.com\",\"role\":\"student\",\"fullName\":\"Villanueva Jared A.\",\"createdAt\":\"2026-02-15T14:44:51.529Z\"}",
+      "createdAt": "2026-02-15T14:44:51.531Z",
+      "expiresAt": "2026-02-15T18:44:51.529Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlnv5lvi0004pvgymn4ucwre",
+      "userId": "1",
+      "token": "9031e2748fea65d22d4279aa29e7a927f9cfe60e079202c013bad974be6c1809",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-15T14:51:27.367Z\"}",
+      "createdAt": "2026-02-15T14:51:30.942Z",
+      "expiresAt": "2026-02-15T18:51:30.879Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlnv6jci0005pvgyjzpqhtd6",
+      "userId": "cmlguc6uu000011oabhsa77b3",
+      "token": "bba8700f2c14454b7266019601b432601eca43bc06765220f56eabc59a46db55",
+      "data": "{\"id\":\"cmlguc6uu000011oabhsa77b3\",\"username\":\"jared\",\"email\":\"jaredlang@gmail.com\",\"role\":\"student\",\"fullName\":\"Villanueva Jared A.\",\"createdAt\":\"2026-02-15T14:52:14.320Z\"}",
+      "createdAt": "2026-02-15T14:52:14.323Z",
+      "expiresAt": "2026-02-15T18:52:14.321Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlp8fnsf0000m9xfd4p4ibw4",
+      "userId": "1",
+      "token": "19e53ca59787dcffc8e1d2d5a4236f7c5f3f6f432202faf61b7ddd82eec0223d",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-16T13:51:00.527Z\"}",
+      "createdAt": "2026-02-16T13:51:01.167Z",
+      "expiresAt": "2026-02-16T17:51:01.150Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlp8girc0001m9xfb3w9tz4d",
+      "userId": "cmlguc6uu000011oabhsa77b3",
+      "token": "6cd84f3d16371003d588b76a1b0559bdf5b522907e0ce4e208e5c1bd5c80a287",
+      "data": "{\"id\":\"cmlguc6uu000011oabhsa77b3\",\"username\":\"jared\",\"email\":\"jaredlang@gmail.com\",\"role\":\"student\",\"fullName\":\"Villanueva Jared A.\",\"createdAt\":\"2026-02-16T13:51:41.262Z\"}",
+      "createdAt": "2026-02-16T13:51:41.304Z",
+      "expiresAt": "2026-02-16T17:51:41.266Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlp8hvgo0002m9xfwlx5gziz",
+      "userId": "cmlgw5pts0000ly3nsisw7kqd",
+      "token": "fff81cbcfd2f16411e4bd359dfd6bea90d3020a6533c26b66e9ba4d781834ab1",
+      "data": "{\"id\":\"cmlgw5pts0000ly3nsisw7kqd\",\"username\":\"Jared\",\"email\":\"jared69gmail.com\",\"role\":\"teacher\",\"fullName\":\"jared a villanueva\",\"createdAt\":\"2026-02-16T13:52:44.423Z\"}",
+      "createdAt": "2026-02-16T13:52:44.425Z",
+      "expiresAt": "2026-02-16T17:52:44.423Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlqno5xn0000vd85wcybblbh",
+      "userId": "1",
+      "token": "8ff4e92322c3accb99e7c7f61b34d2948b6d14f559a28112cae79c8ad9238efd",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-17T13:45:16.768Z\"}",
+      "createdAt": "2026-02-17T13:45:18.346Z",
+      "expiresAt": "2026-02-17T17:45:18.141Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlqnp7m30001vd85m7wwjydw",
+      "userId": "cmlguc6uu000011oabhsa77b3",
+      "token": "a76362d847e1c60d47693bded6cda897ffdd81e2b648b042af186378c204d13c",
+      "data": "{\"id\":\"cmlguc6uu000011oabhsa77b3\",\"username\":\"jared\",\"email\":\"jaredlang@gmail.com\",\"role\":\"student\",\"fullName\":\"Villanueva Jared A.\",\"createdAt\":\"2026-02-17T13:46:07.095Z\"}",
+      "createdAt": "2026-02-17T13:46:07.179Z",
+      "expiresAt": "2026-02-17T17:46:07.171Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlqnpjnd0002vd85b5d44ga4",
+      "userId": "cmlgw5pts0000ly3nsisw7kqd",
+      "token": "c3c7d360f922be267dd0e5d474c6bae348126a16a2bfce4f7d86d647688f7c46",
+      "data": "{\"id\":\"cmlgw5pts0000ly3nsisw7kqd\",\"username\":\"Jared\",\"email\":\"jared69gmail.com\",\"role\":\"teacher\",\"fullName\":\"jared a villanueva\",\"createdAt\":\"2026-02-17T13:46:22.550Z\"}",
+      "createdAt": "2026-02-17T13:46:22.777Z",
+      "expiresAt": "2026-02-17T17:46:22.772Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlqo5e990003vd85yx9y2nd7",
+      "userId": "1",
+      "token": "827ea9a35179beeeea0aa69c5e6161f7082df1c5be3a6b4440e59f165524a8f4",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-17T13:49:27.113Z\"}",
+      "createdAt": "2026-02-17T13:58:42.265Z",
+      "expiresAt": "2026-02-17T17:58:42.225Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlqo64e70004vd850zyt1359",
+      "userId": "1",
+      "token": "8ece16b69736f3b714789860ba07c777a09a5e7d794624853edbf07249a62b21",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-17T13:59:15.219Z\"}",
+      "createdAt": "2026-02-17T13:59:16.157Z",
+      "expiresAt": "2026-02-17T17:59:16.151Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlqo6q1u0005vd85lpkqw191",
+      "userId": "cmlguc6uu000011oabhsa77b3",
+      "token": "183550f38421adae7ec2d46b6d82b20331472cdd9f1d1bcd13929d8d2303be7c",
+      "data": "{\"id\":\"cmlguc6uu000011oabhsa77b3\",\"username\":\"jared\",\"email\":\"jaredlang@gmail.com\",\"role\":\"student\",\"fullName\":\"Villanueva Jared A.\",\"createdAt\":\"2026-02-17T13:59:44.220Z\"}",
+      "createdAt": "2026-02-17T13:59:44.226Z",
+      "expiresAt": "2026-02-17T17:59:44.222Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlqo771w0006vd850bfliuzl",
+      "userId": "cmlgw5pts0000ly3nsisw7kqd",
+      "token": "b0da0756fbe54146270e7efee342c2e02c1c0ad57ee72f919b1b9b8d09d87071",
+      "data": "{\"id\":\"cmlgw5pts0000ly3nsisw7kqd\",\"username\":\"Jared\",\"email\":\"jared69gmail.com\",\"role\":\"teacher\",\"fullName\":\"jared a villanueva\",\"createdAt\":\"2026-02-17T14:00:06.248Z\"}",
+      "createdAt": "2026-02-17T14:00:06.260Z",
+      "expiresAt": "2026-02-17T18:00:06.255Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlqq0w6l0007vd85kq74vitd",
+      "userId": "cmlguc6uu000011oabhsa77b3",
+      "token": "6f3d9d091a10ad20e1f72d97dd00fb342698ac09d31c8c3293d969f4696939b9",
+      "data": "{\"id\":\"cmlguc6uu000011oabhsa77b3\",\"username\":\"jared\",\"email\":\"jaredlang@gmail.com\",\"role\":\"student\",\"fullName\":\"Villanueva Jared A.\",\"createdAt\":\"2026-02-17T14:51:11.453Z\"}",
+      "createdAt": "2026-02-17T14:51:11.467Z",
+      "expiresAt": "2026-02-17T18:51:11.461Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlr8hmh20008vd85ylov5lfg",
+      "userId": "cmlguc6uu000011oabhsa77b3",
+      "token": "5ef36a294112948ab547235518cffc27432b4b99a16be74f39001143114f6b5b",
+      "data": "{\"id\":\"cmlguc6uu000011oabhsa77b3\",\"username\":\"jared\",\"email\":\"jaredlang@gmail.com\",\"role\":\"student\",\"fullName\":\"Villanueva Jared A.\",\"createdAt\":\"2026-02-17T23:28:05.100Z\"}",
+      "createdAt": "2026-02-17T23:28:05.125Z",
+      "expiresAt": "2026-02-18T03:28:05.121Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlr8it1l0009vd85zon693f1",
+      "userId": "1",
+      "token": "8ccbabebf1f6630f2c48d9afbb0f5b8fac4fecc3d526a7440ca760f49209ece5",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-17T23:28:52.104Z\"}",
+      "createdAt": "2026-02-17T23:29:00.291Z",
+      "expiresAt": "2026-02-18T03:29:00.288Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlr8k0wx000avd85sfiyyoed",
+      "userId": "cmlgw5pts0000ly3nsisw7kqd",
+      "token": "1fa595df71fc7c4f1207aee31122e84071afe7072bd7e8c9032668056e7aa426",
+      "data": "{\"id\":\"cmlgw5pts0000ly3nsisw7kqd\",\"username\":\"Jared\",\"email\":\"jared69gmail.com\",\"role\":\"teacher\",\"fullName\":\"jared a villanueva\",\"createdAt\":\"2026-02-17T23:29:57.145Z\"}",
+      "createdAt": "2026-02-17T23:29:57.154Z",
+      "expiresAt": "2026-02-18T03:29:57.146Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlr8mvjz000bvd85a42ehwdh",
+      "userId": "cmlguc6uu000011oabhsa77b3",
+      "token": "82910b70bf4c71c09f6dd394c6c0e58c7d463f856f83e2ca551dce930b40d1f7",
+      "data": "{\"id\":\"cmlguc6uu000011oabhsa77b3\",\"username\":\"jared\",\"email\":\"jaredlang@gmail.com\",\"role\":\"student\",\"fullName\":\"Villanueva Jared A.\",\"createdAt\":\"2026-02-17T23:32:10.115Z\"}",
+      "createdAt": "2026-02-17T23:32:10.170Z",
+      "expiresAt": "2026-02-18T03:32:10.132Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlr8qgdj000cvd858o61novh",
+      "userId": "cmlgw5pts0000ly3nsisw7kqd",
+      "token": "8133eced290dc5f7e1e26b5b82ea006d2f478f4233c07b2b18f66dc5dc44880d",
+      "data": "{\"id\":\"cmlgw5pts0000ly3nsisw7kqd\",\"username\":\"Jared\",\"email\":\"jared69gmail.com\",\"role\":\"teacher\",\"fullName\":\"jared a villanueva\",\"createdAt\":\"2026-02-17T23:34:56.987Z\"}",
+      "createdAt": "2026-02-17T23:34:57.127Z",
+      "expiresAt": "2026-02-18T03:34:56.994Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlr8suwj000dvd85warf0g52",
+      "userId": "1",
+      "token": "ace8e519de3f227e2e6d08299a0ea567fc6f18c75f3dbb6b62ca15b8c7d350de",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-17T23:36:47.455Z\"}",
+      "createdAt": "2026-02-17T23:36:49.261Z",
+      "expiresAt": "2026-02-18T03:36:49.247Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlrtr4dz0012vd85valdpbot",
+      "userId": "1",
+      "token": "ccd2844e1902c75aeb82770400287319d30007784676e56723295a40a6c0c1c9",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-18T09:23:09.736Z\"}",
+      "createdAt": "2026-02-18T09:23:19.973Z",
+      "expiresAt": "2026-02-18T13:23:19.732Z",
+      "revoked": false
+    },
+    {
+      "id": "cmls8puxv0013vd85iikdma5c",
+      "userId": "1",
+      "token": "8ac9685302ef46fd88b69c92d297ce66708124615b91562e95b8c8d2002c784e",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-18T16:22:13.715Z\"}",
+      "createdAt": "2026-02-18T16:22:15.504Z",
+      "expiresAt": "2026-02-18T20:22:15.443Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlscmupz0000tzhy4srms0zc",
+      "userId": "1",
+      "token": "4b5ee77da20600c2945eec74f4af28f38fce41c1b470ac99fe0484c8e9d8c099",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-18T18:11:50.419Z\"}",
+      "createdAt": "2026-02-18T18:11:53.734Z",
+      "expiresAt": "2026-02-18T22:11:53.325Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlsdaldq0003tzhyy6jgskoi",
+      "userId": "cmlsd8rk80002tzhy87tirnhl",
+      "token": "4462f1b044c293996f20532b17d6a92843fff24d9437f583ae51c54c5ea3a89e",
+      "data": "{\"id\":\"cmlsd8rk80002tzhy87tirnhl\",\"username\":\"jareddd\",\"email\":\"jaredlang@gmail.com\",\"role\":\"student\",\"fullName\":\"jared\",\"createdAt\":\"2026-02-18T18:30:21.370Z\"}",
+      "createdAt": "2026-02-18T18:30:21.373Z",
+      "expiresAt": "2026-02-18T22:30:21.372Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlsdcx9g0004tzhygruxv04v",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "84d7b0ab267a02ba4b1d44f697f08d3137baed9a6a891ac3ce6eb2fa4b9a8a4b",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-18T18:32:10.073Z\"}",
+      "createdAt": "2026-02-18T18:32:10.083Z",
+      "expiresAt": "2026-02-18T22:32:10.079Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlsddwdu0005tzhysmm529ve",
+      "userId": "1",
+      "token": "efe734f30aabd54f5c3b32d15d86f8558c60bf28ce3a9eafecbadd301efcb40e",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-18T18:32:55.034Z\"}",
+      "createdAt": "2026-02-18T18:32:55.601Z",
+      "expiresAt": "2026-02-18T22:32:55.585Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlsy5e2k0000zcpsb8bcsrv1",
+      "userId": "1",
+      "token": "bd8d0f2bce83039daa80668617e955d5715094315b58604a83dd213c7f88efc8",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-19T04:13:49.151Z\"}",
+      "createdAt": "2026-02-19T04:14:10.552Z",
+      "expiresAt": "2026-02-19T08:14:10.549Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlsyzrn10000at020351p4j4",
+      "userId": "1",
+      "token": "f450a06b34f828a959976c589f85eef7bba921bb6f438bafbaa5397fa23829f5",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-19T04:37:44.739Z\"}",
+      "createdAt": "2026-02-19T04:37:47.820Z",
+      "expiresAt": "2026-02-19T08:37:47.791Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlsyzry00001at02nny03va0",
+      "userId": "cmlguc6uu000011oabhsa77b3",
+      "token": "7dcf3c63911e1dfd3e699a4081e1c7f02d0f32aaad93af9ea6579760ec88a194",
+      "data": "{\"id\":\"cmlguc6uu000011oabhsa77b3\",\"username\":\"jared\",\"email\":\"jaredlang@gmail.com\",\"role\":\"student\",\"fullName\":\"Villanueva Jared A.\",\"createdAt\":\"2026-02-19T04:37:48.194Z\"}",
+      "createdAt": "2026-02-19T04:37:48.216Z",
+      "expiresAt": "2026-02-19T08:37:48.195Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlsz2p1y0002at024zjyjpdc",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "5f048160b184b1bc342c4a5faeb37402aa7a44134932ef6431b6b192654ca9e4",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-19T04:40:04.418Z\"}",
+      "createdAt": "2026-02-19T04:40:04.438Z",
+      "expiresAt": "2026-02-19T08:40:04.431Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlsz33iu0003at02zts5arul",
+      "userId": "1",
+      "token": "8b5288cdba96c926d1a7d8f2f2e9a28552a57894c40c41d5d4aec7e83927b0aa",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-19T04:40:19.804Z\"}",
+      "createdAt": "2026-02-19T04:40:23.191Z",
+      "expiresAt": "2026-02-19T08:40:23.183Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlsz4vjb0004at0260awdzme",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "b1d09b6b273041f573d587530cbf92f7d3ef4fbcfe7c929d5075d42af0fd47b8",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-19T04:41:46.150Z\"}",
+      "createdAt": "2026-02-19T04:41:46.152Z",
+      "expiresAt": "2026-02-19T08:41:46.151Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlsz5m6e0005at02jvrl17v8",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "18680ddc31df55638283fa83ed9eaf12525c42a472f9b9876950aa7223116ff5",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-19T04:42:20.649Z\"}",
+      "createdAt": "2026-02-19T04:42:20.679Z",
+      "expiresAt": "2026-02-19T08:42:20.663Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlszsscd0006at02hs8k0ls8",
+      "userId": "1",
+      "token": "8f7bb3caf5f2a60c5deed5ee62fd05ec6a9e5ee3013b795f4ee133e9c1a77a0a",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-19T05:00:21.028Z\"}",
+      "createdAt": "2026-02-19T05:00:21.731Z",
+      "expiresAt": "2026-02-19T09:00:21.632Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlt0874c00007x642jcnkkn8",
+      "userId": "1",
+      "token": "bf00375f36031bc638a6b1b3d3183c9a4d5a831b9d1c7cd86375d426837b2c24",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-19T05:12:02.867Z\"}",
+      "createdAt": "2026-02-19T05:12:20.745Z",
+      "expiresAt": "2026-02-19T09:12:20.750Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlt13f5g00008htmn12d60ab",
+      "userId": "1",
+      "token": "19339d63d7220c191b8836797225c9e28f8fc7966306aaf0caa6b13da5ef4885",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-19T05:36:36.406Z\"}",
+      "createdAt": "2026-02-19T05:36:37.491Z",
+      "expiresAt": "2026-02-19T09:36:37.471Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlt1eiyq00048htm9sq8ncpa",
+      "userId": "cmlr97nqc000kvd85olf0q2gi",
+      "token": "1d63d4136e7fffdedd9b39b4cdaeb91b0f4c3bab1b9e6e2dfd1804ea960a92da",
+      "data": "{\"id\":\"cmlr97nqc000kvd85olf0q2gi\",\"username\":\"andrheaa\",\"email\":\"andrhea.alawi@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Andrhea Alawi\",\"createdAt\":\"2026-02-19T05:45:15.648Z\"}",
+      "createdAt": "2026-02-19T05:45:15.650Z",
+      "expiresAt": "2026-02-19T09:45:15.649Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlt1ga1h00058htm4bkfbeiu",
+      "userId": "cmlr9oivd000uvd85p8a82cwy",
+      "token": "f7d387a43ba727853b36f68c696dfc73d35e8dd6957006ece238c867bc8e4dec",
+      "data": "{\"id\":\"cmlr9oivd000uvd85p8a82cwy\",\"username\":\"angeline\",\"email\":\"angeline.villa@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Angeline Villa\",\"createdAt\":\"2026-02-19T05:46:37.391Z\"}",
+      "createdAt": "2026-02-19T05:46:37.397Z",
+      "expiresAt": "2026-02-19T09:46:37.396Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlt1od0n00068htmv3h45ik7",
+      "userId": "1",
+      "token": "e8775a46e094d28e221da17c81abd62973e70111324d77e4b4aa216d24ec1888",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-19T05:52:53.781Z\"}",
+      "createdAt": "2026-02-19T05:52:54.493Z",
+      "expiresAt": "2026-02-19T09:52:54.487Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlt1rizu0000j0wf7s162b45",
+      "userId": "1",
+      "token": "de9783db2e210f3bf54d9894f0034f15392d84e1abf8d8290d7b1d21cbca6c43",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-19T05:55:18.209Z\"}",
+      "createdAt": "2026-02-19T05:55:22.218Z",
+      "expiresAt": "2026-02-19T09:55:22.201Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlt29kwv000dj0wfzxx60w5v",
+      "userId": "cmlr97nqc000kvd85olf0q2gi",
+      "token": "2d6226f7a3761231d15c06aabeb8b15bd8a533ef596da067e0f1e25eb94f9334",
+      "data": "{\"id\":\"cmlr97nqc000kvd85olf0q2gi\",\"username\":\"andrheaa\",\"email\":\"andrhea.alawi@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Andrhea Alawi\",\"createdAt\":\"2026-02-19T06:09:24.491Z\"}",
+      "createdAt": "2026-02-19T06:09:24.510Z",
+      "expiresAt": "2026-02-19T10:09:24.504Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlt2ash6000ej0wfy1mjg7hi",
+      "userId": "1",
+      "token": "4f1fadb991c33e9f3ca12f8d9b6837f4205911764c1aa79a8482b24e674a1b01",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-19T06:10:18.522Z\"}",
+      "createdAt": "2026-02-19T06:10:20.970Z",
+      "expiresAt": "2026-02-19T10:10:20.964Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlt2cuxb000fj0wfqv79qoaz",
+      "userId": "cmlr98ysb000lvd85o883rume",
+      "token": "90a7c9f505453b42ad64612d9c2ff757cd92da73945315333a9da41d0ec4cd8f",
+      "data": "{\"id\":\"cmlr98ysb000lvd85o883rume\",\"username\":\"ehraa\",\"email\":\"ehra.aquino@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Ehra Aquino\",\"createdAt\":\"2026-02-19T06:11:57.444Z\"}",
+      "createdAt": "2026-02-19T06:11:57.455Z",
+      "expiresAt": "2026-02-19T10:11:57.449Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlt31zsf00001390wc71t7tz",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "3bf9d3effaea81d23dc2496512cdd9830e81a63c80e020cfb162c96a086ecf82",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-19T06:31:30.151Z\"}",
+      "createdAt": "2026-02-19T06:31:30.159Z",
+      "expiresAt": "2026-02-19T10:31:30.157Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlt32vkp000gj0wfqd028fw4",
+      "userId": "1",
+      "token": "a2fd7bcd53cd6d2199d7698bf2e483f99a42609a6f53ac407eaf5343e0fb5b51",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-19T06:32:10.256Z\"}",
+      "createdAt": "2026-02-19T06:32:11.351Z",
+      "expiresAt": "2026-02-19T10:32:11.343Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlt33utp000113905odc2lv5",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "029434a6f2564349eb3a9a9165b7d84d243298382223b5e063bf2f797aedda89",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-19T06:32:57.036Z\"}",
+      "createdAt": "2026-02-19T06:32:57.037Z",
+      "expiresAt": "2026-02-19T10:32:57.038Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlt34kop000213901otdubze",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "8a65a0f5e85597c59da19cd7767cd1fcea8b45bcba970602de2f9626d18bbef1",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-19T06:33:30.551Z\"}",
+      "createdAt": "2026-02-19T06:33:30.554Z",
+      "expiresAt": "2026-02-19T10:33:30.553Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlt37pfc00031390engqsm1j",
+      "userId": "1",
+      "token": "aa30d7eb3e290f2586f2e599d079c7dd1a5d6be06cabba4ae2b033c74f5a3779",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-19T06:35:55.388Z\"}",
+      "createdAt": "2026-02-19T06:35:56.664Z",
+      "expiresAt": "2026-02-19T10:35:56.664Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlt39vm1000513904k282ur7",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "99d2953159ad60baf112a9276cbc109e881fc7325042abffcf74d453516f4afc",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-19T06:37:37.986Z\"}",
+      "createdAt": "2026-02-19T06:37:37.993Z",
+      "expiresAt": "2026-02-19T10:37:37.989Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlt3qbpx00081390obkj080l",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "06cbc23c133cca9d04c0b9b424f7ea4a1c7cb2e11a03cdb173d9ec97de5d9610",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-19T06:50:25.343Z\"}",
+      "createdAt": "2026-02-19T06:50:25.364Z",
+      "expiresAt": "2026-02-19T10:50:25.356Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlt3tl9b00091390dnt29ej5",
+      "userId": "1",
+      "token": "bf47e45728da98079765eb538e8865f70f2188e7d824f035ffe7cdd8e1b05d61",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-19T06:52:56.308Z\"}",
+      "createdAt": "2026-02-19T06:52:57.696Z",
+      "expiresAt": "2026-02-19T10:52:57.694Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlt3v2em000a1390uej0ul3e",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "3dc4077e04c47bc8e8df04b7266cb9b61cf882a4358a2014cb11b25037b7f030",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-19T06:54:06.559Z\"}",
+      "createdAt": "2026-02-19T06:54:06.575Z",
+      "expiresAt": "2026-02-19T10:54:06.567Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlt5gqyl0000kqva0xy6i856",
+      "userId": "1",
+      "token": "4e36bc664515ccd8de67213c5be27349253df36ce519b30079c5a51489a2d8ee",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-19T07:38:57.264Z\"}",
+      "createdAt": "2026-02-19T07:38:57.789Z",
+      "expiresAt": "2026-02-19T11:38:57.759Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlt5i7f60001kqvam0tbqhm3",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "b51c15c4bfc6ee88c7a21b186de3e3f484e3d36654425fda439bfac32badef51",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-19T07:40:05.750Z\"}",
+      "createdAt": "2026-02-19T07:40:05.773Z",
+      "expiresAt": "2026-02-19T11:40:05.766Z",
+      "revoked": false
+    },
+    {
+      "id": "cmltjrrix0000n97u02gcsvmy",
+      "userId": "1",
+      "token": "f7a01facc6d3c6b7835369f06f5fa8708f79acc7c999b76623905a9e89e6614b",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-19T14:19:25.597Z\"}",
+      "createdAt": "2026-02-19T14:19:26.360Z",
+      "expiresAt": "2026-02-19T18:19:26.336Z",
+      "revoked": false
+    },
+    {
+      "id": "cmltjsm5w0001n97uln06c1dc",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "b2a04c1d85e7ac10b18abcd4b79a49af2b9eedd72bb4980d815c8dc60c060933",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-19T14:20:06.064Z\"}",
+      "createdAt": "2026-02-19T14:20:06.069Z",
+      "expiresAt": "2026-02-19T18:20:06.066Z",
+      "revoked": false
+    },
+    {
+      "id": "cmltjt8qv0002n97uq9cu1kf6",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "2597075a6d629fd4df6e3a9b4297d3bcde122b69eca9535217fe29057fc44fd3",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-19T14:20:35.324Z\"}",
+      "createdAt": "2026-02-19T14:20:35.335Z",
+      "expiresAt": "2026-02-19T18:20:35.326Z",
+      "revoked": false
+    },
+    {
+      "id": "cmltjucte0003n97ueie9loxd",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "6ec1d20a16a16170e472f0b41abcf2e888be9e860e2e1d87e64b6ba9fa8dae67",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-19T14:21:27.258Z\"}",
+      "createdAt": "2026-02-19T14:21:27.266Z",
+      "expiresAt": "2026-02-19T18:21:27.259Z",
+      "revoked": false
+    },
+    {
+      "id": "cmltkb3ml0000zzgy0w9umvja",
+      "userId": "1",
+      "token": "3c9f3381059fc67948872ea268514da4ef54a1c73f681aa0d70f7d05e623856f",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-19T14:34:24.299Z\"}",
+      "createdAt": "2026-02-19T14:34:28.507Z",
+      "expiresAt": "2026-02-19T18:34:28.454Z",
+      "revoked": false
+    },
+    {
+      "id": "cmltkbd4o0001zzgyh6czaz61",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "cb8e7c50a0d55adbad65352646c401e22de572118cd14dd720d6e685798297f6",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-19T14:34:40.785Z\"}",
+      "createdAt": "2026-02-19T14:34:40.825Z",
+      "expiresAt": "2026-02-19T18:34:40.788Z",
+      "revoked": false
+    },
+    {
+      "id": "cmltkbyqn0002zzgyjthakhmg",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "617fc9a5e0c4689899f11581958fe918b2b1a2a80f95ba6ae3bb0b4138853eaa",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-19T14:35:08.813Z\"}",
+      "createdAt": "2026-02-19T14:35:08.831Z",
+      "expiresAt": "2026-02-19T18:35:08.821Z",
+      "revoked": false
+    },
+    {
+      "id": "cmltkd9qr0003zzgyybnsk2xi",
+      "userId": "1",
+      "token": "837cd5c553a2a2b6e70b29ee6ec7a29ea8d9a2616246f2c3a72724b45a1080bb",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-19T14:36:06.100Z\"}",
+      "createdAt": "2026-02-19T14:36:09.735Z",
+      "expiresAt": "2026-02-19T18:36:09.707Z",
+      "revoked": false
+    },
+    {
+      "id": "cmltkdq6m0004zzgy0fmlume7",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "7da343a9a2aecb8353e73379e03661f60132e396e043902a236817da2fac8de2",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-19T14:36:31.044Z\"}",
+      "createdAt": "2026-02-19T14:36:31.055Z",
+      "expiresAt": "2026-02-19T18:36:31.046Z",
+      "revoked": false
+    },
+    {
+      "id": "cmltkf7xz0005zzgy4utvw9eu",
+      "userId": "1",
+      "token": "6d12928d3ee874973428dd85d99ce8ec071931a1d6d19938ca21458faaaf5d8d",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-19T14:37:39.786Z\"}",
+      "createdAt": "2026-02-19T14:37:40.728Z",
+      "expiresAt": "2026-02-19T18:37:40.724Z",
+      "revoked": false
+    },
+    {
+      "id": "cmltl2m310006zzgy6gqb1zk8",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "71cfabcca69417bb8e502d58c4e358e37e3fd7b2f05d1d3d91857387b75f77e5",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-19T14:55:51.911Z\"}",
+      "createdAt": "2026-02-19T14:55:52.122Z",
+      "expiresAt": "2026-02-19T18:55:51.926Z",
+      "revoked": false
+    },
+    {
+      "id": "cmltlhbqj0000jx35w360kbr4",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "59a36560feb7aa081a37f911850415fd800fa4ca74fe04e54cec3a4b58464c2c",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-19T15:07:18.560Z\"}",
+      "createdAt": "2026-02-19T15:07:18.570Z",
+      "expiresAt": "2026-02-19T19:07:18.563Z",
+      "revoked": false
+    },
+    {
+      "id": "cmltlrpa60001jx35mkityfcj",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "3a9df4a230d28dc1f172d51099424cb806ebbc2b1b6ee3e61a61ece2c02a29f5",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-19T15:15:22.678Z\"}",
+      "createdAt": "2026-02-19T15:15:22.686Z",
+      "expiresAt": "2026-02-19T19:15:22.680Z",
+      "revoked": false
+    },
+    {
+      "id": "cmltlumlw0000u4yrq6l1q7bk",
+      "userId": "1",
+      "token": "e857aafd845dfd9f115555aede96ab18d5925648b48219f3a2aabdfd6b07ed52",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-19T15:17:36.792Z\"}",
+      "createdAt": "2026-02-19T15:17:39.186Z",
+      "expiresAt": "2026-02-19T19:17:37.933Z",
+      "revoked": false
+    },
+    {
+      "id": "cmltlxj160001u4yrhmn37yy6",
+      "userId": "cmlr97nqc000kvd85olf0q2gi",
+      "token": "3819391d3164febccc6c611de9ff3d44ba99088079bf803eaccf330e0e06ded0",
+      "data": "{\"id\":\"cmlr97nqc000kvd85olf0q2gi\",\"username\":\"andrheaa\",\"email\":\"andrhea.alawi@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Andrhea Alawi\",\"createdAt\":\"2026-02-19T15:19:54.511Z\"}",
+      "createdAt": "2026-02-19T15:19:54.521Z",
+      "expiresAt": "2026-02-19T19:19:54.513Z",
+      "revoked": false
+    },
+    {
+      "id": "cmltlyrxu0002u4yr89bhocye",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "571990d547a7f0963e40d0b54a7a07ba384b48d708fdd06f07b95ade32b6ed58",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-19T15:20:52.717Z\"}",
+      "createdAt": "2026-02-19T15:20:52.723Z",
+      "expiresAt": "2026-02-19T19:20:52.719Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlu9eqog0000wxc01k48whcf",
+      "userId": "1",
+      "token": "a23808c9c68aa2149c85d87f59fee5a900e554646b97bac5f0d6e627c575ac81",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-20T02:17:06.540Z\"}",
+      "createdAt": "2026-02-20T02:17:08.751Z",
+      "expiresAt": "2026-02-20T06:17:08.156Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlu9fk1g0001wxc0zoc6omb9",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "ea96b9df12aea7f756b9f434ce62f5f400e2d3dfdcedcef50514f3537e6af1fc",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T02:17:46.802Z\"}",
+      "createdAt": "2026-02-20T02:17:46.804Z",
+      "expiresAt": "2026-02-20T06:17:46.803Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlu9j2as0002wxc0p30oc50n",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "80f3e692e4ae20126181436f4188784335c531df951d8c60fd33dfa6e099fd9f",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-20T02:20:30.433Z\"}",
+      "createdAt": "2026-02-20T02:20:30.437Z",
+      "expiresAt": "2026-02-20T06:20:30.435Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluawl0g0003wxc08mx8tpz1",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "1277c2ede08966a6014c74990ca7624fa95b50029261dd5d065e903aae29489e",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T02:59:00.824Z\"}",
+      "createdAt": "2026-02-20T02:59:00.831Z",
+      "expiresAt": "2026-02-20T06:59:00.826Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluax1xk0004wxc0r4vacmb9",
+      "userId": "1",
+      "token": "b25168b6e6b155b73e8cd6ed167bef19f3c11a952d265802d61f0d0a2cef6f78",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-20T02:59:21.414Z\"}",
+      "createdAt": "2026-02-20T02:59:22.760Z",
+      "expiresAt": "2026-02-20T06:59:22.759Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluaxwcw0005wxc0mcyx5epz",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "165a207b46534463f0de3ace3fb28f406911e7bf8dce043621016c125a071cea",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-20T03:00:02.191Z\"}",
+      "createdAt": "2026-02-20T03:00:02.193Z",
+      "expiresAt": "2026-02-20T07:00:02.192Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluayjbg0006wxc0j3k3deme",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "74bc20cb4933c08bdadff81e04f7347ac735b37d5f9512b9dbd7831e9b74d5f3",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T03:00:31.942Z\"}",
+      "createdAt": "2026-02-20T03:00:31.948Z",
+      "expiresAt": "2026-02-20T07:00:31.946Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlub26hq000twxc08ve6m8qn",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "ec3b19b54913f6612d5d08212f4b42edf14f7feb99a5ac046beed926ce3953af",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-20T03:03:21.944Z\"}",
+      "createdAt": "2026-02-20T03:03:21.950Z",
+      "expiresAt": "2026-02-20T07:03:21.944Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlucebh6000uwxc0sp07tr8w",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "5037702f10b727212f17e562c7be81fe6a46fa31a54642cfb8ca065b0b23061d",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T03:40:47.894Z\"}",
+      "createdAt": "2026-02-20T03:40:47.898Z",
+      "expiresAt": "2026-02-20T07:40:47.896Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlue2wl7000vwxc0aap4jled",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "1a8d9f98a679f43d71c9b870af2ea3fd14c4de5abe4932de61e7b727b0ecf40b",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-20T04:27:54.615Z\"}",
+      "createdAt": "2026-02-20T04:27:54.618Z",
+      "expiresAt": "2026-02-20T08:27:54.615Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlue40p7000wwxc0yirtk1dl",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "d7d09ea759406ac7d41e6ff136011d69253195a74333edd600a2d0f9959222f0",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T04:28:46.601Z\"}",
+      "createdAt": "2026-02-20T04:28:46.603Z",
+      "expiresAt": "2026-02-20T08:28:46.601Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluffw1i001dwxc05sicv0xx",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "bffbe69128e375c4e7f3465ccad38742f13edb95e449ac12cf4236be0131dae4",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-20T05:05:59.936Z\"}",
+      "createdAt": "2026-02-20T05:06:00.015Z",
+      "expiresAt": "2026-02-20T09:05:59.980Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluflthp001ewxc0fgq6nofc",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "3862210ad3e71aebdc43de7905803cb05fdc6e81ed2f9b2a5fa7fe750e15b736",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T05:10:36.659Z\"}",
+      "createdAt": "2026-02-20T05:10:36.679Z",
+      "expiresAt": "2026-02-20T09:10:36.672Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlufplf5001fwxc0tvkfeyuc",
+      "userId": "1",
+      "token": "14fa111e3599910f862c250a4f0a75c42788b25ac322df42019b4f877a44192b",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-20T05:13:23.935Z\"}",
+      "createdAt": "2026-02-20T05:13:32.803Z",
+      "expiresAt": "2026-02-20T09:13:32.532Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlufvebe001kwxc0d5syh4rb",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "17ae7ba190d1d032881fce116f66ae2205ab00f7e4e072c2a4e03f2a5b43d5d0",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T05:18:03.555Z\"}",
+      "createdAt": "2026-02-20T05:18:03.577Z",
+      "expiresAt": "2026-02-20T09:18:03.563Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlugcfxb001xwxc0ggc2kkeg",
+      "userId": "1",
+      "token": "b5f069c8552a178fd7c9516a5fc0539d53e88f4f47320c6df198f92eaf6dc228",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-20T05:31:16.334Z\"}",
+      "createdAt": "2026-02-20T05:31:18.815Z",
+      "expiresAt": "2026-02-20T09:31:18.771Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlugj3qs0021wxc00bh89xlo",
+      "userId": "cmlsd8rk80002tzhy87tirnhl",
+      "token": "2bbec4fa4267b939d44c70b80c8a55a023b43be62e52e250981eee17cb1309ff",
+      "data": "{\"id\":\"cmlsd8rk80002tzhy87tirnhl\",\"username\":\"jareddd\",\"email\":\"jaredlang@gmail.com\",\"role\":\"student\",\"fullName\":\"jared\",\"createdAt\":\"2026-02-20T05:36:29.593Z\"}",
+      "createdAt": "2026-02-20T05:36:29.620Z",
+      "expiresAt": "2026-02-20T09:36:29.612Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlugm3zy0022wxc084s4k9gl",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "6b8d5c1d2643969836fbb71e604b2f5e197753745bf9237eb4491d7913fb2a7c",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T05:38:49.848Z\"}",
+      "createdAt": "2026-02-20T05:38:49.918Z",
+      "expiresAt": "2026-02-20T09:38:49.908Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluhofam0000r3hijiu1gube",
+      "userId": "1",
+      "token": "ba1f9c7b0bf16de274d1f2dc1ec4d650d4a3bc496df2979325d405e28ed3d2c1",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-20T06:08:34.948Z\"}",
+      "createdAt": "2026-02-20T06:08:37.483Z",
+      "expiresAt": "2026-02-20T10:08:37.359Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluhonc20001r3hi06m9mkbl",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "a56407d264339a9c2e616d85cfb67d4c0b1c1c1115d3ad07d62b881be2f333b1",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-20T06:08:47.898Z\"}",
+      "createdAt": "2026-02-20T06:08:47.906Z",
+      "expiresAt": "2026-02-20T10:08:47.901Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluhosig0002r3hizwtnp7a0",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "d00fdde6a70e1fd5f7c0d45194f5e1d8e6f25087556f29216fb012b64e0af52b",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T06:08:54.602Z\"}",
+      "createdAt": "2026-02-20T06:08:54.616Z",
+      "expiresAt": "2026-02-20T10:08:54.608Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluhrbat000fr3hiifkczwss",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "4051acc99e6663b9205790e604b1c6f2b5d782595905d1f28622caef8b3e4371",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-20T06:10:52.270Z\"}",
+      "createdAt": "2026-02-20T06:10:52.277Z",
+      "expiresAt": "2026-02-20T10:10:52.274Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluhyb5e000gr3hi355ec9ig",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "91105e19c9090eeb5212181e8f77a812f3585f4680fbf602d14a28747b2f98aa",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T06:16:18.638Z\"}",
+      "createdAt": "2026-02-20T06:16:18.672Z",
+      "expiresAt": "2026-02-20T10:16:18.666Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluia0if000hr3hiyyorv0sw",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "c2fa40cd37374d1581b86ca2cfadddbc5aac0ee721d3469cba35324fdbdfd5ba",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-20T06:25:24.743Z\"}",
+      "createdAt": "2026-02-20T06:25:24.758Z",
+      "expiresAt": "2026-02-20T10:25:24.752Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluisr37000ir3hicsrcharp",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "3fef08a8b9dd66557d3811f97ae20922725c8b816aea4a60ed64f1ac8322d494",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T06:39:59.000Z\"}",
+      "createdAt": "2026-02-20T06:39:59.007Z",
+      "expiresAt": "2026-02-20T10:39:59.001Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluiuuuy000vr3hiia7elnzm",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "b705f3e22cb096b5fbdf2446041cb0ad519bb59ebac9853a752be91a9fff1f42",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-20T06:41:37.207Z\"}",
+      "createdAt": "2026-02-20T06:41:37.210Z",
+      "expiresAt": "2026-02-20T10:41:37.208Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluiwlx8000wr3hiucs38gye",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "0f6edffffb843a32ee284ad9bc320c7b3815402bcd985ad0ca709fe8cbbc2622",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T06:42:58.931Z\"}",
+      "createdAt": "2026-02-20T06:42:58.940Z",
+      "expiresAt": "2026-02-20T10:42:58.939Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluj7psr000zr3hie1uf9bak",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "9ba1dd2da818a8ffd5319aa72c5b018ebffda33612ac3af31061db04306ed91b",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-20T06:51:37.171Z\"}",
+      "createdAt": "2026-02-20T06:51:37.178Z",
+      "expiresAt": "2026-02-20T10:51:37.174Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluj92vs0010r3hi136tidi4",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "19569ad87d233c6b6be344f2d81706efc5eedcde3bbe2e0aeeb4b7f85c9340c2",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T06:52:40.787Z\"}",
+      "createdAt": "2026-02-20T06:52:40.792Z",
+      "expiresAt": "2026-02-20T10:52:40.791Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlukqpl00011r3hib4wf48ii",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "e137ecc0206492f5168ea363ffea7dffdaa75464e77d9d3ddf9c919496ebcf26",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T07:34:22.951Z\"}",
+      "createdAt": "2026-02-20T07:34:22.979Z",
+      "expiresAt": "2026-02-20T11:34:22.956Z",
+      "revoked": true
+    },
+    {
+      "id": "cmlukztps0012r3hiqlg1zm4d",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "503d35ef663c3b799c70b9ca9394c03703dd771c35eaefb8fdcfea4ca761ef42",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-20T07:41:28.237Z\"}",
+      "createdAt": "2026-02-20T07:41:28.239Z",
+      "expiresAt": "2026-02-20T11:41:28.237Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlumcfjs0013r3hichj2ve3e",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "e7399fcf9e71eb219afea04c8a4e16588247735d1bb4b3d4d1a148e483425fc1",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T08:19:16.006Z\"}",
+      "createdAt": "2026-02-20T08:19:16.019Z",
+      "expiresAt": "2026-02-20T12:19:16.013Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlun7xz90014r3hia1f3e7r8",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "7d38b882266bd5d396900adc0797084a63e3a70321eaf27eaa6443431254c668",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-20T08:43:46.231Z\"}",
+      "createdAt": "2026-02-20T08:43:46.243Z",
+      "expiresAt": "2026-02-20T12:43:46.236Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlusl4e90015r3hi342xy5vb",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "7ca8149ea237ea69314980c037b35db35b47906d8aa7e490267288076ea4ccb4",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T11:13:59.158Z\"}",
+      "createdAt": "2026-02-20T11:13:59.169Z",
+      "expiresAt": "2026-02-20T15:13:59.163Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlut7r0n0016r3hi2cfnob8q",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "9ac13b6419cdd478fca67a11655079bb968de213fc8b3b29102aa017d89c6ec1",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-20T11:31:34.802Z\"}",
+      "createdAt": "2026-02-20T11:31:34.884Z",
+      "expiresAt": "2026-02-20T15:31:34.872Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlutee3b0017r3hivxfm3mnn",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "86ae2e67bd273c3b6e90230907edeb6767cd2e4c7dd4e50c0d9255d0259561b3",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-20T11:36:44.732Z\"}",
+      "createdAt": "2026-02-20T11:36:44.756Z",
+      "expiresAt": "2026-02-20T15:36:44.741Z",
+      "revoked": true
+    },
+    {
+      "id": "cmlutfna00018r3hiqr2l40zy",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "a8c17cb04a9edee49da2c5d4a4abd4d9ff94bb64b2b289a4c858cebca2d84e7f",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T11:37:43.318Z\"}",
+      "createdAt": "2026-02-20T11:37:43.320Z",
+      "expiresAt": "2026-02-20T15:37:43.318Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlutx2nv0019r3hijulvsa45",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "45d57160a5ace822848522b85e7d70103ecae6286acfcc05ca4c1c61650e316e",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-20T11:51:16.404Z\"}",
+      "createdAt": "2026-02-20T11:51:16.409Z",
+      "expiresAt": "2026-02-20T15:51:16.411Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlutykjt001ar3hifntr4n3p",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "ea4cc1acff024b79b43f559b1893a95e3980eaae35753cfb61006fc86df75387",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T11:52:26.081Z\"}",
+      "createdAt": "2026-02-20T11:52:26.249Z",
+      "expiresAt": "2026-02-20T15:52:26.084Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluu059x001dr3hifvth5mu3",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "675cdcf9fa6f4ccd839c776242e0c3dffc508753403a2aa6dfb58154a0593040",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-20T11:53:39.764Z\"}",
+      "createdAt": "2026-02-20T11:53:39.765Z",
+      "expiresAt": "2026-02-20T15:53:39.765Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluu7ofs001er3hiqv5agdd0",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "1c2013b5107717a348da188fdff47391f415637c02bf0abb4c418da39965107c",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T11:59:31.095Z\"}",
+      "createdAt": "2026-02-20T11:59:31.190Z",
+      "expiresAt": "2026-02-20T15:59:31.180Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluuowob001hr3hir79zmntl",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "b9ce1c071e9e5d73ba432ef7da22e9ed28278713be64e3724f877c370d895d74",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T12:12:55.006Z\"}",
+      "createdAt": "2026-02-20T12:12:55.017Z",
+      "expiresAt": "2026-02-20T16:12:55.012Z",
+      "revoked": true
+    },
+    {
+      "id": "cmluw0a06001mr3hibavve48p",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "362c6baa79e8e5c41eb9bbae9e221d3ac977ee29e00c877050391d603faa0f7b",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-20T12:49:45.117Z\"}",
+      "createdAt": "2026-02-20T12:49:45.126Z",
+      "expiresAt": "2026-02-20T16:49:45.118Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluxw5a9001nr3his7ctrqre",
+      "userId": "1",
+      "token": "2cca2833ea7ce97338dcc3fe7280a7e6bea6cccd7a95c6a86d8269c464923522",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-20T13:42:21.740Z\"}",
+      "createdAt": "2026-02-20T13:42:31.616Z",
+      "expiresAt": "2026-02-20T17:42:31.611Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluz0j2g0000j7qwfeozsiaf",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "a0f65473b2af9e2c5406e3698092ef412fa448bf9ea2a09a5d5fd626f39f61cd",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T14:13:55.699Z\"}",
+      "createdAt": "2026-02-20T14:13:55.721Z",
+      "expiresAt": "2026-02-20T18:13:55.713Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluz36rc0001j7qw250nsbg3",
+      "userId": "1",
+      "token": "0d112732b80550abbf7544486513c463d0789006339abbdff3af6c8db04aac42",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-20T14:15:55.331Z\"}",
+      "createdAt": "2026-02-20T14:15:59.709Z",
+      "expiresAt": "2026-02-20T18:15:59.652Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluz39jx0002j7qwyjj4tcj4",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "03786d2463553790bc58da8fb03dc1b6552caebe2a1a12b6d3ad5cb82900be2d",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-20T14:16:03.354Z\"}",
+      "createdAt": "2026-02-20T14:16:03.357Z",
+      "expiresAt": "2026-02-20T18:16:03.355Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluz4rxw0003j7qwysqo88up",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "4c223cee3f55969fd2a9b9392fb24a49a54118b8358372b2b258ae5bc9f67104",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T14:17:13.840Z\"}",
+      "createdAt": "2026-02-20T14:17:13.845Z",
+      "expiresAt": "2026-02-20T18:17:13.843Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluz5h9m0004j7qwuiijubks",
+      "userId": "1",
+      "token": "1380336619a825853c97b618b9c94351651f2ea3c9adbc79d7a1fc32f6a3f393",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-20T14:17:45.339Z\"}",
+      "createdAt": "2026-02-20T14:17:46.666Z",
+      "expiresAt": "2026-02-20T18:17:46.663Z",
+      "revoked": false
+    },
+    {
+      "id": "cmluz8mla0005j7qw1ieumkh6",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "0cf56a0d4ed5d02dcc6032988c6f15ef90152cdd340dd990ea7bffddc1431680",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T14:20:13.523Z\"}",
+      "createdAt": "2026-02-20T14:20:13.535Z",
+      "expiresAt": "2026-02-20T18:20:13.528Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlv081op0006j7qw26d0fe17",
+      "userId": "1",
+      "token": "048c53d231f57c016c88702b77893534af1a5aa3eca2bb93262f2d6f76d42fbe",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-20T14:47:43.647Z\"}",
+      "createdAt": "2026-02-20T14:47:45.995Z",
+      "expiresAt": "2026-02-20T18:47:45.425Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlv2exb80008j7qw0vqa9zyy",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "d4f24cab4a65bd067ef5bacb7dfcd45bf814156576e4c84052b6c6aaacdd209a",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T15:49:06.198Z\"}",
+      "createdAt": "2026-02-20T15:49:06.205Z",
+      "expiresAt": "2026-02-20T19:49:06.201Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlv2fsk80009j7qwwc14jb25",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "21e6a1b7f6e3731036b776ff9706c688014581ec5ad2f9c9f92eb5e34303e8ad",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-20T15:49:46.705Z\"}",
+      "createdAt": "2026-02-20T15:49:46.713Z",
+      "expiresAt": "2026-02-20T19:49:46.706Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlv2g7cm000aj7qwz1cx8rx2",
+      "userId": "1",
+      "token": "c8c8cabec7b7b3d22e3bc7a6b3149b7c9a3cb07ebbe1f9cbc413974da6028b21",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-20T15:49:44.158Z\"}",
+      "createdAt": "2026-02-20T15:50:05.878Z",
+      "expiresAt": "2026-02-20T19:50:05.871Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlv2i9wm0000s6se7iw1e6cu",
+      "userId": "1",
+      "token": "f9513cecde002249b1679c763f7df8c637a3d2e8c381a6741ff3ce8e0c29a407",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-20T15:51:40.401Z\"}",
+      "createdAt": "2026-02-20T15:51:42.499Z",
+      "expiresAt": "2026-02-20T19:51:42.391Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlv2j6th0001s6se1xbwf1mh",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "f308797e5791dc6d5f79602a03a86adf780c7f1df1003b3afec778513edc6c09",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-20T15:52:25.153Z\"}",
+      "createdAt": "2026-02-20T15:52:25.158Z",
+      "expiresAt": "2026-02-20T19:52:25.155Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlv2jz5z0002s6seheppbj8j",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "1bcf4e8dc8a1360b2d7088aae9338c8c02b8850b0c342f5ed9370b9cf3c88e38",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-20T15:53:01.891Z\"}",
+      "createdAt": "2026-02-20T15:53:01.896Z",
+      "expiresAt": "2026-02-20T19:53:01.893Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlv2lzei0003s6sehvfgkduz",
+      "userId": "1",
+      "token": "82b1a51c4a3e90524fbc4a739eb2de7111e0f69bb4d663b86f961bdac758ac60",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-20T15:54:30.987Z\"}",
+      "createdAt": "2026-02-20T15:54:35.504Z",
+      "expiresAt": "2026-02-20T19:54:35.453Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwb23il0000106qw8cbvuyu",
+      "userId": "1",
+      "token": "00729c04a33f90618de4ccc0be9448d8da2736415c62316777b33bcd83be8c74",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-21T12:38:49.341Z\"}",
+      "createdAt": "2026-02-21T12:38:50.444Z",
+      "expiresAt": "2026-02-21T16:38:50.398Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwb4qd10001106q37m6vssc",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "73c97c5c771f68ab0af41a782035150c90f4ef7c2eda67fc1e54a972d91175f4",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-21T12:40:53.358Z\"}",
+      "createdAt": "2026-02-21T12:40:53.365Z",
+      "expiresAt": "2026-02-21T16:40:53.363Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwb7uy40002106qbjkuaaw2",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "df37a11a90433a3849cd2fa27a2dfbad3f4dd3c743837f38d873185b529b35c3",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-21T12:43:19.272Z\"}",
+      "createdAt": "2026-02-21T12:43:19.276Z",
+      "expiresAt": "2026-02-21T16:43:19.273Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwbg4ov0003106q9uoxkmtv",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "705e2bfb82a87fdbca6670076a598932e7bbdd5c3f29a509ff284e482a1dc19a",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-21T12:49:45.149Z\"}",
+      "createdAt": "2026-02-21T12:49:45.152Z",
+      "expiresAt": "2026-02-21T16:49:45.151Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwbkipn0004106q4gcix2w0",
+      "userId": "1",
+      "token": "5e91d94bd84b7ed284265a13cf29e6477c53f9462f608641ba98486d5496e8b2",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-21T12:53:09.262Z\"}",
+      "createdAt": "2026-02-21T12:53:09.948Z",
+      "expiresAt": "2026-02-21T16:53:09.943Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwblkqo0006106qr606i399",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "c3386c7170acf7f9439a64c063024a22fa045da0eb38fe15bfa666e91d9395b8",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-21T12:53:59.223Z\"}",
+      "createdAt": "2026-02-21T12:53:59.232Z",
+      "expiresAt": "2026-02-21T16:53:59.231Z",
+      "revoked": true
+    },
+    {
+      "id": "cmlwbo69p0007106qzucv5no3",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "90734a763721c4efbcc696de5887a383a3078e792f2539295f7fad1b83340957",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-21T12:56:00.444Z\"}",
+      "createdAt": "2026-02-21T12:56:00.446Z",
+      "expiresAt": "2026-02-21T16:56:00.445Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwc06ah0008106qdpe5w3ru",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "a8142e5db911663c08c2794e4bde73f87bcf5d0f929ff3c025c4ad27c652a10b",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-21T13:05:20.336Z\"}",
+      "createdAt": "2026-02-21T13:05:20.344Z",
+      "expiresAt": "2026-02-21T17:05:20.337Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwc0ahx0009106qz44qydiy",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "4d3de063b3edc8c9b295507983a979ef872317afe7d081df18f11a276a0eb83c",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-21T13:05:25.794Z\"}",
+      "createdAt": "2026-02-21T13:05:25.797Z",
+      "expiresAt": "2026-02-21T17:05:25.795Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwc1v3g000a106qxng31skz",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "ebf98098e52c0fdd46c07064d89aabc8c8514c51272b41b33179955e9e556485",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-21T13:06:39.141Z\"}",
+      "createdAt": "2026-02-21T13:06:39.149Z",
+      "expiresAt": "2026-02-21T17:06:39.146Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwc9alg000b106qxzgcc3lt",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "54f1d882b95ad6a36fc200dbf63ef49c0710ba0f8fe00a3f204a802b9f4f236a",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-21T13:12:25.814Z\"}",
+      "createdAt": "2026-02-21T13:12:25.827Z",
+      "expiresAt": "2026-02-21T17:12:25.822Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwco7ad000c106qa353p9rv",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "81f6036a7dc05e12beb6702e13b43019c6c094ed90be2dca0a7b0ff5e21699bb",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-21T13:24:01.376Z\"}",
+      "createdAt": "2026-02-21T13:24:01.381Z",
+      "expiresAt": "2026-02-21T17:24:01.378Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwctnxj000d106q70lei3zu",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "65026e06477a606572624240f95f23929f996ef476cb3c394957a8ad3d611ac4",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-21T13:28:16.225Z\"}",
+      "createdAt": "2026-02-21T13:28:16.231Z",
+      "expiresAt": "2026-02-21T17:28:16.226Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwcugkv000e106q99hzmd1b",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "00bf50ec6f93efa31afae2cc278382fa61570594ae5627bd08d17c167fd41b2b",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-21T13:28:53.344Z\"}",
+      "createdAt": "2026-02-21T13:28:53.359Z",
+      "expiresAt": "2026-02-21T17:28:53.357Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwd1s00000f106qy197bk0u",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "8430e1a8ab25902fb34a7de1c3a8098414c3a02229be4080aa38a5f8292c26c3",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-21T13:34:34.746Z\"}",
+      "createdAt": "2026-02-21T13:34:34.751Z",
+      "expiresAt": "2026-02-21T17:34:34.747Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwdeiji000g106qixrmfhtl",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "0a777e61e59bceb2b5b62a7a089e9b7ac421ad69cfb2eab4e3266decddc67be6",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-21T13:44:29.008Z\"}",
+      "createdAt": "2026-02-21T13:44:29.022Z",
+      "expiresAt": "2026-02-21T17:44:29.009Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwdwtkn000h106q0wsoijl9",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "f673c7159241eccce4d11cb1fa15cc4143eff8520c32048dc5c655a9ad39d65b",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-21T13:58:43.121Z\"}",
+      "createdAt": "2026-02-21T13:58:43.126Z",
+      "expiresAt": "2026-02-21T17:58:43.122Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwe8a2e0000njfhe7enu98p",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "0b99f03d3df3627b83478641261f117bee3a838d86015cf6677e1fca6e0b9889",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-21T14:07:37.704Z\"}",
+      "createdAt": "2026-02-21T14:07:37.716Z",
+      "expiresAt": "2026-02-21T18:07:37.708Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwe8skk0001njfhydxy9214",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "d3da99b90cf11a88602043ab0337a4bb26c6737c460c5ffb31f8167944a051af",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-21T14:08:01.687Z\"}",
+      "createdAt": "2026-02-21T14:08:01.700Z",
+      "expiresAt": "2026-02-21T18:08:01.694Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwe8tju0002njfhfwtlu8l6",
+      "userId": "1",
+      "token": "8ad2d9d28584527a73574a2cb4e690a093841ae40c9da1923071bc70fc939933",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-21T14:07:59.674Z\"}",
+      "createdAt": "2026-02-21T14:08:02.971Z",
+      "expiresAt": "2026-02-21T18:08:02.968Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwe9pdv0003njfh0p83g698",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "d15ff9e6e77e35d1611f72592e8b33adb2f4f7462a0f7eef5dfadda007b31613",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-21T14:08:44.219Z\"}",
+      "createdAt": "2026-02-21T14:08:44.227Z",
+      "expiresAt": "2026-02-21T18:08:44.221Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwea2900004njfhy7nfd1y6",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "37ec48183215a5583de01b821fa2442ee42a3b1d1fc3cbfd2a3aaae7c3a19589",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-21T14:09:00.898Z\"}",
+      "createdAt": "2026-02-21T14:09:00.901Z",
+      "expiresAt": "2026-02-21T18:09:00.899Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwel8wc0005njfhdzfo3wvr",
+      "userId": "1",
+      "token": "394b74a7801281dbe1f56a604314d48959da71beb4804679efbcfc1a658f1633",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-21T14:17:41.528Z\"}",
+      "createdAt": "2026-02-21T14:17:42.730Z",
+      "expiresAt": "2026-02-21T18:17:42.646Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlweqzfx0006njfhba4fga5d",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "ab88b9a6d5569899b471858e6a707427478d5f3abf56ffda5b006b06f9b9870a",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-21T14:22:10.409Z\"}",
+      "createdAt": "2026-02-21T14:22:10.413Z",
+      "expiresAt": "2026-02-21T18:22:10.412Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlweri570007njfhckt6l0a1",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "37bea62a1968c560dcc47dea4ac74dcf6fb58926694a62d2e9df9dfc71d1e32c",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-21T14:22:34.563Z\"}",
+      "createdAt": "2026-02-21T14:22:34.652Z",
+      "expiresAt": "2026-02-21T18:22:34.646Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwf3v1b0008njfhra4ilrdd",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "bde33d26e828b611cd2c09ef6b8f6a6a4afe68daa4071088bdf960c1bdad7757",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-21T14:32:11.224Z\"}",
+      "createdAt": "2026-02-21T14:32:11.231Z",
+      "expiresAt": "2026-02-21T18:32:11.226Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwfc5lz0009njfhfxicaujv",
+      "userId": "1",
+      "token": "cb7f5e127cc4a8647651708bc41f662e24d7c1a2d5d8aff7f3e849599bb65fe8",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-21T14:38:37.881Z\"}",
+      "createdAt": "2026-02-21T14:38:38.184Z",
+      "expiresAt": "2026-02-21T18:38:38.182Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwhq7su000013hnbb8tt62q",
+      "userId": "1",
+      "token": "7d8dd54b08d260a954cfd1a11e368d559f21c21101ea9fd223ea288102b96701",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-21T15:45:29.885Z\"}",
+      "createdAt": "2026-02-21T15:45:33.437Z",
+      "expiresAt": "2026-02-21T19:45:32.553Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwihcz7000w13hn35uma15e",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "663332baf92abaf8c9d090f9fdd7779bf261155820ae78783782b72728a0831a",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-21T16:06:39.845Z\"}",
+      "createdAt": "2026-02-21T16:06:39.859Z",
+      "expiresAt": "2026-02-21T20:06:39.852Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwiij0a000x13hn3dc5o3fn",
+      "userId": "cmlgw5pts0000ly3nsisw7kqd",
+      "token": "08ffe8295e307828a4806824f2bca63e8c2b31a6fb4ef0ba7511a40220053caf",
+      "data": "{\"id\":\"cmlgw5pts0000ly3nsisw7kqd\",\"username\":\"Jared\",\"email\":\"jared69gmail.com\",\"role\":\"teacher\",\"fullName\":\"jared a villanueva\",\"createdAt\":\"2026-02-21T16:07:34.322Z\"}",
+      "createdAt": "2026-02-21T16:07:34.331Z",
+      "expiresAt": "2026-02-21T20:07:34.328Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwiiyyv000y13hnto4hmd2u",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "f065e985ca7ee4d11d66922e58bef9e3262b4f5aca424bd0cea34c3a2fc8aa03",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-21T16:07:55.011Z\"}",
+      "createdAt": "2026-02-21T16:07:55.016Z",
+      "expiresAt": "2026-02-21T20:07:55.014Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwini2t000z13hnt01i6bp3",
+      "userId": "cmlgw5pts0000ly3nsisw7kqd",
+      "token": "657fa3ce175052ab80ecc06018851442e2bc66a159859eadb7a2f19b4c1eb487",
+      "data": "{\"id\":\"cmlgw5pts0000ly3nsisw7kqd\",\"username\":\"Jared\",\"email\":\"jared69gmail.com\",\"role\":\"teacher\",\"fullName\":\"jared a villanueva\",\"createdAt\":\"2026-02-21T16:11:26.380Z\"}",
+      "createdAt": "2026-02-21T16:11:26.405Z",
+      "expiresAt": "2026-02-21T20:11:26.403Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwipp88001013hn9i8czhjn",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "c445ef4bd46984c0c135e01cc0bebcdea11a5d7331c89bf9e81a421d47498593",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-21T16:13:08.977Z\"}",
+      "createdAt": "2026-02-21T16:13:08.984Z",
+      "expiresAt": "2026-02-21T20:13:08.982Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwiw8ef001113hn19u1dpow",
+      "userId": "1",
+      "token": "16b28d024459518fffc81b7a8d9ca312bcbecbb56882c7170cf2d38d311c9d53",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-21T16:18:11.567Z\"}",
+      "createdAt": "2026-02-21T16:18:13.766Z",
+      "expiresAt": "2026-02-21T20:18:13.761Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwizsnf001213hnx92c028q",
+      "userId": "cmlgw5pts0000ly3nsisw7kqd",
+      "token": "6a17c768788ca4251b96904f3b8c6e39d6e70a03d27e4c6d1291a2bff5d527b9",
+      "data": "{\"id\":\"cmlgw5pts0000ly3nsisw7kqd\",\"username\":\"Jared\",\"email\":\"jared69gmail.com\",\"role\":\"teacher\",\"fullName\":\"jared a villanueva\",\"createdAt\":\"2026-02-21T16:20:59.967Z\"}",
+      "createdAt": "2026-02-21T16:20:59.975Z",
+      "expiresAt": "2026-02-21T20:20:59.972Z",
+      "revoked": true
+    },
+    {
+      "id": "cmlwj2a1p001313hn0a6af635",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "21b3789317358f0742882296b6c629c42f635c9b0dc53edc3ddfd88408788df5",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-21T16:22:55.832Z\"}",
+      "createdAt": "2026-02-21T16:22:55.836Z",
+      "expiresAt": "2026-02-21T20:22:55.833Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwjj3rg001413hnycq29lsl",
+      "userId": "1",
+      "token": "9089748f61edab2e06fbdef7106bca2b2c9622c62aa547cc393be32afa2cbce7",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-21T16:35:59.868Z\"}",
+      "createdAt": "2026-02-21T16:36:00.844Z",
+      "expiresAt": "2026-02-21T20:36:00.839Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlwjrig2001513hn5hbenumq",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "0b334e9fe788012eb22db042a6b5cdf7f822eb5b9fe7f093577a33f9efc1b0fc",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-21T16:42:33.113Z\"}",
+      "createdAt": "2026-02-21T16:42:33.121Z",
+      "expiresAt": "2026-02-21T20:42:33.115Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxhy8g30000ys0e54ty6uyp",
+      "userId": "1",
+      "token": "665eaf002ca30a7eb7d077d1a736af4e1636f65f153b651864bc23deb35cd0f3",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-22T08:39:26.999Z\"}",
+      "createdAt": "2026-02-22T08:39:33.696Z",
+      "expiresAt": "2026-02-22T12:39:32.303Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxja5jp0000o2sqsgtdd5yc",
+      "userId": "1",
+      "token": "af2438cd0b0bc2670162241d75fb45612a2a3988a7aa6b1ae196da1dcc5e39d2",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-22T09:16:43.830Z\"}",
+      "createdAt": "2026-02-22T09:16:49.409Z",
+      "expiresAt": "2026-02-22T13:16:47.399Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxjb58w0001o2sqjvr544bx",
+      "userId": "1",
+      "token": "a00b2fe6550628fb49ace7cb7373562b6f5e6477ebe58850eee77ac07103065d",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-22T09:17:35.125Z\"}",
+      "createdAt": "2026-02-22T09:17:35.695Z",
+      "expiresAt": "2026-02-22T13:17:35.690Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxjciwy0002o2sqb129fyxu",
+      "userId": "1",
+      "token": "d0e252c0ff21acb7ad7834991a1b7100681252db78bf83efb0c7f27e411b2640",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-22T09:18:39.190Z\"}",
+      "createdAt": "2026-02-22T09:18:40.066Z",
+      "expiresAt": "2026-02-22T13:18:40.059Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxjdt470003o2sqzjiv76pi",
+      "userId": "1",
+      "token": "d92b4beac90905e5cc231b6bb1b9a12176a06a2cb7abbd1534f70f72d79f080c",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-22T09:19:38.593Z\"}",
+      "createdAt": "2026-02-22T09:19:39.943Z",
+      "expiresAt": "2026-02-22T13:19:39.940Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxjf1q40004o2sq71qcw5i6",
+      "userId": "2",
+      "token": "aa95ef1e4cca6ae0c8eab91ce5287ea3cc272945ed50a1ae368be1ee0b035475",
+      "data": "{\"id\":\"2\",\"username\":\"teacher1\",\"email\":\"teacher1@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Maria Santos\",\"createdAt\":\"2026-02-22T09:20:37.255Z\"}",
+      "createdAt": "2026-02-22T09:20:37.756Z",
+      "expiresAt": "2026-02-22T13:20:37.752Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxjg5um0005o2sqam7ytznm",
+      "userId": "4",
+      "token": "afb79bd4bfe08330cf80a417710b542a95a13ea2b051e18f62ac37efb4c436c5",
+      "data": "{\"id\":\"4\",\"username\":\"student1\",\"email\":\"student1@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Pedro Reyes\",\"createdAt\":\"2026-02-22T09:21:29.541Z\"}",
+      "createdAt": "2026-02-22T09:21:29.759Z",
+      "expiresAt": "2026-02-22T13:21:29.754Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxjgecr0006o2sqgwyxsk93",
+      "userId": "cmlr96blo000jvd85kgttd6oq",
+      "token": "7874918cada801e13b665a9e72a1a58cdc3e55118383b4b867aea4953af29431",
+      "data": "{\"id\":\"cmlr96blo000jvd85kgttd6oq\",\"username\":\"heart\",\"email\":\"heart.ayson@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Heart Ayson\",\"createdAt\":\"2026-02-22T09:21:40.774Z\"}",
+      "createdAt": "2026-02-22T09:21:40.779Z",
+      "expiresAt": "2026-02-22T13:21:40.775Z",
+      "revoked": true
+    },
+    {
+      "id": "cmlxjk95j0007o2sq9doptzmf",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "3037e8ca1fa81b82f73015fadb7cd600a330aa9d8eaaf8e0cbee75baab9cfc15",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-22T09:24:40.546Z\"}",
+      "createdAt": "2026-02-22T09:24:40.662Z",
+      "expiresAt": "2026-02-22T13:24:40.573Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxjpeuq000ao2sqgii6r8uz",
+      "userId": "1",
+      "token": "d003a38e8f08094c163d77c831b112d1aed2f1f41a4628a011415fb701850218",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-22T09:28:40.106Z\"}",
+      "createdAt": "2026-02-22T09:28:41.330Z",
+      "expiresAt": "2026-02-22T13:28:41.328Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxjpo68000bo2sqbukmpy9g",
+      "userId": "1",
+      "token": "3f2039e7d1a2a48f5be197b969c864b4f93a481a754c8d29cca693d7060bffb1",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-22T09:28:52.533Z\"}",
+      "createdAt": "2026-02-22T09:28:53.409Z",
+      "expiresAt": "2026-02-22T13:28:53.406Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxjta3k000co2sqq6yytb53",
+      "userId": "1",
+      "token": "2eec226454b64cbea3da4bf7e8db35271a3cb4ef682be327475ffc6be82e04ed",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-22T09:31:40.698Z\"}",
+      "createdAt": "2026-02-22T09:31:41.788Z",
+      "expiresAt": "2026-02-22T13:31:41.783Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxju2wb000do2sqzqe6x9d1",
+      "userId": "1",
+      "token": "1e8f356397c6ea9c88f8b71b6e0c9ae097ad6ee794f3f1410277f33282bb478d",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-22T09:32:18.505Z\"}",
+      "createdAt": "2026-02-22T09:32:19.116Z",
+      "expiresAt": "2026-02-22T13:32:19.110Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxjub3r000eo2sqxgh1vtnm",
+      "userId": "2",
+      "token": "fa454a5cfafe9971debd4f047d45e1945e3a6eada7fc9cb52368b8669c09f7c1",
+      "data": "{\"id\":\"2\",\"username\":\"teacher1\",\"email\":\"teacher1@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Maria Santos\",\"createdAt\":\"2026-02-22T09:32:18.626Z\"}",
+      "createdAt": "2026-02-22T09:32:29.751Z",
+      "expiresAt": "2026-02-22T13:32:29.750Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxjuk62000fo2sqo18e9fz5",
+      "userId": "4",
+      "token": "5fefcdb271ac85fb48f1c4864ad5e16270d8372499831d9aaa40e1131f7ff194",
+      "data": "{\"id\":\"4\",\"username\":\"student1\",\"email\":\"student1@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Pedro Reyes\",\"createdAt\":\"2026-02-22T09:32:18.884Z\"}",
+      "createdAt": "2026-02-22T09:32:41.498Z",
+      "expiresAt": "2026-02-22T13:32:41.496Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxjverb000go2sqf79zwibw",
+      "userId": "1",
+      "token": "0f5015ad337d9290735c054712f85566d22b95f620f8283c79c0a3a9b529ab22",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-22T09:33:20.101Z\"}",
+      "createdAt": "2026-02-22T09:33:21.143Z",
+      "expiresAt": "2026-02-22T13:33:21.136Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxjvwbn000ho2sq8mz9eqzm",
+      "userId": "1",
+      "token": "a86aba3b127a60787d15e5c3bcca2db70d8e8e77992a9c694380dbc10ed22cf2",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-22T09:33:20.101Z\"}",
+      "createdAt": "2026-02-22T09:33:43.908Z",
+      "expiresAt": "2026-02-22T13:33:43.905Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxjwdbq000io2sqbvsw7ekq",
+      "userId": "1",
+      "token": "18abedb469439b34c97ba5bb9379ac099e5643b4138e86ee79619a96f5874cb3",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-22T09:33:20.101Z\"}",
+      "createdAt": "2026-02-22T09:34:05.942Z",
+      "expiresAt": "2026-02-22T13:34:05.940Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxk5tyr0000ymtqzrvy89ly",
+      "userId": "1",
+      "token": "6e2f757601e6c5c7f9e7198adafbe3358ee98a150c5522797a750db00ea30988",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-22T09:41:25.515Z\"}",
+      "createdAt": "2026-02-22T09:41:27.411Z",
+      "expiresAt": "2026-02-22T13:41:26.947Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxk6qby0001ymtq5jttjx0u",
+      "userId": "1",
+      "token": "ca64a5482ec5ab59e6cb219b012d3ae0c65c1ddd03f4ee46da072caae1dca412",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-22T09:42:08.799Z\"}",
+      "createdAt": "2026-02-22T09:42:09.358Z",
+      "expiresAt": "2026-02-22T13:42:09.355Z",
+      "revoked": true
+    },
+    {
+      "id": "cmlxk74at0002ymtq3zq7qdh0",
+      "userId": "2",
+      "token": "2fd252cc8f0b1540be3b2b788c86a0d0267d07f6dd2ef92810b69ac646efa889",
+      "data": "{\"id\":\"2\",\"username\":\"teacher1\",\"email\":\"teacher1@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Maria Santos\",\"createdAt\":\"2026-02-22T09:42:26.974Z\"}",
+      "createdAt": "2026-02-22T09:42:27.461Z",
+      "expiresAt": "2026-02-22T13:42:27.459Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxk76z70003ymtq5fhmgu0q",
+      "userId": "4",
+      "token": "000c90aea7cb1690ae88f64e4f670b25d9a6e296250c8bb2ef7b4e926ff0106d",
+      "data": "{\"id\":\"4\",\"username\":\"student1\",\"email\":\"student1@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Pedro Reyes\",\"createdAt\":\"2026-02-22T09:42:27.275Z\"}",
+      "createdAt": "2026-02-22T09:42:30.932Z",
+      "expiresAt": "2026-02-22T13:42:30.930Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxk79jz0004ymtq4f2qage2",
+      "userId": "1",
+      "token": "00b6fd2e53aa2b01ce01684c55a6993e0d479072195d60b243b6da677c791963",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-22T09:42:26.801Z\"}",
+      "createdAt": "2026-02-22T09:42:34.272Z",
+      "expiresAt": "2026-02-22T13:42:34.270Z",
+      "revoked": true
+    },
+    {
+      "id": "cmlxk7a730005ymtqoeedajpw",
+      "userId": "2",
+      "token": "232433cdc248690cafe48cae2c5c9da3eda2d78e72f8cc80a72237ab8b65b143",
+      "data": "{\"id\":\"2\",\"username\":\"teacher1\",\"email\":\"teacher1@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Maria Santos\",\"createdAt\":\"2026-02-22T09:42:26.974Z\"}",
+      "createdAt": "2026-02-22T09:42:35.103Z",
+      "expiresAt": "2026-02-22T13:42:35.073Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxk7aj20006ymtqyaga2u5z",
+      "userId": "4",
+      "token": "3e22eeeeaba08d7b9bf6acf2d17bb1bacef11f048ee497f64eca74b3e397e6ba",
+      "data": "{\"id\":\"4\",\"username\":\"student1\",\"email\":\"student1@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Pedro Reyes\",\"createdAt\":\"2026-02-22T09:42:27.275Z\"}",
+      "createdAt": "2026-02-22T09:42:35.534Z",
+      "expiresAt": "2026-02-22T13:42:35.533Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxk7pyl0007ymtq0gzvrzy6",
+      "userId": "1",
+      "token": "dce4b8abc76f484ad918f6b9a18e5843fb78c922be87f4511986fd11884e2a97",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-22T09:42:26.801Z\"}",
+      "createdAt": "2026-02-22T09:42:55.533Z",
+      "expiresAt": "2026-02-22T13:42:55.531Z",
+      "revoked": true
+    },
+    {
+      "id": "cmlxk85030008ymtqjk3w41d8",
+      "userId": "1",
+      "token": "6107945e6a4ae271d262d59249d3dc1cd2a66ff884a5c0a712eee3e60521f06f",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-22T09:42:26.801Z\"}",
+      "createdAt": "2026-02-22T09:43:15.027Z",
+      "expiresAt": "2026-02-22T13:43:15.025Z",
+      "revoked": true
+    },
+    {
+      "id": "cmlxk89aw0009ymtq5oz154tk",
+      "userId": "2",
+      "token": "631ec3c40812f669dc66288c3f60d3934a02cb56f83937bc4abc16a914e21801",
+      "data": "{\"id\":\"2\",\"username\":\"teacher1\",\"email\":\"teacher1@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Maria Santos\",\"createdAt\":\"2026-02-22T09:43:20.308Z\"}",
+      "createdAt": "2026-02-22T09:43:20.600Z",
+      "expiresAt": "2026-02-22T13:43:20.599Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxk89my000aymtqvyjewgxr",
+      "userId": "4",
+      "token": "c05903561b158147c23c62a6f94fd65f3142a47c5f7accf1d448096f876c009f",
+      "data": "{\"id\":\"4\",\"username\":\"student1\",\"email\":\"student1@pnhs.edu.ph\",\"role\":\"student\",\"fullName\":\"Pedro Reyes\",\"createdAt\":\"2026-02-22T09:43:20.504Z\"}",
+      "createdAt": "2026-02-22T09:43:21.035Z",
+      "expiresAt": "2026-02-22T13:43:21.033Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxk8noo000bymtqh8ex4014",
+      "userId": "1",
+      "token": "2a64d4f75a1ef8ffac3f81c7436acb324916329ae73e239710b77837283031c0",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-22T09:43:20.228Z\"}",
+      "createdAt": "2026-02-22T09:43:39.240Z",
+      "expiresAt": "2026-02-22T13:43:39.238Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxkhmwi000cymtq3imzklg5",
+      "userId": "1",
+      "token": "5f2c763f239f034d1043b796248426d87bf73fc970a78b80f2d874b9ec770395",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-22T09:50:37.316Z\"}",
+      "createdAt": "2026-02-22T09:50:38.115Z",
+      "expiresAt": "2026-02-22T13:50:38.065Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxkit30000dymtqlfuw1brv",
+      "userId": "cmlr9neqb000tvd85werf89x4",
+      "token": "c06960b5e3c149e1b10b8635828385ec51b14fe4058c7b49c1ede76ef2e72c30",
+      "data": "{\"id\":\"cmlr9neqb000tvd85werf89x4\",\"username\":\"lady\",\"email\":\"lady.benigno@pnhs.edu.ph\",\"role\":\"teacher\",\"fullName\":\"Lady Jane Benigno\",\"createdAt\":\"2026-02-22T09:51:32.775Z\"}",
+      "createdAt": "2026-02-22T09:51:32.790Z",
+      "expiresAt": "2026-02-22T13:51:32.783Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxkvz2d000eymtqmoueu7t5",
+      "userId": "1",
+      "token": "911f395a46b80645913263c06a6f9f0f7af8bcc6d7ca73466824805bb49a94e3",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-22T10:01:45.501Z\"}",
+      "createdAt": "2026-02-22T10:01:47.051Z",
+      "expiresAt": "2026-02-22T14:01:46.834Z",
+      "revoked": false
+    },
+    {
+      "id": "cmlxky01r000fymtqdm513yju",
+      "userId": "1",
+      "token": "ac1129c92d504bdb7fa820729895cd835b0b815ec92c29b9edc417ece514fe6a",
+      "data": "{\"id\":\"1\",\"username\":\"admin\",\"email\":\"admin@pnhs.edu.ph\",\"role\":\"admin\",\"fullName\":\"Administrator\",\"createdAt\":\"2026-02-22T10:03:20.949Z\"}",
+      "createdAt": "2026-02-22T10:03:21.654Z",
+      "expiresAt": "2026-02-22T14:03:21.648Z",
+      "revoked": false
+    }
+  ],
+  "Announcement": [
+    {
+      "id": "cmlg1cmq50001w6kwl8rkgnyy",
+      "title": "Welcome",
+      "message": "DB-backed announcement",
+      "date": "2026-02-10T00:00:00.000Z",
+      "author": "Admin",
+      "type": "info",
+      "createdAt": "2026-02-10T03:22:46.923Z",
+      "deletedAt": "2026-02-20T14:48:09.844Z"
+    },
+    {
+      "id": "cmljqq2op0000v62h5i4q4opz",
+      "title": "tyuiop",
+      "message": "rfghj",
+      "date": "2026-02-12T17:36:23.034Z",
+      "author": "Administrator",
+      "type": "warning",
+      "createdAt": "2026-02-12T17:36:23.062Z",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlkx18tj0001jolymzuehx42",
+      "title": "123456789",
+      "message": "cvbnm,",
+      "date": "2026-02-13T13:20:47.994Z",
+      "author": "Administrator",
+      "type": "info",
+      "createdAt": "2026-02-13T13:20:48.075Z",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlt1dgzt00018htmzaxtyyaq",
+      "title": "hi",
+      "message": "lksbjmc s",
+      "date": "2026-02-19T05:44:23.915Z",
+      "author": "Administrator",
+      "type": "success",
+      "createdAt": "2026-02-19T05:44:26.345Z",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlt1dh1r00038htmo8yz5i43",
+      "title": "hi",
+      "message": "lksbjmc s",
+      "date": "2026-02-19T05:44:25.346Z",
+      "author": "Administrator",
+      "type": "success",
+      "createdAt": "2026-02-19T05:44:26.345Z",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlt1dh0000028htma9dgitnn",
+      "title": "hi",
+      "message": "lksbjmc s",
+      "date": "2026-02-19T05:44:25.129Z",
+      "author": "Administrator",
+      "type": "success",
+      "createdAt": "2026-02-19T05:44:26.345Z",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlwbkzu00005106qpljbfo4z",
+      "title": "QWERTYUIOP",
+      "message": "SDFGHJK",
+      "date": "2026-02-21T12:53:32.127Z",
+      "author": "Administrator",
+      "type": "warning",
+      "createdAt": "2026-02-21T12:53:32.136Z",
+      "deletedAt": null
+    },
+    {
+      "id": "cmlwid6rf000r13hnghcs4r4e",
+      "title": "sdfghjk",
+      "message": "asdfghjkl",
+      "date": "2026-02-21T16:03:25.076Z",
+      "author": "Administrator",
+      "type": "warning",
+      "createdAt": "2026-02-21T16:03:25.176Z",
+      "deletedAt": null
+    }
+  ],
+  "Settings": [],
+  "AuditLog": [
+    {
+      "id": "cmlr95aeg000fvd85b6ewa8dz",
+      "actorId": "1",
+      "actorRole": "admin",
+      "action": "soft-delete",
+      "resource": "Student",
+      "resourceId": "cmlguc6uu000011oabhsa77b3",
+      "metadata": null,
+      "createdAt": "2026-02-17T23:46:29.224Z"
+    },
+    {
+      "id": "cmlr95eg6000gvd85dr9t9bk9",
+      "actorId": "1",
+      "actorRole": "admin",
+      "action": "soft-delete",
+      "resource": "Student",
+      "resourceId": "cmlr93hmd000evd85mxgi3rmm",
+      "metadata": null,
+      "createdAt": "2026-02-17T23:46:34.470Z"
+    },
+    {
+      "id": "cmlsd85dy0001tzhytuadab3o",
+      "actorId": "1",
+      "actorRole": "admin",
+      "action": "soft-delete",
+      "resource": "Student",
+      "resourceId": "cmlkxrwfo0002r0vjxxrqjnaz",
+      "metadata": null,
+      "createdAt": "2026-02-18T18:28:27.333Z"
+    },
+    {
+      "id": "cmlt38gjo00041390711328ip",
+      "actorId": "1",
+      "actorRole": "admin",
+      "action": "soft-delete",
+      "resource": "Class",
+      "resourceId": "cmlgw7vv20001ly3nfommgu67",
+      "metadata": null,
+      "createdAt": "2026-02-19T06:36:31.812Z"
+    },
+    {
+      "id": "cmlv08k220007j7qww7042l8k",
+      "actorId": "1",
+      "actorRole": "admin",
+      "action": "soft-delete",
+      "resource": "Announcement",
+      "resourceId": "cmlg1cmq50001w6kwl8rkgnyy",
+      "metadata": null,
+      "createdAt": "2026-02-20T14:48:09.866Z"
+    },
+    {
+      "id": "cmlwi559z000p13hnu2h9u5ya",
+      "actorId": "1",
+      "actorRole": "admin",
+      "action": "soft-delete",
+      "resource": "Class",
+      "resourceId": "cmlwi4ycd000e13hne4r2lgtf",
+      "metadata": null,
+      "createdAt": "2026-02-21T15:57:10.007Z"
+    },
+    {
+      "id": "cmlwi57bm000q13hn70paqlhv",
+      "actorId": "1",
+      "actorRole": "admin",
+      "action": "soft-delete",
+      "resource": "Class",
+      "resourceId": "cmlwi4ycd000e13hne4r2lgtf",
+      "metadata": null,
+      "createdAt": "2026-02-21T15:57:12.658Z"
+    }
+  ]
+}

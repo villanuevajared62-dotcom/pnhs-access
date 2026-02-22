@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { getSessionUser } from "@/lib/server-session-node";
 import { put } from "@vercel/blob";
 
-export const runtime = "nodejs"
+export const runtime = "nodejs";
 
 const db = prisma as any;
 
@@ -74,7 +74,10 @@ export async function POST(req: NextRequest) {
       // Upload to Vercel Blob for persistent storage
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
-      const blobOptions = { access: "public", token: process.env.BLOB_READ_WRITE_TOKEN } as const;
+      const blobOptions = {
+        access: "public",
+        token: process.env.BLOB_READ_WRITE_TOKEN,
+      } as const;
       const blob = await put(safeName, buffer, blobOptions);
 
       const existing = await db.submission.findFirst({

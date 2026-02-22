@@ -4,11 +4,9 @@ import { signSessionUser } from "@/lib/server-session-node";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
-export const runtime = "nodejs"
+export const runtime = "nodejs";
 
-// Note: Rate limiting is handled at Vercel edge or via external service (e.g., Upstash Redis)
-// For now, we'll skip rate limiting in serverless - Vercel has built-in DDoS protection
-
+// Helper function to check if a string is a bcrypt hash
 function isBcryptHash(value: unknown): value is string {
   return (
     typeof value === "string" &&
@@ -16,6 +14,7 @@ function isBcryptHash(value: unknown): value is string {
   );
 }
 
+// Helper function to compare passwords
 function matchesPassword(provided: string, stored: unknown): boolean {
   if (typeof stored !== "string" || stored.length === 0) return false;
   if (isBcryptHash(stored)) {
@@ -29,401 +28,222 @@ function matchesPassword(provided: string, stored: unknown): boolean {
   return provided === stored;
 }
 
+// Helper function to create session and set cookies
+async function createUserSession(
+  user: {
+    id: string;
+    username: string;
+    email: string;
+    role: "admin" | "teacher" | "student";
+    fullName: string;
+    createdAt: string;
+  },
+  res: NextResponse,
+): Promise<NextResponse> {
+  // Clear old session cookies first
+  res.cookies.set("pnhs_session", "", { maxAge: 0, path: "/" });
+  res.cookies.set("pnhs_session_token", "", { maxAge: 0, path: "/" });
+
+  try {
+    const prisma = (await import("@/lib/prisma")).default;
+    const token = crypto.randomBytes(32).toString("hex");
+    const expiresAt = new Date(Date.now() + 4 * 60 * 60 * 1000); // 4 hours
+
+    await prisma.session.create({
+      data: {
+        userId: user.id,
+        token,
+        data: JSON.stringify(user),
+        expiresAt,
+      },
+    });
+
+    // Set httpOnly session token cookie
+    res.cookies.set("pnhs_session_token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 4 * 60 * 60,
+    });
+  } catch (e) {
+    console.warn(
+      "[login] DB session unavailable, continuing with signed cookie only",
+    );
+  }
+
+  // Set signed session cookie
+  res.cookies.set(
+    "pnhs_session",
+    process.env.SESSION_SECRET ? signSessionUser(user) : JSON.stringify(user),
+    {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 4 * 60 * 60,
+    },
+  );
+
+  // Set public fallback cookie for middleware/client routing
+  res.cookies.set(
+    "pnhs_user",
+    encodeURIComponent(
+      JSON.stringify({
+        id: user.id,
+        username: user.username || "",
+        role: user.role,
+        fullName: user.fullName || "",
+        createdAt: user.createdAt,
+      }),
+    ),
+    {
+      httpOnly: false,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 4 * 60 * 60,
+    },
+  );
+
+  return res;
+}
+
+// Helper function to authenticate from database (student or teacher)
+async function authenticateFromDatabase(
+  usernameInput: string,
+  passwordInput: string,
+): Promise<{
+  success: boolean;
+  user?: {
+    id: string;
+    username: string;
+    email: string;
+    role: "admin" | "teacher" | "student";
+    fullName: string;
+    createdAt: string;
+  };
+  message?: string;
+}> {
+  const prisma = (await import("@/lib/prisma")).default;
+
+  // Try to find student first
+  const student = await prisma.student.findFirst({
+    where: {
+      OR: [
+        { username: usernameInput },
+        { email: usernameInput },
+        { studentId: usernameInput },
+      ],
+    },
+  });
+
+  if (student) {
+    const storedHash = student.password;
+    const provided = passwordInput;
+
+    // Accept hashed/plain password OR fallback to studentId
+    const matched =
+      matchesPassword(provided, storedHash) ||
+      provided === (student.studentId || "");
+
+    if (matched) {
+      return {
+        success: true,
+        user: {
+          id: student.id,
+          username: student.username || "",
+          email: student.email,
+          role: "student" as const,
+          fullName: student.name,
+          createdAt: new Date().toISOString(),
+        },
+      };
+    }
+  }
+
+  // Try to find teacher
+  const teacher = await prisma.teacher.findFirst({
+    where: {
+      OR: [
+        { username: usernameInput },
+        { email: usernameInput },
+        { email: { startsWith: `${usernameInput}@` } },
+      ],
+    },
+  });
+
+  if (teacher) {
+    const storedHash = teacher.password;
+    const provided = passwordInput;
+
+    // Accept hashed/plain password OR fallback to email local-part
+    const emailLocal = (teacher.email || "").split("@")[0] || "";
+    const matched =
+      matchesPassword(provided, storedHash) || provided === emailLocal;
+
+    if (matched) {
+      return {
+        success: true,
+        user: {
+          id: teacher.id,
+          username: teacher.username || "",
+          email: teacher.email,
+          role: "teacher" as const,
+          fullName: teacher.name,
+          createdAt: new Date().toISOString(),
+        },
+      };
+    }
+  }
+
+  return { success: false, message: "Invalid username or password" };
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as LoginCredentials;
     const usernameInput = String(body?.username || "").trim();
     const passwordInput = String(body?.password || "");
-    const key = usernameInput || "unknown";
 
-    // Skip in-memory rate limiting for serverless - let Vercel handle it
-    // In production, use Upstash Redis or Vercel Edge for rate limiting
-
-    // ==============================
-    // 1️⃣ DEMO / HARDCODED USERS
-    // ==============================
-    const result = authenticateUser(body);
-
-    if (result.success && result.user) {
-      // loginAttemptStore.delete(key); // Not used anymore
-      const user = result.user;
-
-      const res = NextResponse.json({ success: true, user });
-
-      // 🔥 IMPORTANT FIX: clear old session first
-      res.cookies.set("pnhs_session", "", { maxAge: 0, path: "/" });
-      res.cookies.set("pnhs_session_token", "", { maxAge: 0, path: "/" });
-
-      try {
-        const prisma = (await import("@/lib/prisma")).default;
-        const token = crypto.randomBytes(32).toString("hex");
-        const expiresAt = new Date(Date.now() + 4 * 60 * 60 * 1000);
-
-        await prisma.session.create({
-          data: {
-            userId: user.id,
-            token,
-            data: JSON.stringify(user),
-            expiresAt,
-          },
-        });
-
-        res.cookies.set("pnhs_session_token", token, {
-          httpOnly: true,
-          sameSite: "lax",
-          secure: process.env.NODE_ENV === "production",
-          path: "/",
-          maxAge: 4 * 60 * 60,
-        });
-
-        res.cookies.set(
-          "pnhs_session",
-          process.env.SESSION_SECRET ? signSessionUser(user) : JSON.stringify(user),
-          {
-            httpOnly: true,
-            sameSite: "lax",
-            secure: process.env.NODE_ENV === "production",
-            path: "/",
-            maxAge: 4 * 60 * 60,
-          },
-        );
-
-        // public, non-http fallback so middleware + refresh can route correctly
-        res.cookies.set(
-          "pnhs_user",
-          encodeURIComponent(
-            JSON.stringify({
-              id: user.id,
-              username: user.username || "",
-              role: user.role,
-              fullName: user.fullName || "",
-              createdAt: user.createdAt,
-            }),
-          ),
-          {
-            httpOnly: false,
-            sameSite: "lax",
-            secure: process.env.NODE_ENV === "production",
-            path: "/",
-            maxAge: 4 * 60 * 60,
-          },
-        );
-      } catch (e) {
-        console.warn("[login] DB session unavailable, continuing with signed cookie only");
-      }
-
-      // Always set signed session + public cookie even if DB session creation fails
-      res.cookies.set(
-        "pnhs_session",
-        process.env.SESSION_SECRET ? signSessionUser(user) : JSON.stringify(user),
-        {
-          httpOnly: true,
-          sameSite: "lax",
-          secure: process.env.NODE_ENV === "production",
-          path: "/",
-          maxAge: 4 * 60 * 60,
-        },
+    if (!usernameInput || !passwordInput) {
+      return NextResponse.json(
+        { success: false, message: "Username and password are required" },
+        { status: 400 },
       );
-
-      res.cookies.set(
-        "pnhs_user",
-        encodeURIComponent(
-          JSON.stringify({
-            id: user.id,
-            username: user.username || "",
-            role: user.role,
-            fullName: user.fullName || "",
-            createdAt: user.createdAt,
-          }),
-        ),
-        {
-          httpOnly: false,
-          sameSite: "lax",
-          secure: process.env.NODE_ENV === "production",
-          path: "/",
-          maxAge: 4 * 60 * 60,
-        },
-      );
-
-      return res;
     }
 
-    // ==============================
-    // 2️⃣ DATABASE USERS
-    // ==============================
+    // First try: Demo/Hardcoded users (from lib/auth.ts)
+    const demoResult = authenticateUser(body);
+
+    if (demoResult.success && demoResult.user) {
+      const res = NextResponse.json({ success: true, user: demoResult.user });
+      return createUserSession(demoResult.user, res);
+    }
+
+    // Second try: Database users (students and teachers)
     try {
-      const prisma = (await import("@/lib/prisma")).default;
+      const dbResult = await authenticateFromDatabase(
+        usernameInput,
+        passwordInput,
+      );
 
-      // ---------- STUDENT ----------
-      // allow lookup by username OR email (seed data may have username NULL)
-      const student = await prisma.student.findFirst({
-        where: {
-          OR: [
-            { username: usernameInput },
-            { email: usernameInput },
-            { studentId: usernameInput },
-          ],
-        },
-      });
-
-      if (student) {
-        const storedHash = student.password;
-        const provided = passwordInput;
-
-        // accept hashed/plain password OR fallback to studentId
-        const matched =
-          matchesPassword(provided, storedHash) ||
-          provided === (student.studentId || "");
-
-        if (matched) {
-          // Rate limiting removed for serverless
-
-          const user = {
-            id: student.id,
-            username: student.username || "",
-            email: student.email,
-            role: "student" as const,
-            fullName: student.name,
-            createdAt: new Date().toISOString(),
-          };
-
-          const res = NextResponse.json({ success: true, user });
-
-          // 🔥 CLEAR OLD SESSION
-          res.cookies.set("pnhs_session", "", { maxAge: 0, path: "/" });
-          res.cookies.set("pnhs_session_token", "", { maxAge: 0, path: "/" });
-
-          try {
-            const token = crypto.randomBytes(32).toString("hex");
-            const expiresAt = new Date(Date.now() + 4 * 60 * 60 * 1000);
-
-            await prisma.session.create({
-              data: {
-                userId: user.id,
-                token,
-                data: JSON.stringify(user),
-                expiresAt,
-              },
-            });
-
-            res.cookies.set("pnhs_session_token", token, {
-              httpOnly: true,
-              sameSite: "lax",
-              secure: process.env.NODE_ENV === "production",
-              path: "/",
-              maxAge: 4 * 60 * 60,
-            });
-
-            res.cookies.set(
-              "pnhs_session",
-              process.env.SESSION_SECRET ? signSessionUser(user) : JSON.stringify(user),
-              {
-                httpOnly: true,
-                sameSite: "lax",
-                secure: process.env.NODE_ENV === "production",
-                path: "/",
-                maxAge: 4 * 60 * 60,
-              },
-            );
-
-            // public, non-http fallback so middleware + refresh can route correctly
-            res.cookies.set(
-              "pnhs_user",
-              encodeURIComponent(
-                JSON.stringify({
-                  id: user.id,
-                  username: user.username || "",
-                  role: user.role,
-                  fullName: user.fullName || "",
-                  createdAt: user.createdAt,
-                }),
-              ),
-              {
-                httpOnly: false,
-                sameSite: "lax",
-                secure: process.env.NODE_ENV === "production",
-                path: "/",
-                maxAge: 4 * 60 * 60,
-              },
-            );
-          } catch {
-            res.cookies.set(
-              "pnhs_session",
-              process.env.SESSION_SECRET ? signSessionUser(user) : JSON.stringify(user),
-              {
-                httpOnly: true,
-                sameSite: "lax",
-                secure: process.env.NODE_ENV === "production",
-                path: "/",
-                maxAge: 4 * 60 * 60,
-              },
-            );
-            // also set public fallback cookie when DB session creation fails
-            res.cookies.set(
-              "pnhs_user",
-              encodeURIComponent(
-                JSON.stringify({
-                  id: user.id,
-                  username: user.username || "",
-                  role: user.role,
-                  fullName: user.fullName || "",
-                  createdAt: user.createdAt,
-                }),
-              ),
-              {
-                httpOnly: false,
-                sameSite: "lax",
-                secure: process.env.NODE_ENV === "production",
-                path: "/",
-                maxAge: 4 * 60 * 60,
-              },
-            );
-          }
-
-          return res;
-        }
+      if (dbResult.success && dbResult.user) {
+        const res = NextResponse.json({ success: true, user: dbResult.user });
+        return createUserSession(dbResult.user, res);
       }
 
-      // ---------- TEACHER ----------
-      // allow lookup by username, full email, or email-local-part (seed teachers may not have username)
-      const teacher = await prisma.teacher.findFirst({
-        where: {
-          OR: [
-            { username: usernameInput },
-            { email: usernameInput },
-            // allow entering 'santos' to match 'santos@pnhs.edu.ph'
-            { email: { startsWith: `${usernameInput}@` } },
-          ],
-        },
-      });
-
-      if (teacher) {
-        const storedHash = teacher.password;
-        const provided = passwordInput;
-
-        // accept hashed/plain password OR fallback to email local-part
-        const emailLocal = (teacher.email || "").split("@")[0] || "";
-        const matched =
-          matchesPassword(provided, storedHash) || provided === emailLocal;
-
-        if (matched) {
-          // Rate limiting removed for serverless
-
-          const user = {
-            id: teacher.id,
-            username: teacher.username || "",
-            email: teacher.email,
-            role: "teacher" as const,
-            fullName: teacher.name,
-            createdAt: new Date().toISOString(),
-          };
-
-          const res = NextResponse.json({ success: true, user });
-
-          // 🔥 CLEAR OLD SESSION
-          res.cookies.set("pnhs_session", "", { maxAge: 0, path: "/" });
-          res.cookies.set("pnhs_session_token", "", { maxAge: 0, path: "/" });
-
-          try {
-            const token = crypto.randomBytes(32).toString("hex");
-            const expiresAt = new Date(Date.now() + 4 * 60 * 60 * 1000);
-
-            await prisma.session.create({
-              data: {
-                userId: user.id,
-                token,
-                data: JSON.stringify(user),
-                expiresAt,
-              },
-            });
-
-            res.cookies.set("pnhs_session_token", token, {
-              httpOnly: true,
-              sameSite: "lax",
-              secure: process.env.NODE_ENV === "production",
-              path: "/",
-              maxAge: 4 * 60 * 60,
-            });
-
-            res.cookies.set(
-              "pnhs_session",
-              process.env.SESSION_SECRET ? signSessionUser(user) : JSON.stringify(user),
-              {
-                httpOnly: true,
-                sameSite: "lax",
-                secure: process.env.NODE_ENV === "production",
-                path: "/",
-                maxAge: 4 * 60 * 60,
-              },
-            );
-
-            // public, non-http fallback so middleware + refresh can route correctly
-            res.cookies.set(
-              "pnhs_user",
-              encodeURIComponent(
-                JSON.stringify({
-                  id: user.id,
-                  username: user.username || "",
-                  role: user.role,
-                  fullName: user.fullName || "",
-                  createdAt: user.createdAt,
-                }),
-              ),
-              {
-                httpOnly: false,
-                sameSite: "lax",
-                secure: process.env.NODE_ENV === "production",
-                path: "/",
-                maxAge: 4 * 60 * 60,
-              },
-            );
-          } catch {
-            res.cookies.set(
-              "pnhs_session",
-              process.env.SESSION_SECRET ? signSessionUser(user) : JSON.stringify(user),
-              {
-                httpOnly: true,
-                sameSite: "lax",
-                secure: process.env.NODE_ENV === "production",
-                path: "/",
-                maxAge: 4 * 60 * 60,
-              },
-            );
-            // also set public fallback cookie when DB session creation fails
-            res.cookies.set(
-              "pnhs_user",
-              encodeURIComponent(
-                JSON.stringify({
-                  id: user.id,
-                  username: user.username || "",
-                  role: user.role,
-                  fullName: user.fullName || "",
-                  createdAt: user.createdAt,
-                }),
-              ),
-              {
-                httpOnly: false,
-                sameSite: "lax",
-                secure: process.env.NODE_ENV === "production",
-                path: "/",
-                maxAge: 4 * 60 * 60,
-              },
-            );
-          }
-
-          return res;
-        }
+      if (dbResult.message) {
+        return NextResponse.json(
+          { success: false, message: dbResult.message },
+          { status: 401 },
+        );
       }
     } catch (e) {
       console.error("Login database error:", e);
     }
 
-    // ==============================
-    // ❌ FAILED LOGIN
-    // ==============================
-    // Rate limiting removed for serverless compatibility
-    // In production, implement rate limiting at Vercel edge or use Redis
-
+    // Failed login
     return NextResponse.json(
       { success: false, message: "Invalid username or password" },
       { status: 401 },

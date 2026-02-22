@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = 'force-dynamic'
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -3205,7 +3207,7 @@ export default function TeacherDashboard() {
             >
               <div className="w-10 h-10 md:w-12 md:h-12 rounded-full shadow-lg overflow-hidden bg-white p-1">
                 <img
-                  src="/login/public/logo.png"
+                  src="/pnhs-logo.png"
                   alt="PNHS Logo"
                   className="w-full h-full object-contain"
                 />

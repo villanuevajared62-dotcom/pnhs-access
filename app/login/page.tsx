@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = 'force-dynamic'
+
 import { useState } from "react";
 import Link from "next/link";
 import { Lock, User, AlertCircle, Eye, EyeOff, BookOpen } from "lucide-react";
@@ -293,32 +295,15 @@ export default function LoginPage() {
               </button>
             </form>
 
-            {/* Demo Credentials */}
+            {/* Reminder */}
             <div className="mt-6 p-4 bg-gradient-to-br from-yellow-50 to-green-50 rounded-xl border-2 border-green-200">
-              <p className="text-sm font-bold text-green-800 mb-3 flex items-center">
+              <p className="text-sm font-bold text-green-800 mb-2 flex items-center">
                 <span className="w-2 h-2 bg-green-600 rounded-full mr-2 animate-pulse"></span>
-                Demo Credentials
+                Reminder
               </p>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center justify-between p-2 bg-white/60 rounded-lg">
-                  <span className="font-semibold text-gray-700">Admin:</span>
-                  <code className="text-green-700 bg-green-100 px-2 py-1 rounded">
-                    admin / admin123
-                  </code>
-                </div>
-                <div className="flex items-center justify-between p-2 bg-white/60 rounded-lg">
-                  <span className="font-semibold text-gray-700">Teacher:</span>
-                  <code className="text-green-700 bg-green-100 px-2 py-1 rounded">
-                    teacher1 / teacher123
-                  </code>
-                </div>
-                <div className="flex items-center justify-between p-2 bg-white/60 rounded-lg">
-                  <span className="font-semibold text-gray-700">Student:</span>
-                  <code className="text-green-700 bg-green-100 px-2 py-1 rounded">
-                    student1 / student123
-                  </code>
-                </div>
-              </div>
+              <p className="text-sm text-gray-700">
+                If you do not have an account yet, please go to the Admin Office to request access.
+              </p>
             </div>
           </div>
 

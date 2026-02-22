@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = 'force-dynamic'
+
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -1907,7 +1909,7 @@ export default function AdminDashboard() {
                 className={`flex items-center justify-center rounded-xl overflow-hidden shadow-lg ${sidebarOpen ? "w-12 h-12" : "w-10 h-10"}`}
               >
                 <img
-                  src="/login/public/logo.png"
+                  src="/pnhs-logo.png"
                   alt="PNHS Logo"
                   className="w-full h-full object-contain"
                 />
@@ -1938,14 +1940,14 @@ export default function AdminDashboard() {
               <button
                 key={item.key}
                 onClick={() => handleNavigation(item.key)}
-                className={`w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl transition-all ${
+                className={`w-full flex items-center ${sidebarOpen ? "justify-start gap-3 px-3 md:px-4" : "justify-center"} py-2.5 md:py-3 rounded-xl relative ${
                   activeTab === item.key
                     ? "bg-white/20 shadow-inner font-semibold"
                     : "hover:bg-white/10 text-green-100"
-                } ${!sidebarOpen && "justify-center px-0"}`}
+                } ${!sidebarOpen && "hidden lg:flex"}`}
               >
-                <item.icon className="w-6 h-6 flex-shrink-0" />
-                {sidebarOpen && <span>{item.label}</span>}
+                <item.icon className="w-5 h-5 flex-shrink-0" />
+                {sidebarOpen && <span className="text-sm md:text-base truncate">{item.label}</span>}
               </button>
             ))}
           </nav>
@@ -1954,10 +1956,10 @@ export default function AdminDashboard() {
         <div className="absolute bottom-0 w-full p-6 border-t border-white/15">
           <button
             onClick={handleLogout}
-            className={`w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl hover:bg-white/10 transition-colors text-green-100 ${!sidebarOpen && "justify-center px-0"}`}
+            className={`w-full flex items-center ${sidebarOpen ? "gap-3 px-3 md:px-4" : "justify-center"} py-2.5 md:py-3 rounded-xl hover:bg-white/10 transition-colors text-green-100 ${!sidebarOpen && "hidden lg:flex"}`}
           >
-            <LogOut className="w-6 h-6 flex-shrink-0" />
-            {sidebarOpen && <span>Logout</span>}
+            <LogOut className="w-5 h-5 flex-shrink-0" />
+            {sidebarOpen && <span className="text-sm md:text-base">Logout</span>}
           </button>
         </div>
       </aside>
@@ -1966,34 +1968,35 @@ export default function AdminDashboard() {
         className={`transition-all duration-300 ${sidebarOpen ? "lg:ml-72" : "lg:ml-20"} ml-0`}
       >
         <header className="bg-white/90 backdrop-blur-sm shadow-sm sticky top-0 z-40 border-b border-green-100">
-          <div className="px-6 lg:px-10 py-5">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl lg:text-3xl font-bold text-green-900">
-                  Admin Dashboard
-                </h1>
-                <p className="text-green-700 mt-1">
-                  Welcome back, {user?.fullName || "Admin"}!
-                </p>
-              </div>
-              <div className="flex items-center space-x-5">
-                <div className="relative hidden md:block">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <div className="px-4 md:px-6 lg:px-8 py-3 md:py-4">
+            <div className="flex items-center justify-between gap-3">
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="p-2 hover:bg-gray-100 rounded-lg flex-shrink-0"
+              >
+                <Menu className="w-5 h-5 md:w-6 md:h-6" />
+              </button>
+
+              <div className="flex-1 max-w-md md:max-w-2xl mx-2 md:mx-4 hidden md:block">
+                <div className="relative">
+                  <Search className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
                   <input
                     type="text"
                     placeholder="Search..."
+                    className="w-full pl-9 md:pl-12 pr-3 md:pr-4 py-2 md:py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm md:text-base"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-teal-500 w-64"
                   />
                 </div>
+              </div>
 
+              <div className="flex items-center gap-2 md:gap-3">
                 {activeTab === "students" && (
-                  <div className="relative">
+                  <div className="relative hidden sm:block">
                     <select
                       value={selectedFilter}
                       onChange={(e) => setSelectedFilter(e.target.value)}
-                      className="px-4 py-2.5 bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-teal-500 appearance-none pr-10"
+                      className="px-3 md:px-4 py-2 bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-teal-500 appearance-none pr-8 md:pr-10 text-sm md:text-base"
                     >
                       <option value="all">All Grades</option>
                       <option value="Grade 7">Grade 7</option>
@@ -2008,14 +2011,16 @@ export default function AdminDashboard() {
                 )}
 
                 <button className="relative p-2 hover:bg-gray-100 rounded-full transition-colors">
-                  <Bell className="w-6 h-6 text-gray-700" />
-                  <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
+                  <Bell className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
+                  <span className="absolute top-1 right-1 w-2 h-2 md:w-2.5 md:h-2.5 bg-red-500 rounded-full"></span>
                 </button>
-                <div className="w-12 h-12 bg-gradient-to-br from-green-800 to-teal-700 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-md">
+                <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-green-800 to-teal-700 rounded-full flex items-center justify-center text-white font-bold text-lg md:text-xl shadow-md">
                   {user?.fullName?.charAt(0) || "A"}
                 </div>
               </div>
             </div>
+
+            {/* Mobile tabs removed to match student dashboard */}
           </div>
         </header>
 

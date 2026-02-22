@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
           select: { id: true },
         })
       ).map((c: any) => c.id);
-      where.assignment = { classId: { in: classIds } };
+      where.assignment = { is: { classId: { in: classIds } } };
     }
 
     const submissions = await db.submission.findMany({
@@ -53,7 +53,10 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error("Error fetching submissions:", error);
     return NextResponse.json(
-      { message: "Failed to fetch submissions" },
+      {
+        message: "Failed to fetch submissions",
+        error: (error as any)?.message ?? String(error),
+      },
       { status: 500 },
     );
   }
@@ -239,4 +242,4 @@ export async function PUT(req: NextRequest) {
   }
 }
 
-export const runtime = "nodejs"
+export const runtime = "nodejs";

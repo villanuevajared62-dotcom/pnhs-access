@@ -7,10 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// =======================
-// CORE MODELS
-// =======================
-
 model User {
   id        String   @id @default(cuid())
   username  String   @unique
@@ -24,10 +20,6 @@ model User {
   teacherProfile Teacher?
   studentProfile Student?
 }
-
-// =======================
-// STUDENT & TEACHER
-// =======================
 
 model Student {
   id         String   @id @default(cuid())
@@ -55,13 +47,9 @@ model Teacher {
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   classes    Class[]
   grades     Grade[]
-  attendance Attendance[]
+  attendance Attendance[] @relation("TeacherAttendance")
   tasks      Task[]
 }
-
-// =======================
-// ACADEMIC STRUCTURE
-// =======================
 
 model Class {
   id         String   @id @default(cuid())
@@ -76,7 +64,7 @@ model Class {
 
   teacher     Teacher     @relation(fields: [teacherId], references: [id])
   enrollments Enrollment[]
-  attendance  Attendance[]
+  attendance  Attendance[] @relation("TeacherAttendance")
   assignments Assignment[]
   grades      Grade[]
 }
@@ -92,10 +80,6 @@ model Enrollment {
 
   @@unique([studentId, classId])
 }
-
-// =======================
-// GRADES & ATTENDANCE
-// =======================
 
 model Grade {
   id        String   @id @default(cuid())
@@ -123,14 +107,10 @@ model Attendance {
 
   student Student @relation(fields: [studentId], references: [id])
   class   Class   @relation(fields: [classId], references: [id])
-  teacher Teacher @relation(fields: [teacherId], references: [id])
+  teacher Teacher @relation(fields: [teacherId], references: [id], name: "TeacherAttendance")
 
   @@unique([studentId, classId, date])
 }
-
-// =======================
-// ASSIGNMENTS & TASKS
-// =======================
 
 model Assignment {
   id          String   @id @default(cuid())
@@ -170,10 +150,6 @@ model Task {
   teacher Teacher @relation(fields: [teacherId], references: [id])
 }
 
-// =======================
-// ANNOUNCEMENTS & LOGS
-// =======================
-
 model Announcement {
   id        String   @id @default(cuid())
   title     String
@@ -194,10 +170,6 @@ model AuditLog {
   metadata   String?
   createdAt  DateTime @default(now())
 }
-
-// =======================
-// SETTINGS
-// =======================
 
 model Settings {
   id                 String   @id @default(cuid())

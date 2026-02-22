@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { Class } from "@/lib/shared-data";
 import prisma from "@/lib/prisma";
-import { getSessionUser, requireAdmin } from "@/lib/server-session";
+import { getSessionUser, requireAdmin } from "@/lib/server-session-node";
 
 let classes: Class[] = [
   {
@@ -213,3 +213,5 @@ export async function POST(
     return NextResponse.json({ message: "Failed" }, { status: 500 });
   }
 }
+
+export const runtime = "nodejs"

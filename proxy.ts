@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { User } from "@/lib/auth";
-import { getSessionUserSync } from "@/lib/server-session";
+import { getSessionUser } from "@/lib/server-session";
 
-export function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const url = req.nextUrl;
   const pathname = url.pathname;
 
-  // Get user session ONCE (cookie-only, synchronous — middleware runs in Edge runtime)
-  const user: User | null = getSessionUserSync(req);
+  // Get user session (signed cookie verification when SESSION_SECRET is set)
+  const user: User | null = await getSessionUser(req);
 
   console.log(
-    `[Middleware] ${pathname} - User: ${user?.username || "none"} (${user?.role || "N/A"})`,
+    `[Proxy] ${pathname} - User: ${user?.username || "none"} (${user?.role || "N/A"})`,
   );
 
   const isAdminPath = pathname.startsWith("/admin");
@@ -21,27 +21,27 @@ export function middleware(req: NextRequest) {
 
   // Not authenticated - redirect to login
   if (needsAuth && !user) {
-    console.log(`[Middleware] ❌ No user, redirecting to login`);
+    console.log(`[Proxy] ❌ No user, redirecting to login`);
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
   // Check role-based access
   if (user) {
     if (isAdminPath && user.role !== "admin") {
-      console.log(`[Middleware] ❌ Wrong role (${user.role}), need admin`);
+      console.log(`[Proxy] ❌ Wrong role (${user.role}), need admin`);
       return NextResponse.redirect(new URL("/login", req.url));
     }
     if (isTeacherPath && user.role !== "teacher") {
-      console.log(`[Middleware] ❌ Wrong role (${user.role}), need teacher`);
+      console.log(`[Proxy] ❌ Wrong role (${user.role}), need teacher`);
       return NextResponse.redirect(new URL("/login", req.url));
     }
     if (isStudentPath && user.role !== "student") {
-      console.log(`[Middleware] ❌ Wrong role (${user.role}), need student`);
+      console.log(`[Proxy] ❌ Wrong role (${user.role}), need student`);
       return NextResponse.redirect(new URL("/login", req.url));
     }
   }
 
-  console.log(`[Middleware] ✅ Access granted`);
+  console.log(`[Proxy] ✅ Access granted`);
   return NextResponse.next();
 }
 

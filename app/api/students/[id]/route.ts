@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { STRANDS, type Student } from "@/lib/shared-data";
 import prisma from "@/lib/prisma";
-import { getSessionUser, requireAdmin } from "@/lib/server-session";
+import { getSessionUser, requireAdmin } from "@/lib/server-session-node";
 import bcrypt from "bcryptjs";
 
 function isMaskedPassword(value: unknown): boolean {
@@ -232,3 +232,5 @@ export async function DELETE(
     return NextResponse.json({ message: "Not found" }, { status: 404 });
   }
 }
+
+export const runtime = "nodejs"

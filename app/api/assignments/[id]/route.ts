@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSessionUser } from "@/lib/server-session";
+import { getSessionUser } from "@/lib/server-session-node";
 import prisma from "@/lib/prisma";
 const db = prisma as any;
 
@@ -292,3 +292,5 @@ export async function DELETE(
     );
   }
 }
+
+export const runtime = "nodejs"

@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/server-session";
+import { requireAdmin } from "@/lib/server-session-node";
 import {
   getAuthUserById,
   updateAuthUser,
   deleteAuthUser,
   type ManageUserUpdate,
 } from "@/lib/auth";
+
+export const runtime = "nodejs"
 
 export async function GET(
   req: NextRequest,

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin, getSessionUser } from "@/lib/server-session";
+import { requireAdmin, getSessionUser } from "@/lib/server-session-node";
 import bcrypt from "bcryptjs";
 
 const prismaPromise = import("@/lib/prisma").then((m) => m.default);
@@ -120,3 +120,5 @@ export async function DELETE(
     return NextResponse.json({ message: "Not found" }, { status: 404 });
   }
 }
+
+export const runtime = "nodejs"

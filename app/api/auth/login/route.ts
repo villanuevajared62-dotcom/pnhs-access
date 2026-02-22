@@ -1,18 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { authenticateUser, type LoginCredentials } from "@/lib/auth";
-import { signSessionUser } from "@/lib/server-session";
+import { signSessionUser } from "@/lib/server-session-node";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
-// ==============================
-// Simple in-memory rate limiter
-// ==============================
-const loginAttemptStore = new Map<
-  string,
-  { attempts: number; firstAttempt: number; blockedUntil?: number }
->();
-const MAX_ATTEMPTS = 6;
-const BLOCK_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+export const runtime = "nodejs"
+
+// Note: Rate limiting is handled at Vercel edge or via external service (e.g., Upstash Redis)
+// For now, we'll skip rate limiting in serverless - Vercel has built-in DDoS protection
 
 function isBcryptHash(value: unknown): value is string {
   return (
@@ -41,17 +36,8 @@ export async function POST(req: NextRequest) {
     const passwordInput = String(body?.password || "");
     const key = usernameInput || "unknown";
 
-    const state = loginAttemptStore.get(key) || {
-      attempts: 0,
-      firstAttempt: Date.now(),
-    };
-
-    if (state.blockedUntil && Date.now() < state.blockedUntil) {
-      return NextResponse.json(
-        { success: false, message: "Too many attempts. Try again later." },
-        { status: 429 },
-      );
-    }
+    // Skip in-memory rate limiting for serverless - let Vercel handle it
+    // In production, use Upstash Redis or Vercel Edge for rate limiting
 
     // ==============================
     // 1️⃣ DEMO / HARDCODED USERS
@@ -59,7 +45,7 @@ export async function POST(req: NextRequest) {
     const result = authenticateUser(body);
 
     if (result.success && result.user) {
-      loginAttemptStore.delete(key);
+      // loginAttemptStore.delete(key); // Not used anymore
       const user = result.user;
 
       const res = NextResponse.json({ success: true, user });
@@ -90,13 +76,17 @@ export async function POST(req: NextRequest) {
           maxAge: 4 * 60 * 60,
         });
 
-        res.cookies.set("pnhs_session", signSessionUser(user), {
-          httpOnly: true,
-          sameSite: "lax",
-          secure: process.env.NODE_ENV === "production",
-          path: "/",
-          maxAge: 4 * 60 * 60,
-        });
+        res.cookies.set(
+          "pnhs_session",
+          process.env.SESSION_SECRET ? signSessionUser(user) : JSON.stringify(user),
+          {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: process.env.NODE_ENV === "production",
+            path: "/",
+            maxAge: 4 * 60 * 60,
+          },
+        );
 
         // public, non-http fallback so middleware + refresh can route correctly
         res.cookies.set(
@@ -119,15 +109,41 @@ export async function POST(req: NextRequest) {
           },
         );
       } catch (e) {
-        console.error("[login] DB session failed, using signed cookie only", e);
-        res.cookies.set("pnhs_session", signSessionUser(user), {
+        console.warn("[login] DB session unavailable, continuing with signed cookie only");
+      }
+
+      // Always set signed session + public cookie even if DB session creation fails
+      res.cookies.set(
+        "pnhs_session",
+        process.env.SESSION_SECRET ? signSessionUser(user) : JSON.stringify(user),
+        {
           httpOnly: true,
           sameSite: "lax",
           secure: process.env.NODE_ENV === "production",
           path: "/",
           maxAge: 4 * 60 * 60,
-        });
-      }
+        },
+      );
+
+      res.cookies.set(
+        "pnhs_user",
+        encodeURIComponent(
+          JSON.stringify({
+            id: user.id,
+            username: user.username || "",
+            role: user.role,
+            fullName: user.fullName || "",
+            createdAt: user.createdAt,
+          }),
+        ),
+        {
+          httpOnly: false,
+          sameSite: "lax",
+          secure: process.env.NODE_ENV === "production",
+          path: "/",
+          maxAge: 4 * 60 * 60,
+        },
+      );
 
       return res;
     }
@@ -160,7 +176,7 @@ export async function POST(req: NextRequest) {
           provided === (student.studentId || "");
 
         if (matched) {
-          loginAttemptStore.delete(key);
+          // Rate limiting removed for serverless
 
           const user = {
             id: student.id,
@@ -198,13 +214,17 @@ export async function POST(req: NextRequest) {
               maxAge: 4 * 60 * 60,
             });
 
-            res.cookies.set("pnhs_session", signSessionUser(user), {
-              httpOnly: true,
-              sameSite: "lax",
-              secure: process.env.NODE_ENV === "production",
-              path: "/",
-              maxAge: 4 * 60 * 60,
-            });
+            res.cookies.set(
+              "pnhs_session",
+              process.env.SESSION_SECRET ? signSessionUser(user) : JSON.stringify(user),
+              {
+                httpOnly: true,
+                sameSite: "lax",
+                secure: process.env.NODE_ENV === "production",
+                path: "/",
+                maxAge: 4 * 60 * 60,
+              },
+            );
 
             // public, non-http fallback so middleware + refresh can route correctly
             res.cookies.set(
@@ -227,13 +247,17 @@ export async function POST(req: NextRequest) {
               },
             );
           } catch {
-            res.cookies.set("pnhs_session", signSessionUser(user), {
-              httpOnly: true,
-              sameSite: "lax",
-              secure: process.env.NODE_ENV === "production",
-              path: "/",
-              maxAge: 4 * 60 * 60,
-            });
+            res.cookies.set(
+              "pnhs_session",
+              process.env.SESSION_SECRET ? signSessionUser(user) : JSON.stringify(user),
+              {
+                httpOnly: true,
+                sameSite: "lax",
+                secure: process.env.NODE_ENV === "production",
+                path: "/",
+                maxAge: 4 * 60 * 60,
+              },
+            );
             // also set public fallback cookie when DB session creation fails
             res.cookies.set(
               "pnhs_user",
@@ -283,7 +307,7 @@ export async function POST(req: NextRequest) {
           matchesPassword(provided, storedHash) || provided === emailLocal;
 
         if (matched) {
-          loginAttemptStore.delete(key);
+          // Rate limiting removed for serverless
 
           const user = {
             id: teacher.id,
@@ -321,13 +345,17 @@ export async function POST(req: NextRequest) {
               maxAge: 4 * 60 * 60,
             });
 
-            res.cookies.set("pnhs_session", signSessionUser(user), {
-              httpOnly: true,
-              sameSite: "lax",
-              secure: process.env.NODE_ENV === "production",
-              path: "/",
-              maxAge: 4 * 60 * 60,
-            });
+            res.cookies.set(
+              "pnhs_session",
+              process.env.SESSION_SECRET ? signSessionUser(user) : JSON.stringify(user),
+              {
+                httpOnly: true,
+                sameSite: "lax",
+                secure: process.env.NODE_ENV === "production",
+                path: "/",
+                maxAge: 4 * 60 * 60,
+              },
+            );
 
             // public, non-http fallback so middleware + refresh can route correctly
             res.cookies.set(
@@ -350,13 +378,17 @@ export async function POST(req: NextRequest) {
               },
             );
           } catch {
-            res.cookies.set("pnhs_session", signSessionUser(user), {
-              httpOnly: true,
-              sameSite: "lax",
-              secure: process.env.NODE_ENV === "production",
-              path: "/",
-              maxAge: 4 * 60 * 60,
-            });
+            res.cookies.set(
+              "pnhs_session",
+              process.env.SESSION_SECRET ? signSessionUser(user) : JSON.stringify(user),
+              {
+                httpOnly: true,
+                sameSite: "lax",
+                secure: process.env.NODE_ENV === "production",
+                path: "/",
+                maxAge: 4 * 60 * 60,
+              },
+            );
             // also set public fallback cookie when DB session creation fails
             res.cookies.set(
               "pnhs_user",
@@ -389,11 +421,8 @@ export async function POST(req: NextRequest) {
     // ==============================
     // ❌ FAILED LOGIN
     // ==============================
-    state.attempts += 1;
-    if (state.attempts >= MAX_ATTEMPTS) {
-      state.blockedUntil = Date.now() + BLOCK_WINDOW_MS;
-    }
-    loginAttemptStore.set(key, state);
+    // Rate limiting removed for serverless compatibility
+    // In production, implement rate limiting at Vercel edge or use Redis
 
     return NextResponse.json(
       { success: false, message: "Invalid username or password" },

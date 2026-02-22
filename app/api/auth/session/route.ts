@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSessionUser } from "@/lib/server-session";
+import { getSessionUser } from "@/lib/server-session-node";
 
 export async function GET(req: NextRequest) {
   const user = await getSessionUser(req);
@@ -8,3 +8,5 @@ export async function GET(req: NextRequest) {
   }
   return NextResponse.json({ authenticated: true, user });
 }
+
+export const runtime = "nodejs"

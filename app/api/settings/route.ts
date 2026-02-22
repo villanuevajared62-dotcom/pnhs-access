@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/server-session";
+import { requireAdmin } from "@/lib/server-session-node";
 import { settingsDB } from "@/lib/db-store";
 
 interface SettingsPayload {
@@ -48,3 +48,5 @@ export async function PUT(req: NextRequest) {
     );
   }
 }
+
+export const runtime = "nodejs"

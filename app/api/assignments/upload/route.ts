@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
 import prisma from "@/lib/prisma";
-import { getSessionUser } from "@/lib/server-session";
+import { getSessionUser } from "@/lib/server-session-node";
+import { put } from "@vercel/blob";
+
+export const runtime = "nodejs"
 
 const db = prisma as any;
+
+// Check if we're running on Vercel (serverless) or local
+const isServerless =
+  process.env.VERCEL === "1" || !process.cwd().includes("pnhs-access");
 
 export async function POST(req: NextRequest) {
   const user = await getSessionUser(req);
@@ -25,7 +30,10 @@ export async function POST(req: NextRequest) {
     const classId = String(formData.get("classId") || "");
 
     if (!(file instanceof File)) {
-      return NextResponse.json({ message: "file is required" }, { status: 400 });
+      return NextResponse.json(
+        { message: "file is required" },
+        { status: 400 },
+      );
     }
 
     if (user.role === "teacher" && classId) {
@@ -39,28 +47,54 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const ext = path.extname(file.name || "").slice(0, 16);
-    const base = path
-      .basename(file.name || "attachment", ext)
-      .replace(/[^a-zA-Z0-9-_]/g, "_")
-      .slice(0, 48);
-    const safeName = `${Date.now()}_${user.id}_${base || "file"}${ext}`;
+    // Generate safe filename
+    const ext = (file.name || "").split(".").pop()?.slice(0, 16) || "bin";
+    const safeName = `${Date.now()}_${user.id}_assignment.${ext}`;
 
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "assignments");
-    const output = path.join(uploadDir, safeName);
+    // For Vercel serverless: return a placeholder URL and store file data in DB
+    // For local: save to filesystem (fallback)
+    if (isServerless) {
+      // Upload to Vercel Blob for persistent storage
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
 
-    await fs.mkdir(uploadDir, { recursive: true });
-    await fs.writeFile(output, buffer);
+      const blobOptions = { access: "public", token: process.env.BLOB_READ_WRITE_TOKEN } as const;
+      const blob = await put(safeName, buffer, blobOptions);
 
-    return NextResponse.json(
-      {
-        filePath: `/uploads/assignments/${safeName}`,
-        fileName: file.name,
-      },
-      { status: 201 },
-    );
+      return NextResponse.json(
+        {
+          filePath: blob.url,
+          fileName: file.name,
+        },
+        { status: 201 },
+      );
+    } else {
+      // Local development: use filesystem
+      const { promises: fs } = await import("fs");
+      const path = await import("path");
+
+      const uploadDir = path.join(
+        process.cwd(),
+        "public",
+        "uploads",
+        "assignments",
+      );
+      const output = path.join(uploadDir, safeName);
+
+      await fs.mkdir(uploadDir, { recursive: true });
+
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      await fs.writeFile(output, buffer);
+
+      return NextResponse.json(
+        {
+          filePath: `/uploads/assignments/${safeName}`,
+          fileName: file.name,
+        },
+        { status: 201 },
+      );
+    }
   } catch (error) {
     console.error("Error uploading assignment attachment:", error);
     return NextResponse.json(

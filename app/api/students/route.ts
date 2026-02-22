@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { getSessionUser, requireAdmin } from "@/lib/server-session";
+import { getSessionUser, requireAdmin } from "@/lib/server-session-node";
 import bcrypt from "bcryptjs";
 
 export async function GET(req: NextRequest) {
@@ -87,3 +87,5 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export const runtime = "nodejs"

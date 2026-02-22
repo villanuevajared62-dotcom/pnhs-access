@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { getSessionUser } from "@/lib/server-session";
+import { getSessionUser } from "@/lib/server-session-node";
 const db = prisma as any;
 
 // GET: Retrieve submission details
@@ -238,3 +238,5 @@ export async function PUT(req: NextRequest) {
     );
   }
 }
+
+export const runtime = "nodejs"

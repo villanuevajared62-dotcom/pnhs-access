@@ -37,3 +37,5 @@ export async function POST(req: NextRequest) {
   });
   return res;
 }
+
+export const runtime = "nodejs"

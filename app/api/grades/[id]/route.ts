@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { getSessionUser } from "@/lib/server-session";
+import { getSessionUser } from "@/lib/server-session-node";
 
 export async function GET(
   req: NextRequest,
@@ -125,3 +125,5 @@ export async function DELETE(
     return NextResponse.json({ message: "Not found" }, { status: 404 });
   }
 }
+
+export const runtime = "nodejs"

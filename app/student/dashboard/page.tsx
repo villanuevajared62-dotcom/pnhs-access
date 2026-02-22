@@ -473,7 +473,10 @@ export default function StudentDashboard() {
   }, [messages, user?.id]);
 
   useEffect(() => {
-    if (didInitUnreadRef.current && messageUnreadCount > prevUnreadRef.current) {
+    if (
+      didInitUnreadRef.current &&
+      messageUnreadCount > prevUnreadRef.current
+    ) {
       showToast("You have a new message.", "info");
     }
     didInitUnreadRef.current = true;
@@ -595,7 +598,9 @@ export default function StudentDashboard() {
 
       for (const t of teachersDirectory) {
         const idKey = String(t?.id || "").trim();
-        const nameKey = `name:${String(t?.name || "").trim().toLowerCase()}`;
+        const nameKey = `name:${String(t?.name || "")
+          .trim()
+          .toLowerCase()}`;
         const target = byKey.get(idKey) || byKey.get(nameKey);
         if (!target) continue;
         target.id = idKey || target.id;
@@ -957,7 +962,9 @@ export default function StudentDashboard() {
       const items: DashboardMessage[] = raw ? JSON.parse(raw) : [];
       items.unshift(payload);
       localStorage.setItem(key, JSON.stringify(items));
-      setMessages(items.filter((m) => m.fromId === user.id || m.toId === user.id));
+      setMessages(
+        items.filter((m) => m.fromId === user.id || m.toId === user.id),
+      );
     } catch {
       // ignore localStorage failures
     }
@@ -1056,7 +1063,6 @@ export default function StudentDashboard() {
     const total = attendances.reduce((sum, att) => sum + att, 0);
     return `${(total / attendances.length).toFixed(0)}%`;
   };
-
 
   const calculateAttendanceStats = () => {
     const totalPresent = subjects.reduce(
@@ -1243,7 +1249,12 @@ export default function StudentDashboard() {
     { icon: Calendar, label: "Schedule", key: "schedule" },
     { icon: FileText, label: "Assignments", key: "assignments" },
     { icon: PieChart, label: "Attendance", key: "attendance" },
-    { icon: Users, label: "Teachers", key: "teachers", badge: messageUnreadCount },
+    {
+      icon: Users,
+      label: "Teachers",
+      key: "teachers",
+      badge: messageUnreadCount,
+    },
     { icon: UserIcon, label: "Profile", key: "profile" },
   ];
 
@@ -1655,7 +1666,8 @@ export default function StudentDashboard() {
                                 </p>
                               )}
                               <p className="text-xs md:text-sm text-gray-600 mt-1 line-clamp-2">
-                                {assignment.description || "No instructions provided by teacher."}
+                                {assignment.description ||
+                                  "No instructions provided by teacher."}
                               </p>
                             </div>
                             <span
@@ -1677,14 +1689,13 @@ export default function StudentDashboard() {
                                 <Clock className="w-4 h-4" />
                                 <span>
                                   Due:{" "}
-                                  {new Date(assignment.dueDate).toLocaleDateString(
-                                    "en-US",
-                                    {
-                                      month: "short",
-                                      day: "numeric",
-                                      year: "numeric",
-                                    },
-                                  )}
+                                  {new Date(
+                                    assignment.dueDate,
+                                  ).toLocaleDateString("en-US", {
+                                    month: "short",
+                                    day: "numeric",
+                                    year: "numeric",
+                                  })}
                                 </span>
                               </div>
                               {assignment.attachmentPath && (
@@ -1696,7 +1707,8 @@ export default function StudentDashboard() {
                                   className="inline-flex items-center gap-2 text-xs md:text-sm text-green-700 hover:text-green-800 underline"
                                 >
                                   <Download className="w-4 h-4" />
-                                  {assignment.attachmentName || "Download attachment"}
+                                  {assignment.attachmentName ||
+                                    "Download attachment"}
                                 </a>
                               )}
                               {assignment.points && (
@@ -1724,7 +1736,9 @@ export default function StudentDashboard() {
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    void handleDeleteSubmittedFile(assignment.id);
+                                    void handleDeleteSubmittedFile(
+                                      assignment.id,
+                                    );
                                   }}
                                   className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 border border-red-200 text-red-700 rounded-lg hover:bg-red-50 text-sm"
                                 >
@@ -1734,16 +1748,17 @@ export default function StudentDashboard() {
                               )}
                             </div>
 
-                            {assignment.status === "graded" && assignment.grade && (
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs md:text-sm text-gray-600">
-                                  Grade:
-                                </span>
-                                <span className="text-lg md:text-xl font-bold text-green-600">
-                                  {assignment.grade}
-                                </span>
-                              </div>
-                            )}
+                            {assignment.status === "graded" &&
+                              assignment.grade && (
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs md:text-sm text-gray-600">
+                                    Grade:
+                                  </span>
+                                  <span className="text-lg md:text-xl font-bold text-green-600">
+                                    {assignment.grade}
+                                  </span>
+                                </div>
+                              )}
                           </div>
                         </div>
                       ))}
@@ -3097,7 +3112,8 @@ export default function StudentDashboard() {
                     className="inline-flex items-center gap-2 px-3 md:px-4 py-2 bg-green-50 text-green-700 rounded-xl hover:bg-green-100 text-sm"
                   >
                     <Download className="w-4 h-4" />
-                    {showAssignmentModal.attachmentName || "Download attached file"}
+                    {showAssignmentModal.attachmentName ||
+                      "Download attached file"}
                   </a>
                 </div>
               )}
@@ -3152,7 +3168,8 @@ export default function StudentDashboard() {
                 {showAssignmentModal.status === "pending" && (
                   <div className="flex-1 space-y-3">
                     <p className="text-xs text-gray-600">
-                      Upload file first. Assignment will be marked as submitted only after file upload.
+                      Upload file first. Assignment will be marked as submitted
+                      only after file upload.
                     </p>
                     <input
                       type="file"
@@ -3169,13 +3186,17 @@ export default function StudentDashboard() {
                       className="w-full flex items-center justify-center gap-2 px-4 md:px-6 py-2.5 md:py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 font-semibold text-sm md:text-base disabled:opacity-60"
                     >
                       <Upload className="w-4 h-4 md:w-5 md:h-5" />
-                      {submittingAssignment ? "Submitting..." : "Submit Assignment"}
+                      {submittingAssignment
+                        ? "Submitting..."
+                        : "Submit Assignment"}
                     </button>
                   </div>
                 )}
                 {showAssignmentModal.status === "submitted" && (
                   <button
-                    onClick={() => handleDeleteSubmittedFile(showAssignmentModal.id)}
+                    onClick={() =>
+                      handleDeleteSubmittedFile(showAssignmentModal.id)
+                    }
                     className="px-4 md:px-6 py-2.5 md:py-3 border border-red-200 text-red-700 rounded-xl hover:bg-red-50 font-semibold text-sm md:text-base"
                   >
                     Delete Submitted File

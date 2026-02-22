@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { requireAdmin, getSessionUser } from "@/lib/server-session";
+import { requireAdmin, getSessionUser } from "@/lib/server-session-node";
 
 export async function GET(req: NextRequest) {
   const user = await getSessionUser(req);
@@ -55,3 +55,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Invalid payload" }, { status: 400 });
   }
 }
+
+export const runtime = "nodejs"

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSessionUser } from "@/lib/server-session";
+import { getSessionUser } from "@/lib/server-session-node";
 import { tasksDB } from "@/lib/db-store";
 
 export async function PUT(
@@ -62,3 +62,5 @@ export async function DELETE(
     );
   }
 }
+
+export const runtime = "nodejs"

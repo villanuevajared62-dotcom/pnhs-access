@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/server-session";
+import { requireAdmin } from "@/lib/server-session-node";
 import { listAuthUsers, addAuthUser, type ManageUserCreate } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
@@ -28,3 +28,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Invalid payload" }, { status: 400 });
   }
 }
+
+export const runtime = "nodejs"

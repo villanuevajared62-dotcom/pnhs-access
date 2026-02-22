@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSessionUser } from "@/lib/server-session";
+import { getSessionUser } from "@/lib/server-session-node";
 import { tasksDB, getNextTaskId } from "@/lib/db-store";
 
 interface TaskPayload {
@@ -72,3 +72,5 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export const runtime = "nodejs"

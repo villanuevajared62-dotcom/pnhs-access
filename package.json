@@ -1,44 +1,27 @@
 {
   "name": "pnhs-access",
-<<<<<<< HEAD
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "prisma generate && next build",
-    "start": "next start",
-    "lint": "next lint",
-    "db:push": "prisma db push",
-    "db:seed": "npx tsx prisma/seed.ts"
-  },
-  "dependencies": {
-    "@prisma/client": "^5.10.0",
-    "bcryptjs": "^2.4.3",
-    "jose": "^5.2.3",
-    "next": "14.1.0",
-    "react": "^18",
-    "react-dom": "^18",
-    "recharts": "^2.12.0"
-=======
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "migrate:data": "node scripts/prisma-migrate-data.js",
     "start": "next start",
-    "lint": "next lint --dir .",
+    "lint": "next lint",
+    "db:push": "prisma db push",
+    "db:seed": "npx tsx prisma/seed.ts",
+    "migrate:data": "node scripts/prisma-migrate-data.js",
     "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^5.17.0",
     "@vercel/blob": "^2.3.0",
     "bcryptjs": "^2.4.3",
+    "jose": "^5.2.3",
     "lucide-react": "^0.263.1",
-    "next": "^16.1.6",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
->>>>>>> abd22b2953a867c47a19ce65745932cb9bbe898c
+    "next": "14.1.0",
+    "react": "^18",
+    "react-dom": "^18",
+    "recharts": "^2.12.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -47,14 +30,9 @@
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
     "postcss": "^8",
-<<<<<<< HEAD
-    "prisma": "^5.10.0",
-    "tailwindcss": "^3.3.0",
-    "tsx": "^4.7.1",
-=======
     "prisma": "^5.17.0",
     "tailwindcss": "^3.3.0",
->>>>>>> abd22b2953a867c47a19ce65745932cb9bbe898c
+    "tsx": "^4.7.1",
     "typescript": "^5"
   }
 }

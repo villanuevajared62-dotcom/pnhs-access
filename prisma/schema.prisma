@@ -47,7 +47,7 @@ model Teacher {
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   classes    Class[]
   grades     Grade[]
-  attendance Attendance[] @relation("TeacherAttendance")
+  attendance AttendanceTeacher[]
   tasks      Task[]
 }
 
@@ -64,7 +64,7 @@ model Class {
 
   teacher     Teacher     @relation(fields: [teacherId], references: [id])
   enrollments Enrollment[]
-  attendance  Attendance[] @relation("TeacherAttendance")
+  attendance  Attendance[]
   assignments Assignment[]
   grades      Grade[]
 }
@@ -101,15 +101,26 @@ model Attendance {
   id        String   @id @default(cuid())
   studentId String
   classId   String
-  teacherId String
   date      DateTime
   status    String   // present, absent, late
 
   student Student @relation(fields: [studentId], references: [id])
   class   Class   @relation(fields: [classId], references: [id])
-  teacher Teacher @relation(fields: [teacherId], references: [id], name: "TeacherAttendance")
 
   @@unique([studentId, classId, date])
+}
+
+model AttendanceTeacher {
+  id        String   @id @default(cuid())
+  teacherId String
+  classId   String
+  date      DateTime
+  status    String   // present, absent, late
+
+  teacher Teacher @relation(fields: [teacherId], references: [id])
+  class   Class   @relation(fields: [classId], references: [id])
+
+  @@unique([teacherId, classId, date])
 }
 
 model Assignment {

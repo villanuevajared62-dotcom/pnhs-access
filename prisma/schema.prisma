@@ -117,11 +117,13 @@ model Attendance {
   id        String   @id @default(cuid())
   studentId String
   classId   String
+  teacherId String
   date      DateTime
   status    String   // present, absent, late
 
   student Student @relation(fields: [studentId], references: [id])
   class   Class   @relation(fields: [classId], references: [id])
+  teacher Teacher @relation(fields: [teacherId], references: [id])
 
   @@unique([studentId, classId, date])
 }

@@ -33,9 +33,9 @@ model Student {
   status     String
   studentId  String
   deletedAt  DateTime?
-  userId     String    @unique
+  userId     String?   @unique
 
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
   enrollments Enrollment[]
   grades      Grade[]
   attendance  Attendance[]
@@ -71,7 +71,7 @@ model Class {
   students   Int       @default(0)
   schedule   String?
   time       String?
-  room       String
+  room       String    @default("")
   gradeLevel String
   section    String
   strand     String?

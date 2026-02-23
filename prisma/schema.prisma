@@ -10,41 +10,188 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// NOTE: SQLite connector does not support Prisma enums or Json types.
-// We use String fields instead and validate values at the application level.
-
-model Announcement {
+model User {
   id        String   @id @default(cuid())
-  title     String
-  message   String
-  date      DateTime @default(now())
-  author    String
-  type      String   // was enum AnnouncementType
+  username  String   @unique
+  password  String
+  role      String
   createdAt DateTime @default(now())
+
+  student Student?
+}
+
+model Student {
+  id         String    @id @default(cuid())
+  name       String
+  email      String
+  gradeLevel String
+  username   String?   @unique
+  password   String?
+  section    String
+  strand     String?
+  gpa        String
+  status     String
+  studentId  String
   deletedAt  DateTime?
+  userId     String    @unique
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  enrollments Enrollment[]
+  grades      Grade[]
+  attendance  Attendance[]
+  submissions Submission[]
+  assignments Assignment[]
 }
 
-model AuditLog {
-  id         String   @id @default(cuid())
-  actorId    String?
-  actorRole  String?
-  action     String
-  resource   String
-  resourceId String?
-  metadata   String?  // JSON string
-  createdAt  DateTime @default(now())
+model Teacher {
+  id         String    @id @default(cuid())
+  name       String
+  email      String
+  department String
+  subjects   String    @default("[]")
+  students   Int       @default(0)
+  status     String
+  username   String?   @unique
+  password   String?
+  deletedAt  DateTime?
+
+  teacherSubjects TeacherSubject[]
+  classes         Class[]          @relation("TeacherClasses")
+  tasks           Task[]           @relation("TeacherTasks")
+  grades          Grade[]
+  attendance      Attendance[]
 }
 
-model Session {
+model Class {
+  id         String    @id @default(cuid())
+  name       String
+  subject    String?
+  teacher    String
+  teacherId  String
+  students   Int       @default(0)
+  schedule   String?
+  time       String?
+  room       String
+  gradeLevel String
+  section    String
+  strand     String?
+  deletedAt  DateTime?
+  createdAt  DateTime  @default(now())
+
+  teacherRef  Teacher?     @relation(fields: [teacherId], references: [id], name: "TeacherClasses")
+  enrollments Enrollment[]
+  attendance  Attendance[]
+  assignments Assignment[]
+  grades      Grade[]
+}
+
+model Enrollment {
   id        String   @id @default(cuid())
-  userId    String
-  token     String   @unique
-  data      String   // JSON payload of user data
+  studentId String
+  classId   String
   createdAt DateTime @default(now())
-  expiresAt DateTime
-  revoked   Boolean  @default(false)
 
-  @@index([userId])
+  student Student @relation(fields: [studentId], references: [id])
+  class   Class   @relation(fields: [classId], references: [id])
+
+  @@unique([studentId, classId])
+}
+
+model Grade {
+  id        String   @id @default(cuid())
+  studentId String
+  subjectId String?
+  classId   String?
+  teacherId String?
+  grade     String?
+  score     Float?
+  quarter   String
+  remarks   String?
+  createdAt DateTime @default(now())
+
+  student Student  @relation(fields: [studentId], references: [id])
+  subject Subject? @relation(fields: [subjectId], references: [id])
+  class   Class?   @relation(fields: [classId], references: [id])
+  teacher Teacher? @relation(fields: [teacherId], references: [id])
+}
+
+model Attendance {
+  id        String   @id @default(cuid())
+  studentId String
+  classId   String
+  teacherId String?
+  date      DateTime
+  status    String
+  createdAt DateTime @default(now())
+
+  student Student  @relation(fields: [studentId], references: [id])
+  class   Class    @relation(fields: [classId], references: [id])
+  teacher Teacher? @relation(fields: [teacherId], references: [id])
+
+  @@unique([studentId, classId, date])
+}
+
+model Subject {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+
+  grades          Grade[]
+  teacherSubjects TeacherSubject[]
+  tasks           Task[]
+}
+
+model TeacherSubject {
+  id        String   @id @default(cuid())
+  teacherId String
+  subjectId String
+  createdAt DateTime @default(now())
+
+  teacher Teacher @relation(fields: [teacherId], references: [id])
+  subject Subject @relation(fields: [subjectId], references: [id])
+
+  @@unique([teacherId, subjectId])
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  title       String?
+  task        String?
+  description String?
+  subjectId   String?
+  teacherId   String
+  dueDate     DateTime?
+  deadline    DateTime?
+  priority    String?
+  class       String?
+  status      String    @default("pending")
+  completed   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+
+  subject Subject? @relation(fields: [subjectId], references: [id])
+  teacher Teacher  @relation(fields: [teacherId], references: [id], name: "TeacherTasks")
+}
+
+model Assignment {
+  id                     String   @id @default(cuid())
+  title                  String
+  description            String?
+  subject                String?
+  subjectId              String?
+  teacherId              String?
+  classId                String?
+  studentId              String?
+  dueDate                DateTime
+  status                 String   @default("published")
+  grade                  String?
+  gradingCriteria        String?
+  submissionRequirements String?
+  createdAt              DateTime @default(now())
+
+  class       Class?       @relation(fields: [classId], references: [id])
+  student     Student?     @relation(fields: [studentId], references: [id])
+  submissions Submission[]
 }
 
 model Submission {
@@ -57,435 +204,45 @@ model Submission {
   grade        String?
   feedback     String?
 
-  assignment   Assignment @relation(fields: [assignmentId], references: [id])
-}
-
-model Student {
-  id         String   @id @default(cuid())
-  name       String
-  email      String
-  gradeLevel String
-  username   String?  @unique
-  password   String?
-  section    String
-  strand     String?
-  gpa        String
-  status     String   // was enum StudentStatus
-  studentId  String
-  deletedAt  DateTime?
-
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  enrollments Enrollment[]
-  grades      Grade[]
-  attendance  Attendance[]
-  submissions Submission[]
-}
-
-model Teacher {
-  id         String   @id @default(cuid())
-  name       String
-  email      String
-  department String
-  subjects   String   @default("[]") // legacy: store array of subjects as JSON string (migrate to relation)
-  students   Int
-  status     String   // was enum TeacherStatus
-  username   String?  @unique
-  password   String?
-  deletedAt  DateTime?
-
-  // new relation fields
-  teacherSubjects TeacherSubject[]
-  classes Class[] @relation("TeacherClasses")
-  tasks Task[] @relation("TeacherTasks")
-}
-
-model Class {
-  id         String   @id @default(cuid())
-  name       String
-  subject    String?  // subject name
-  teacher    String
-  teacherId  String
-  teacherRef Teacher? @relation(fields: [teacherId], references: [id], name: "TeacherClasses")
-  students   Int
-  schedule   String
-  time       String?  // class time (e.g., "8:00 AM - 9:00 AM")
-  room       String
-  gradeLevel String
-  section    String
-  strand     String?
-  deletedAt  DateTime?
-
-  enrollments Enrollment[]
-  attendance  Attendance[]
-}
-
-model Enrollment {
-  id        String   @id @default(cuid())
-  studentId String
-  classId   String
-  createdAt DateTime @default(now())
-
-  student Student @relation(fields: [studentId], references: [id])
-  class   Class   @relation(fields: [classId], references: [id])
-
-  @@unique([studentId, classId])
-}
-
-model Grade {
-  id         String   @id @default(cuid())
-  studentId  String
-  subjectId  String
-  grade      String
-  quarter    String
-  remarks    String
-  createdAt  DateTime @default(now())
-
-  student Student @relation(fields: [studentId], references: [id])
-  subject Subject @relation(fields: [subjectId], references: [id])
-}
-
-model Attendance {
-  id        String           @id @default(cuid())
-  studentId String
-  classId   String
-  date      DateTime
-  status    String           // was enum AttendanceStatus
-
-  student   Student          @relation(fields: [studentId], references: [id])
-  class     Class            @relation(fields: [classId], references: [id])
-
-  // Prevent duplicate attendance records for same student/class/date
-  @@unique([studentId, classId, date])
-}
-
-model Subject {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  createdAt   DateTime @default(now())
-
-  grades Grade[]
-  teacherSubjects TeacherSubject[]
-  tasks Task[]
-}
-
-model TeacherSubject {
-  id        String   @id @default(cuid())
-  teacherId String
-  subjectId String
-  createdAt DateTime @default(now())
-
-  teacher Teacher @relation(fields: [teacherId], references: [id])
-  subject Subject @relation(fields: [subjectId], references: [id])
-
-  @@unique([teacherId, subjectId])
-}
-
-model Task {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  subjectId   String
-  teacherId   String
-  dueDate     DateTime
-  status      String   @default("pending") // was enum TaskStatus
-  createdAt   DateTime @default(now())
-
-  subject  Subject @relation(fields: [subjectId], references: [id])
-  teacher  Teacher @relation(fields: [teacherId], references: [id], name: "TeacherTasks")
-}
-
-model Assignment {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  subjectId   String
-  teacherId   String
-  dueDate     DateTime
-  createdAt   DateTime @default(now())
-
-  submissions Submission[]
-}
-
-model Teacher {
-  id         String   @id @default(cuid())
-  name       String
-  email      String
-  department String
-  subjects   String   @default("[]") // legacy: store array of subjects as JSON string (migrate to relation)
-  students   Int
-  status     String   // was enum TeacherStatus
-  username   String?  @unique
-  password   String?
-  deletedAt  DateTime?
-
-  // new relation fields
-  teacherSubjects TeacherSubject[]
-  classes Class[] @relation("TeacherClasses")
-  tasks Task[] @relation("TeacherTasks")
-}
-
-model Student {
-  id         String   @id @default(cuid())
-  name       String
-  email      String
-  gradeLevel String
-  username   String?  @unique
-  password   String?
-  section    String
-  strand     String?
-  gpa        String
-  status     String   // was enum StudentStatus
-  studentId  String
-  deletedAt  DateTime?
-}
-
-model Class {
-  id         String   @id @default(cuid())
-  name       String
-  subject    String?  // subject name
-  teacher    String
-  teacherId  String
-  teacherRef Teacher? @relation(fields: [teacherId], references: [id], name: "TeacherClasses")
-  students   Int
-  schedule   String
-  time       String?  // class time (e.g., "8:00 AM - 9:00 AM")
-  room       String
-  gradeLevel String
-  section    String
-  strand     String?
-  deletedAt  DateTime?
-  section     String
-  teacherId   String
-  teacher     Teacher  @relation(fields: [teacherId], references: [id])
-  subjectId   String
-  subject     Subject  @relation(fields: [subjectId], references: [id])
-  students    Student[]
-  grades      Grade[]
-  attendance  Attendance[]
-  schedule    String?
-  createdAt   DateTime @default(now())
-}
-
-model Subject {
-  id      String  @id @default(cuid())
-  name    String
-  code    String  @unique
-  classes Class[]
-}
-
-model Grade {
-  id          String   @id @default(cuid())
-  studentId   String
-  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  classId     String
-  class       Class    @relation(fields: [classId], references: [id])
-  teacherId   String
-  teacher     Teacher  @relation(fields: [teacherId], references: [id])
-  quarter     Int      // 1, 2, 3, 4
-  score       Float
-  remarks     String?
-  name       String
-  email      String
-  department String
-  subjects   String   @default("[]") // legacy: store array of subjects as JSON string (migrate to relation)
-  students   Int
-  status     String   // was enum TeacherStatus
-  username   String?  @unique
-  password   String?
-  deletedAt  DateTime?
-
-  // new relation fields
-  teacherSubjects TeacherSubject[]
-  classes Class[] @relation("TeacherClasses")
-  tasks Task[] @relation("TeacherTasks")
-}
-
-model Class {
-  id         String   @id @default(cuid())
-  name       String
-  subject    String?  // subject name
-  teacher    String
-  teacherId  String
-  teacherRef Teacher? @relation(fields: [teacherId], references: [id], name: "TeacherClasses")
-  students   Int
-  schedule   String
-  time       String?  // class time (e.g., "8:00 AM - 9:00 AM")
-  room       String
-  gradeLevel String
-  section    String
-  strand     String?
-  deletedAt  DateTime?
-
-  teacher     Teacher       @relation(fields: [teacherId], references: [id])
-  enrollments Enrollment[]
-  attendance  Attendance[]
-  assignments Assignment[]
-  grades      Grade[]
-  attendanceTeachers AttendanceTeacher[]  // <- fixed relation
-}
-
-/* =======================
-   ENROLLMENTS
-======================= */
-
-model Enrollment {
-  id        String   @id @default(cuid())
-  studentId String
-  classId   String
-  createdAt DateTime @default(now())
-
-  student Student @relation(fields: [studentId], references: [id])
-  class   Class   @relation(fields: [classId], references: [id])
-
-  @@unique([studentId, classId])
-}
-
-/* =======================
-   GRADES & ATTENDANCE
-======================= */
-
-model Grade {
-  id         String   @id @default(cuid())
-  studentId  String
-  subjectId  String
-  grade      String
-  quarter    String
-  remarks    String
-  createdAt  DateTime @default(now())
-
-  student Student @relation(fields: [studentId], references: [id])
-  subject Subject @relation(fields: [subjectId], references: [id])
-}
-
-model Attendance {
-  id        String           @id @default(cuid())
-  studentId String
-  classId   String
-  date      DateTime
-  status    String           // was enum AttendanceStatus
-
-  student   Student          @relation(fields: [studentId], references: [id])
-  class     Class            @relation(fields: [classId], references: [id])
-
-  // Prevent duplicate attendance records for same student/class/date
-  @@unique([studentId, classId, date])
-}
-
-/* =======================
-   SUBJECTS & TASKS
-======================= */
-
-model Subject {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  createdAt   DateTime @default(now())
-
-  grades Grade[]
-  teacherSubjects TeacherSubject[]
-  tasks Task[]
-}
-
-model TeacherSubject {
-  id        String   @id @default(cuid())
-  teacherId String
-  subjectId String
-  createdAt DateTime @default(now())
-
-  teacher Teacher @relation(fields: [teacherId], references: [id])
-  subject Subject @relation(fields: [subjectId], references: [id])
-
-  @@unique([teacherId, subjectId])
-}
-
-model Task {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  subjectId   String
-  teacherId   String
-  dueDate     DateTime
-  status      String   @default("pending") // was enum TaskStatus
-  createdAt   DateTime @default(now())
-
-  subject  Subject @relation(fields: [subjectId], references: [id])
-  teacher  Teacher @relation(fields: [teacherId], references: [id], name: "TeacherTasks")
-}
-
-  student    Student  @relation(fields: [studentId], references: [id])
->>>>>>> abd22b2953a867c47a19ce65745932cb9bbe898c
-}
-
-model Attendance {
-  id        String           @id @default(cuid())
-  studentId String
-<<<<<<< HEAD
-  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  classId   String
-  class     Class    @relation(fields: [classId], references: [id])
-  teacherId String
-  teacher   Teacher  @relation(fields: [teacherId], references: [id])
-  date      String   // YYYY-MM-DD
-  status    String   // present, absent, late, excused
-  createdAt DateTime @default(now())
+  assignment Assignment @relation(fields: [assignmentId], references: [id])
+  student    Student    @relation(fields: [studentId], references: [id])
 }
 
 model Announcement {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   title     String
-  content   String
-  authorId  String
-  audience  String   @default("all") // all, teachers, students
+  message   String?
+  content   String?
+  author    String?
+  authorId  String?
+  type      String?
+  audience  String    @default("all")
+  date      DateTime  @default(now())
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  actorRole  String?
+  action     String
+  resource   String
+  resourceId String?
+  metadata   String?
+  createdAt  DateTime @default(now())
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  data      String
   createdAt DateTime @default(now())
-=======
-  classId   String
-  date      DateTime
-  status    String   // was enum AttendanceStatus
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
 
-  student   Student  @relation(fields: [studentId], references: [id])
-  class     Class    @relation(fields: [classId], references: [id])
-
-  // Prevent duplicate attendance records for same student/class/date
-  @@unique([studentId, classId, date])
-}
-
-model Task {
-  id         String   @id @default(cuid())
-  task       String
-  deadline   DateTime
-  priority   String
-  class      String
-  description String?
-  teacherId  String
-  completed  Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  // relation
-  teacher    Teacher  @relation(fields: [teacherId], references: [id], name: "TeacherTasks")
-}
-
-model Assignment {
-  id         String   @id @default(cuid())
-  title      String
-  subject    String?
-  dueDate    DateTime
-  status     String   @default("published")
-  grade      String?
-  description String?
-
-  // Class-based assignment fields
-  classId        String?
-  gradingCriteria String?
-  submissionRequirements String?
-
-  // Keep studentId optional for backward compatibility
-  studentId  String?
-  createdAt  DateTime @default(now())
-
-  // Relations
-  class      Class?   @relation(fields: [classId], references: [id])
-  student    Student? @relation(fields: [studentId], references: [id])
-  submissions Submission[]
+  @@index([userId])
 }
 
 model Settings {

@@ -1,6 +1,6 @@
 "use client";
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -836,6 +836,8 @@ export default function StudentDashboard() {
 
   const loadClasses = async () => {
     try {
+      // API automatically filters classes by student enrollment
+      // Only shows classes where student is enrolled (matches grade/section/strand)
       const res = await fetch("/api/classes", { credentials: "include" });
       if (res.status === 401) {
         router.push("/login");
@@ -861,6 +863,8 @@ export default function StudentDashboard() {
 
   const loadAssignments = async (studentId: string) => {
     try {
+      // API automatically filters assignments by student enrollment
+      // Only shows assignments for classes where student is enrolled
       const res = await fetch("/api/assignments", {
         credentials: "include",
         cache: "no-store",
@@ -2553,11 +2557,11 @@ export default function StudentDashboard() {
               className={`flex items-center gap-3 ${!sidebarOpen && "justify-center lg:flex"} ${!sidebarOpen && "hidden lg:flex"}`}
             >
               <div className="w-10 h-10 md:w-12 md:h-12 rounded-full shadow-lg overflow-hidden bg-white p-1">
-                  <img
-                    src="/pnhs-logo.png"
-                    alt="PNHS Logo"
-                    className="w-full h-full object-contain"
-                  />
+                <img
+                  src="/pnhs-logo.png"
+                  alt="PNHS Logo"
+                  className="w-full h-full object-contain"
+                />
               </div>
               {sidebarOpen && (
                 <div>

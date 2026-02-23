@@ -1,6 +1,6 @@
 "use client";
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -286,11 +286,18 @@ export default function AdminDashboard() {
     setScheduleDays(days);
     setScheduleStart(start);
     setScheduleEnd(end);
-    const combined = `${days}${start ? " " + start : ""}${end ? " - " + end : ""}`.trim();
+    const combined =
+      `${days}${start ? " " + start : ""}${end ? " - " + end : ""}`.trim();
     setEditingClass((prev) => (prev ? { ...prev, schedule: combined } : prev));
     if (editingClass?.teacherId) {
       setScheduleConflict(
-        checkScheduleConflict(editingClass.teacherId, days, start, end, editingClass.id),
+        checkScheduleConflict(
+          editingClass.teacherId,
+          days,
+          start,
+          end,
+          editingClass.id,
+        ),
       );
     }
   };
@@ -477,7 +484,14 @@ export default function AdminDashboard() {
         editingClass.id,
       ),
     );
-  }, [editingClass?.teacherId, scheduleDays, scheduleStart, scheduleEnd, editingClass?.id, classes]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [
+    editingClass?.teacherId,
+    scheduleDays,
+    scheduleStart,
+    scheduleEnd,
+    editingClass?.id,
+    classes,
+  ]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadData = async () => {
     try {
@@ -768,7 +782,10 @@ export default function AdminDashboard() {
 
       if (!res.ok) {
         const err = await res.json();
-        showToast(`Failed to add student: ${err.message || "Unknown error"}`, "error");
+        showToast(
+          `Failed to add student: ${err.message || "Unknown error"}`,
+          "error",
+        );
         return;
       }
 
@@ -875,7 +892,10 @@ export default function AdminDashboard() {
 
       if (!res.ok) {
         const error = await res.json().catch(() => ({}));
-        showToast(`Failed to update student: ${error.message || "Unknown error"}`, "error");
+        showToast(
+          `Failed to update student: ${error.message || "Unknown error"}`,
+          "error",
+        );
         return;
       }
 
@@ -886,6 +906,23 @@ export default function AdminDashboard() {
       console.error("Error updating student:", error);
       showToast("An error occurred while updating the student.", "error");
     }
+  };
+
+  const addSubjectToTeacher = (subject: string) => {
+    if (!editingTeacher || !subject.trim()) return;
+
+    const currentSubjects = editingTeacher.subjects || [];
+    const trimmedSubject = subject.trim();
+
+    if (currentSubjects.includes(trimmedSubject)) {
+      showToast("Subject already added", "warning");
+      return;
+    }
+
+    setEditingTeacher({
+      ...editingTeacher,
+      subjects: [...currentSubjects, trimmedSubject],
+    });
   };
 
   const handleUpdateTeacher = async () => {
@@ -909,15 +946,45 @@ export default function AdminDashboard() {
           showToast("Please fill in Name and Email", "warning");
           return;
         }
-        const payload: any = { ...editingTeacher };
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(editingTeacher.email)) {
+          showToast("Please enter a valid email address", "warning");
+          return;
+        }
+
+        // Prepare subjects array properly
+        const subjects = editingTeacher.subjects || [];
+        if (!Array.isArray(subjects)) {
+          showToast("Subjects must be formatted correctly", "warning");
+          return;
+        }
+
+        const payload: any = {
+          ...editingTeacher,
+          subjects: subjects,
+          email: editingTeacher.email.trim().toLowerCase(),
+          name: editingTeacher.name.trim(),
+        };
+
+        // Clean up payload
         if (typeof payload.__newSubject !== "undefined")
           delete payload.__newSubject;
+        if (payload.username) {
+          payload.username = payload.username.trim();
+        }
+        if (payload.password === "") {
+          delete payload.password;
+        }
+
         const res = await fetch("/api/teachers", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
           body: JSON.stringify(payload),
         });
+
         if (!res.ok) {
           const err = await res.json().catch(() => null);
           throw new Error(err?.message || "Failed to add teacher");
@@ -956,7 +1023,10 @@ export default function AdminDashboard() {
       return;
     }
     if (scheduleConflict) {
-      showToast("Cannot save: teacher already has a class at this time slot.", "error");
+      showToast(
+        "Cannot save: teacher already has a class at this time slot.",
+        "error",
+      );
       return;
     }
     try {
@@ -1094,12 +1164,12 @@ export default function AdminDashboard() {
 
             <div className="space-y-4">
               {announcements.length === 0 ? (
-                <div className="bg-blue-50 rounded-2xl p-8 text-center border-2 border-dashed border-blue-300">
-                  <Bell className="w-12 h-12 text-blue-400 mx-auto mb-3" />
-                  <p className="text-gray-600 font-medium">
+                <div className="bg-blue-50 rounded-2xl p-6 md:p-8 text-center border-2 border-dashed border-blue-300">
+                  <Bell className="w-10 h-10 md:w-12 md:h-12 text-blue-400 mx-auto mb-3" />
+                  <p className="text-gray-600 font-medium text-sm md:text-base">
                     No announcements yet
                   </p>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-xs md:text-sm text-gray-500 mt-1">
                     Create your first announcement by clicking "New
                     Announcement"
                   </p>
@@ -1108,7 +1178,7 @@ export default function AdminDashboard() {
                 announcements.map((announcement) => (
                   <div
                     key={announcement.id}
-                    className={`bg-white rounded-2xl shadow-md p-6 border-l-4 ${
+                    className={`bg-white rounded-2xl shadow-md p-4 md:p-6 border-l-4 ${
                       announcement.type === "info"
                         ? "border-blue-500"
                         : announcement.type === "warning"
@@ -1116,14 +1186,14 @@ export default function AdminDashboard() {
                           : "border-green-500"
                     }`}
                   >
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-xl font-bold text-gray-900">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                          <h3 className="text-lg md:text-xl font-bold text-gray-900 truncate">
                             {announcement.title}
                           </h3>
                           <span
-                            className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                            className={`px-2 py-1 md:px-3 rounded-full text-xs font-semibold flex-shrink-0 ${
                               announcement.type === "info"
                                 ? "bg-blue-100 text-blue-700"
                                 : announcement.type === "warning"
@@ -1134,12 +1204,12 @@ export default function AdminDashboard() {
                             {announcement.type.toUpperCase()}
                           </span>
                         </div>
-                        <p className="text-gray-700 mb-3">
+                        <p className="text-sm md:text-base text-gray-700 mb-3">
                           {announcement.message}
                         </p>
-                        <div className="flex items-center gap-4 text-sm text-gray-500">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs md:text-sm text-gray-500">
                           <span>By: {announcement.author}</span>
-                          <span>•</span>
+                          <span className="hidden sm:inline">•</span>
                           <span>{formatDate(announcement.date)}</span>
                         </div>
                       </div>
@@ -1147,9 +1217,9 @@ export default function AdminDashboard() {
                         onClick={() =>
                           handleDeleteAnnouncement(announcement.id)
                         }
-                        className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                        className="p-2 hover:bg-red-50 rounded-lg transition-colors self-start sm:self-auto"
                       >
-                        <Trash2 className="w-5 h-5 text-red-600" />
+                        <Trash2 className="w-4 h-4 md:w-5 md:h-5 text-red-600" />
                       </button>
                     </div>
                   </div>
@@ -1186,34 +1256,34 @@ export default function AdminDashboard() {
 
             <div className="bg-white rounded-2xl shadow-md border border-green-100 overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full">
+                <table className="w-full min-w-[768px]">
                   <thead className="bg-green-50">
                     <tr>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-green-900">
+                      <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
                         Student ID
                       </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-green-900">
+                      <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
                         Name
                       </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-green-900">
+                      <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900 hidden sm:table-cell">
                         Email
                       </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-green-900">
+                      <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900 hidden md:table-cell">
                         Username
                       </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-green-900">
+                      <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900 hidden lg:table-cell">
                         Password
                       </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-green-900">
+                      <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
                         Grade
                       </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-green-900">
+                      <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900 hidden sm:table-cell">
                         Section
                       </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-green-900">
+                      <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900 hidden md:table-cell">
                         Strand
                       </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-green-900">
+                      <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
                         Actions
                       </th>
                     </tr>
@@ -1237,10 +1307,10 @@ export default function AdminDashboard() {
                           key={student.id}
                           className="border-t border-green-100 hover:bg-green-50"
                         >
-                          <td className="px-6 py-4 text-sm text-gray-900 font-mono">
+                          <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900 font-mono">
                             {student.studentId}
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-900">
+                          <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900">
                             <button
                               onClick={() => openStudentAttendance(student)}
                               className="text-left text-green-700 hover:underline"
@@ -1248,26 +1318,26 @@ export default function AdminDashboard() {
                               {student.name}
                             </button>
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-600">
+                          <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-600 hidden sm:table-cell">
                             {student.email}
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-900 font-mono">
+                          <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900 font-mono hidden md:table-cell">
                             {student.username}
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-900 font-mono">
+                          <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900 font-mono hidden lg:table-cell">
                             ••••••••
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-900">
+                          <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900">
                             {student.gradeLevel}
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-900">
+                          <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900 hidden sm:table-cell">
                             {student.section || "-"}
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-900">
+                          <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900 hidden md:table-cell">
                             {student.strand || "-"}
                           </td>
-                          <td className="px-6 py-4 text-sm">
-                            <div className="flex gap-2">
+                          <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm">
+                            <div className="flex gap-1 md:gap-2">
                               <button
                                 onClick={() =>
                                   // FIX: Reset password to empty string so we never
@@ -1277,15 +1347,15 @@ export default function AdminDashboard() {
                                     password: "",
                                   })
                                 }
-                                className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                                className="p-1 md:p-2 hover:bg-blue-50 rounded-lg transition-colors"
                               >
-                                <Edit className="w-4 h-4 text-blue-600" />
+                                <Edit className="w-3 h-3 md:w-4 md:h-4 text-blue-600" />
                               </button>
                               <button
                                 onClick={() => handleDeleteStudent(student.id)}
-                                className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                                className="p-1 md:p-2 hover:bg-red-50 rounded-lg transition-colors"
                               >
-                                <Trash2 className="w-4 h-4 text-red-600" />
+                                <Trash2 className="w-3 h-3 md:w-4 md:h-4 text-red-600" />
                               </button>
                             </div>
                           </td>
@@ -1348,8 +1418,8 @@ export default function AdminDashboard() {
 
             <div className="grid gap-4">
               {filteredTeachers.length === 0 ? (
-                <div className="bg-purple-50 rounded-2xl p-8 text-center border-2 border-dashed border-purple-300">
-                  <GraduationCap className="w-12 h-12 text-purple-400 mx-auto mb-3" />
+                <div className="bg-purple-50 rounded-2xl p-6 md:p-8 text-center border-2 border-dashed border-purple-300">
+                  <GraduationCap className="w-10 h-10 md:w-12 md:h-12 text-purple-400 mx-auto mb-3" />
                   <p className="text-gray-600 font-medium">No teachers found</p>
                   <p className="text-sm text-gray-500 mt-1">
                     Add a new teacher to get started
@@ -1359,42 +1429,42 @@ export default function AdminDashboard() {
                 filteredTeachers.map((teacher) => (
                   <div
                     key={teacher.id}
-                    className="bg-white rounded-2xl shadow-md p-6 border border-green-100"
+                    className="bg-white rounded-2xl shadow-md p-4 md:p-6 border border-green-100"
                   >
-                    <div className="flex justify-between items-start">
-                      <div className="flex gap-4">
-                        <div className="w-16 h-16 bg-gradient-to-br from-green-600 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+                      <div className="flex gap-3 md:gap-4">
+                        <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-green-600 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-lg md:text-xl flex-shrink-0">
                           {teacher.name.charAt(0)}
                         </div>
-                        <div>
-                          <h3 className="text-lg font-bold text-gray-900">
+                        <div className="min-w-0 flex-1">
+                          <h3 className="text-base md:text-lg font-bold text-gray-900 truncate">
                             {teacher.name}
                           </h3>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-xs md:text-sm text-gray-600 break-all">
                             {teacher.email}
                           </p>
                           {teacher.username && (
-                            <p className="text-sm text-gray-600 mt-1">
+                            <p className="text-xs md:text-sm text-gray-600 mt-1">
                               Username:{" "}
                               <span className="font-mono text-gray-800">
                                 {teacher.username}
                               </span>
                             </p>
                           )}
-                          <p className="text-sm text-gray-600 mt-1">
+                          <p className="text-xs md:text-sm text-gray-600 mt-1">
                             Password:{" "}
                             <span className="font-mono text-gray-800">
                               ••••••••
                             </span>
                           </p>
-                          <p className="text-sm text-gray-600 mt-1">
+                          <p className="text-xs md:text-sm text-gray-600 mt-1">
                             {teacher.department}
                           </p>
-                          <div className="flex gap-2 mt-2">
+                          <div className="flex flex-wrap gap-1 mt-2">
                             {teacher.subjects.map((subject, idx) => (
                               <span
                                 key={idx}
-                                className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium"
+                                className="px-2 py-1 md:px-3 md:py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium"
                               >
                                 {subject}
                               </span>
@@ -1402,29 +1472,29 @@ export default function AdminDashboard() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 self-end sm:self-start">
                         <button
                           onClick={() => setEditingTeacher(teacher)}
                           className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
                         >
-                          <Edit className="w-5 h-5 text-blue-600" />
+                          <Edit className="w-4 h-4 md:w-5 md:h-5 text-blue-600" />
                         </button>
                         <button
                           onClick={() => handleDeleteTeacher(teacher.id)}
                           className="p-2 hover:bg-red-50 rounded-lg transition-colors"
                         >
-                          <Trash2 className="w-5 h-5 text-red-600" />
+                          <Trash2 className="w-4 h-4 md:w-5 md:h-5 text-red-600" />
                         </button>
                       </div>
                     </div>
-                    <div className="mt-4 pt-4 border-t border-gray-100 flex gap-6">
-                      <div className="text-sm">
+                    <div className="mt-3 md:mt-4 pt-3 md:pt-4 border-t border-gray-100 flex flex-wrap gap-4 md:gap-6">
+                      <div className="text-xs md:text-sm">
                         <span className="text-gray-600">Students: </span>
                         <span className="font-semibold text-gray-900">
                           {teacher.students}
                         </span>
                       </div>
-                      <div className="text-sm">
+                      <div className="text-xs md:text-sm">
                         <span className="text-gray-600">Status: </span>
                         <span
                           className={`font-semibold ${teacher.status === "active" ? "text-green-600" : "text-gray-600"}`}
@@ -1760,24 +1830,24 @@ export default function AdminDashboard() {
       default:
         return (
           <div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-10">
               {stats.map((stat, i) => (
                 <div
                   key={i}
-                  className="bg-white rounded-2xl shadow-md p-6 border border-green-100 hover:border-teal-400 transition-all duration-300 cursor-pointer"
+                  className="bg-white rounded-2xl shadow-md p-4 md:p-6 border border-green-100 hover:border-teal-400 transition-all duration-300 cursor-pointer"
                 >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className={`${stat.color} p-4 rounded-xl`}>
-                      <stat.icon className="w-7 h-7 text-white" />
+                  <div className="flex items-center justify-between mb-3 md:mb-4">
+                    <div className={`${stat.color} p-3 md:p-4 rounded-xl`}>
+                      <stat.icon className="w-5 h-5 md:w-7 md:h-7 text-white" />
                     </div>
-                    <span className="text-green-600 font-semibold text-sm">
+                    <span className="text-green-600 font-semibold text-xs md:text-sm">
                       {stat.change}
                     </span>
                   </div>
-                  <h3 className="text-sm font-medium text-gray-600 mb-1">
+                  <h3 className="text-xs md:text-sm font-medium text-gray-600 mb-1">
                     {stat.label}
                   </h3>
-                  <p className="text-3xl font-bold text-teal-800">
+                  <p className="text-2xl md:text-3xl font-bold text-teal-800">
                     {stat.value}
                   </p>
                 </div>
@@ -1788,39 +1858,45 @@ export default function AdminDashboard() {
               <h2 className="text-2xl font-bold text-green-900 mb-6">
                 Quick Actions
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 <button
                   onClick={() => handleNavigation("announcements")}
-                  className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl p-6 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center gap-5"
+                  className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl p-4 md:p-6 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center gap-3 md:gap-5"
                 >
-                  <Bell className="w-10 h-10" />
-                  <div className="text-left">
-                    <h3 className="font-bold text-lg">Announcements</h3>
-                    <p className="text-blue-100 text-sm mt-1">
+                  <Bell className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0" />
+                  <div className="text-left min-w-0 flex-1">
+                    <h3 className="font-bold text-base md:text-lg truncate">
+                      Announcements
+                    </h3>
+                    <p className="text-blue-100 text-xs md:text-sm mt-1">
                       Post updates & news
                     </p>
                   </div>
                 </button>
                 <button
                   onClick={() => handleNavigation("students")}
-                  className="bg-gradient-to-r from-teal-700 to-green-700 text-white rounded-2xl p-6 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center gap-5"
+                  className="bg-gradient-to-r from-teal-700 to-green-700 text-white rounded-2xl p-4 md:p-6 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center gap-3 md:gap-5"
                 >
-                  <UserPlus className="w-10 h-10" />
-                  <div className="text-left">
-                    <h3 className="font-bold text-lg">Manage Students</h3>
-                    <p className="text-teal-100 text-sm mt-1">
+                  <UserPlus className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0" />
+                  <div className="text-left min-w-0 flex-1">
+                    <h3 className="font-bold text-base md:text-lg truncate">
+                      Manage Students
+                    </h3>
+                    <p className="text-teal-100 text-xs md:text-sm mt-1">
                       View all students
                     </p>
                   </div>
                 </button>
                 <button
                   onClick={() => handleNavigation("teachers")}
-                  className="bg-gradient-to-r from-emerald-700 to-green-700 text-white rounded-2xl p-6 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center gap-5"
+                  className="bg-gradient-to-r from-emerald-700 to-green-700 text-white rounded-2xl p-4 md:p-6 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center gap-3 md:gap-5"
                 >
-                  <GraduationCap className="w-10 h-10" />
-                  <div className="text-left">
-                    <h3 className="font-bold text-lg">Manage Teachers</h3>
-                    <p className="text-emerald-100 text-sm mt-1">
+                  <GraduationCap className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0" />
+                  <div className="text-left min-w-0 flex-1">
+                    <h3 className="font-bold text-base md:text-lg truncate">
+                      Manage Teachers
+                    </h3>
+                    <p className="text-emerald-100 text-xs md:text-sm mt-1">
                       View all teachers
                     </p>
                   </div>
@@ -1828,19 +1904,19 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-md p-7 border border-green-100">
-              <h2 className="text-xl font-bold text-green-900 mb-6">
+            <div className="bg-white rounded-2xl shadow-md p-4 md:p-7 border border-green-100">
+              <h2 className="text-lg md:text-xl font-bold text-green-900 mb-4 md:mb-6">
                 Recent Announcements
               </h2>
               <div className="space-y-4">
                 {announcements.slice(0, 5).map((announcement) => (
                   <div
                     key={announcement.id}
-                    className="flex items-start justify-between py-4 border-b last:border-b-0 hover:bg-green-50 px-4 rounded-lg transition-colors"
+                    className="flex flex-col sm:flex-row sm:items-start justify-between py-3 md:py-4 border-b last:border-b-0 hover:bg-green-50 px-2 md:px-4 rounded-lg transition-colors gap-2 sm:gap-4"
                   >
-                    <div className="flex items-start space-x-4">
+                    <div className="flex items-start space-x-3 md:space-x-4 min-w-0 flex-1">
                       <div
-                        className={`w-3 h-3 rounded-full mt-1.5 ${
+                        className={`w-2 h-2 md:w-3 md:h-3 rounded-full mt-1 md:mt-1.5 flex-shrink-0 ${
                           announcement.type === "success"
                             ? "bg-green-500"
                             : announcement.type === "warning"
@@ -1848,16 +1924,16 @@ export default function AdminDashboard() {
                               : "bg-blue-500"
                         }`}
                       />
-                      <div>
-                        <p className="font-medium text-gray-900">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-gray-900 text-sm md:text-base truncate">
                           {announcement.title}
                         </p>
-                        <p className="text-sm text-gray-600 mt-1">
+                        <p className="text-xs md:text-sm text-gray-600 mt-1">
                           {announcement.message.substring(0, 100)}...
                         </p>
                       </div>
                     </div>
-                    <span className="text-sm text-gray-500">
+                    <span className="text-xs md:text-sm text-gray-500 flex-shrink-0">
                       {formatDate(announcement.date)}
                     </span>
                   </div>
@@ -1947,7 +2023,11 @@ export default function AdminDashboard() {
                 } ${!sidebarOpen && "hidden lg:flex"}`}
               >
                 <item.icon className="w-5 h-5 flex-shrink-0" />
-                {sidebarOpen && <span className="text-sm md:text-base truncate">{item.label}</span>}
+                {sidebarOpen && (
+                  <span className="text-sm md:text-base truncate">
+                    {item.label}
+                  </span>
+                )}
               </button>
             ))}
           </nav>
@@ -1959,7 +2039,9 @@ export default function AdminDashboard() {
             className={`w-full flex items-center ${sidebarOpen ? "gap-3 px-3 md:px-4" : "justify-center"} py-2.5 md:py-3 rounded-xl hover:bg-white/10 transition-colors text-green-100 ${!sidebarOpen && "hidden lg:flex"}`}
           >
             <LogOut className="w-5 h-5 flex-shrink-0" />
-            {sidebarOpen && <span className="text-sm md:text-base">Logout</span>}
+            {sidebarOpen && (
+              <span className="text-sm md:text-base">Logout</span>
+            )}
           </button>
         </div>
       </aside>
@@ -2024,28 +2106,28 @@ export default function AdminDashboard() {
           </div>
         </header>
 
-        <main className="p-6 lg:p-10">{renderContent()}</main>
+        <main className="p-3 md:p-6 lg:p-10">{renderContent()}</main>
       </div>
 
       {/* Student Attendance Modal (Admin) */}
       {showStudentAttendance && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl md:rounded-2xl shadow-2xl max-w-3xl w-full p-4 md:p-6 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4 md:mb-6">
-              <h3 className="text-xl md:text-2xl font-bold text-green-900">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className="bg-white rounded-xl md:rounded-2xl shadow-2xl max-w-3xl w-full p-3 md:p-6 max-h-[90vh] overflow-y-auto mx-2">
+            <div className="flex justify-between items-center mb-3 md:mb-6">
+              <h3 className="text-lg md:text-2xl font-bold text-green-900 truncate">
                 {showStudentAttendance.student.name} — Attendance
               </h3>
               <button
                 onClick={() => setShowStudentAttendance(null)}
-                className="p-2 hover:bg-gray-100 rounded-lg"
+                className="p-1 md:p-2 hover:bg-gray-100 rounded-lg flex-shrink-0"
               >
-                <X className="w-5 h-5 md:w-6 md:h-6" />
+                <X className="w-4 h-4 md:w-6 md:h-6" />
               </button>
             </div>
 
-            <div className="space-y-4 md:space-y-6">
-              <div className="flex gap-3 items-center">
-                <div className="flex-1 grid grid-cols-2 gap-3 md:gap-4">
+            <div className="space-y-3 md:space-y-6">
+              <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                   <div>
                     <label className="block text-xs text-gray-600 mb-1">
                       From
@@ -2934,10 +3016,14 @@ export default function AdminDashboard() {
                     }
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
+                        e.preventDefault();
                         const val = (
                           (editingTeacher as any).__newSubject || ""
                         ).trim();
-                        if (!val) return;
+                        if (!val) {
+                          showToast("Please enter a subject name", "warning");
+                          return;
+                        }
                         const existing = (editingTeacher.subjects ||
                           []) as string[];
                         if (!existing.includes(val)) {
@@ -2946,7 +3032,12 @@ export default function AdminDashboard() {
                             subjects: [...existing, val],
                             __newSubject: "",
                           } as any);
+                          showToast(`Subject "${val}" added`, "success");
                         } else {
+                          showToast(
+                            `Subject "${val}" is already added`,
+                            "warning",
+                          );
                           setEditingTeacher({
                             ...(editingTeacher as any),
                             __newSubject: "",
@@ -2963,7 +3054,10 @@ export default function AdminDashboard() {
                       const val = (
                         (editingTeacher as any).__newSubject || ""
                       ).trim();
-                      if (!val) return;
+                      if (!val) {
+                        showToast("Please enter a subject name", "warning");
+                        return;
+                      }
                       const existing = (editingTeacher.subjects ||
                         []) as string[];
                       if (!existing.includes(val)) {
@@ -2972,7 +3066,12 @@ export default function AdminDashboard() {
                           subjects: [...existing, val],
                           __newSubject: "",
                         } as any);
+                        showToast(`Subject "${val}" added`, "success");
                       } else {
+                        showToast(
+                          `Subject "${val}" is already added`,
+                          "warning",
+                        );
                         setEditingTeacher({
                           ...(editingTeacher as any),
                           __newSubject: "",
@@ -3218,7 +3317,11 @@ export default function AdminDashboard() {
                       list="admin-day-opts"
                       value={scheduleDays}
                       onChange={(e) =>
-                        handleScheduleChange(e.target.value, scheduleStart, scheduleEnd)
+                        handleScheduleChange(
+                          e.target.value,
+                          scheduleStart,
+                          scheduleEnd,
+                        )
                       }
                       disabled={teacherMustBeSelectedFirst}
                       placeholder="Mon/Wed/Fri"
@@ -3240,7 +3343,11 @@ export default function AdminDashboard() {
                       list="admin-start-opts"
                       value={scheduleStart}
                       onChange={(e) =>
-                        handleScheduleChange(scheduleDays, e.target.value, scheduleEnd)
+                        handleScheduleChange(
+                          scheduleDays,
+                          e.target.value,
+                          scheduleEnd,
+                        )
                       }
                       disabled={teacherMustBeSelectedFirst}
                       placeholder="7:30 AM"
@@ -3262,7 +3369,11 @@ export default function AdminDashboard() {
                       list="admin-end-opts"
                       value={scheduleEnd}
                       onChange={(e) =>
-                        handleScheduleChange(scheduleDays, scheduleStart, e.target.value)
+                        handleScheduleChange(
+                          scheduleDays,
+                          scheduleStart,
+                          e.target.value,
+                        )
                       }
                       disabled={teacherMustBeSelectedFirst}
                       placeholder="8:30 AM"
@@ -3291,14 +3402,17 @@ export default function AdminDashboard() {
                 )}
 
                 {/* Preview */}
-                {!scheduleConflict && scheduleDays && scheduleStart && scheduleEnd && (
-                  <p className="mt-1.5 text-xs text-gray-500">
-                    Preview:{" "}
-                    <span className="font-medium text-gray-700">
-                      {scheduleDays} {scheduleStart} – {scheduleEnd}
-                    </span>
-                  </p>
-                )}
+                {!scheduleConflict &&
+                  scheduleDays &&
+                  scheduleStart &&
+                  scheduleEnd && (
+                    <p className="mt-1.5 text-xs text-gray-500">
+                      Preview:{" "}
+                      <span className="font-medium text-gray-700">
+                        {scheduleDays} {scheduleStart} – {scheduleEnd}
+                      </span>
+                    </p>
+                  )}
               </div>
 
               <div className="text-sm text-gray-600 mt-2">
@@ -3318,15 +3432,13 @@ export default function AdminDashboard() {
                 <input
                   type="number"
                   value={editingClass.students}
-                  onChange={(e) =>
-                    {
-                      manualStudentsEditedRef.current = true;
-                      setEditingClass({
-                        ...editingClass,
-                        students: parseInt(e.target.value),
-                      });
-                    }
-                  }
+                  onChange={(e) => {
+                    manualStudentsEditedRef.current = true;
+                    setEditingClass({
+                      ...editingClass,
+                      students: parseInt(e.target.value),
+                    });
+                  }}
                   disabled={teacherMustBeSelectedFirst}
                   className={`w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none ${
                     teacherMustBeSelectedFirst ? "opacity-60" : ""

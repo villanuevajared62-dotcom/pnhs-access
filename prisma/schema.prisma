@@ -52,46 +52,6 @@ enum AssignmentStatus {
   ARCHIVED
 }
 
-enum AnnouncementType {
-  GENERAL
-  EVENT
-  URGENT
-}
-
-enum StudentStatus {
-  ACTIVE
-  INACTIVE
-  GRADUATED
-  TRANSFERRED
-}
-
-enum TeacherStatus {
-  ACTIVE
-  INACTIVE
-  ON_LEAVE
-  RESIGNED
-}
-
-enum AttendanceStatus {
-  PRESENT
-  ABSENT
-  LATE
-  EXCUSED
-}
-
-enum TaskPriority {
-  LOW
-  MEDIUM
-  HIGH
-  URGENT
-}
-
-enum AssignmentStatus {
-  DRAFT
-  PUBLISHED
-  ARCHIVED
-}
-
 model Announcement {
   id        String           @id @default(cuid())
   title     String

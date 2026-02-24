@@ -150,18 +150,60 @@ export async function POST(
       String(cls.gradeLevel) === "Grade 11" ||
       String(cls.gradeLevel) === "Grade 12";
 
+    // Get section and strand values, normalized for comparison
+    const classSection = (cls.section || "").toString().trim().toUpperCase();
+    const classStrand = (cls.strand || "").toString().trim().toUpperCase();
+
     const studentWhere: any = {
       gradeLevel: cls.gradeLevel,
       deletedAt: null,
       status: "active",
     };
+
+    // Track if we should skip auto-enrollment
+    let shouldEnroll = true;
+
     if (isSenior) {
-      const strandValue = (cls.strand || "").toString().trim();
-      const sectionValue = (cls.section || "").toString().trim();
-      if (strandValue) studentWhere.strand = strandValue;
-      if (sectionValue) studentWhere.section = sectionValue;
+      // Senior High: Must match gradeLevel AND section (REQUIRED)
+      // Strand is optional but if provided, must match
+      if (!classSection) {
+        console.log(
+          "No section specified for senior high class - skipping auto-enrollment",
+        );
+        shouldEnroll = false;
+      } else {
+        studentWhere.section = classSection;
+      }
+
+      if (classStrand) {
+        studentWhere.strand = classStrand;
+      }
     } else {
-      if (cls.section) studentWhere.section = cls.section;
+      // Junior High: Must match gradeLevel AND section (REQUIRED)
+      if (!classSection) {
+        console.log(
+          "No section specified for junior high class - skipping auto-enrollment",
+        );
+        shouldEnroll = false;
+      } else {
+        studentWhere.section = classSection;
+      }
+    }
+
+    // Only enroll if we have valid criteria - otherwise just return current enrollments
+    if (!shouldEnroll) {
+      const result = await prisma.class.findUnique({
+        where: { id: cls.id },
+        include: { _count: { select: { enrollments: true } } },
+      });
+      const out = {
+        ...(result as any),
+        students:
+          (result as any)?._count?.enrollments ??
+          (result as any)?.students ??
+          0,
+      };
+      return NextResponse.json(out, { status: 200 });
     }
 
     const targetStudents = await prisma.student.findMany({
@@ -214,4 +256,4 @@ export async function POST(
   }
 }
 
-export const runtime = "nodejs"
+export const runtime = "nodejs";

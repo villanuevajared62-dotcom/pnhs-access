@@ -301,7 +301,15 @@ export default function StudentDashboard() {
   const [profilePhoto, setProfilePhoto] = useState("");
 
   const [classSchedule, setClassSchedule] = useState<
-    { subject: string; time: string; room: string; teacher: string }[]
+    {
+      subject: string;
+      time: string;
+      room: string;
+      teacher: string;
+      gradeLevel: string;
+      section: string;
+      strand: string;
+    }[]
   >([]);
 
   const loadStudentProfile = async (studentId: string) => {

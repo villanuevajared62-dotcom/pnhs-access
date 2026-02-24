@@ -2242,6 +2242,17 @@ export default function AdminDashboard() {
                         <div className="text-sm md:text-base text-gray-600">
                           Student ID: {showStudentAttendance.student.studentId}
                         </div>
+                        <div className="text-sm md:text-base text-gray-600">
+                          {showStudentAttendance.student.gradeLevel} • Section{" "}
+                          {showStudentAttendance.student.section}
+                          {(showStudentAttendance.student.gradeLevel ===
+                            "Grade 11" ||
+                            showStudentAttendance.student.gradeLevel ===
+                              "Grade 12") &&
+                            showStudentAttendance.student.strand && (
+                              <> • {showStudentAttendance.student.strand}</>
+                            )}
+                        </div>
                       </>
                     );
                   })()}

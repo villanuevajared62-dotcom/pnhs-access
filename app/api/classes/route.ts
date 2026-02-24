@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getSessionUser, requireAdmin } from "@/lib/server-session-node";
 
-export const runtime = "nodejs"
+export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
   const user = await getSessionUser(req);
@@ -70,35 +70,71 @@ export async function POST(req: NextRequest) {
       status: "active",
     };
 
+    // Get the section and strand values, normalized to uppercase for comparison
+    const classSection = (createData.section || "")
+      .toString()
+      .trim()
+      .toUpperCase();
+    const classStrand = (createData.strand || "")
+      .toString()
+      .trim()
+      .toUpperCase();
+
+    // Track if we should skip auto-enrollment
+    let shouldEnroll = true;
+
     if (isSenior) {
-      // Senior High: match by strand AND section when both are provided.
-      const strandValue = (createData.strand || "").toString().trim();
-      const sectionValue = (createData.section || "").toString().trim();
-      if (strandValue) studentWhere.strand = strandValue;
-      if (sectionValue) studentWhere.section = sectionValue;
+      // Senior High: Must match gradeLevel AND section
+      // Section is REQUIRED for senior high
+      if (!classSection) {
+        // No section specified - don't enroll anyone automatically
+        console.log(
+          "No section specified for senior high class - skipping auto-enrollment",
+        );
+        shouldEnroll = false;
+      } else {
+        studentWhere.section = classSection;
+      }
+
+      // Strand is optional but if provided, must match
+      if (classStrand) {
+        studentWhere.strand = classStrand;
+      }
     } else {
-      // match by section for junior high
-      if (createData.section) studentWhere.section = createData.section;
+      // Junior High: Must match gradeLevel AND section
+      // Section is REQUIRED for junior high
+      if (!classSection) {
+        // No section specified - don't enroll anyone automatically
+        console.log(
+          "No section specified for junior high class - skipping auto-enrollment",
+        );
+        shouldEnroll = false;
+      } else {
+        studentWhere.section = classSection;
+      }
     }
 
-    const studentsToEnroll = await prisma.student.findMany({
-      where: studentWhere,
-      select: { id: true },
-    });
-
-    if (studentsToEnroll.length > 0) {
-      const enrollData = studentsToEnroll.map((s) => ({
-        studentId: s.id,
-        classId: newClass.id,
-      }));
-
-      await prisma.enrollment.createMany({ data: enrollData });
-
-      // keep the class "students" counter in-sync (UI prefers authoritative count from enrollments)
-      await prisma.class.update({
-        where: { id: newClass.id },
-        data: { students: studentsToEnroll.length },
+    // Only enroll if we have valid criteria
+    if (shouldEnroll) {
+      const studentsToEnroll = await prisma.student.findMany({
+        where: studentWhere,
+        select: { id: true },
       });
+
+      if (studentsToEnroll.length > 0) {
+        const enrollData = studentsToEnroll.map((s) => ({
+          studentId: s.id,
+          classId: newClass.id,
+        }));
+
+        await prisma.enrollment.createMany({ data: enrollData });
+
+        // keep the class "students" counter in-sync (UI prefers authoritative count from enrollments)
+        await prisma.class.update({
+          where: { id: newClass.id },
+          data: { students: studentsToEnroll.length },
+        });
+      }
     }
 
     // return the freshly-updated class (client uses /api/classes GET which prefers enrollment count)

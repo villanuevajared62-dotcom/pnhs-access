@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getSessionUser } from "@/lib/server-session-node";
 
-export const runtime = "nodejs"
+export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
   const user = await getSessionUser(req);
@@ -31,6 +31,22 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
     where.studentId = user.id;
+
+    // CRITICAL: Only return attendance for classes the student is enrolled in
+    // This ensures students only see data for classes that match their section
+    const enrollments = await prisma.enrollment.findMany({
+      where: { studentId: user.id },
+      select: { classId: true },
+    });
+    const enrolledClassIds = enrollments.map((e) => e.classId);
+
+    // If student has no enrollments, return empty array
+    if (enrolledClassIds.length === 0) {
+      return NextResponse.json([]);
+    }
+
+    // Filter attendance to only include enrolled classes
+    where.classId = { in: enrolledClassIds };
 
     const items = await prisma.attendance.findMany({
       where,
@@ -101,7 +117,10 @@ export async function POST(req: NextRequest) {
     // Parse and validate date
     const attendanceDate = body.date ? new Date(body.date) : new Date();
     if (Number.isNaN(attendanceDate.getTime())) {
-      return NextResponse.json({ message: "Invalid date value" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Invalid date value" },
+        { status: 400 },
+      );
     }
 
     // Prevent future-dated attendance

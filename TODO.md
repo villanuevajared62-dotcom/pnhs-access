@@ -1,24 +1,36 @@
-# PNHS Access System - Fix List
+# TODO: Section-Based Filtering for Student Dashboard
 
-## Phase 1: Core Infrastructure Fixes - COMPLETED ✅
+## Task
 
-- [x] 1. Fix lib/auth.ts - Already using Prisma database
-- [x] 2. Fix app/api/auth/login/route.ts - Removed duplicate code, created helper function
-- [x] 3. Create/update middleware.ts for authentication - CREATED NEW
-- [x] 4. Fix session management - Already properly configured
+Ensure students only see classes, grades, attendance, and assignments that match their assigned section and were encoded by the admin.
 
-## Phase 2: Dashboard Refactoring - CAN BE DONE LATER
+## Progress
 
-- [ ] 5. Create shared components for both dashboards
-- [ ] 6. Break down Student Dashboard into smaller components
-- [ ] 7. Break down Teacher Dashboard into smaller components
-- [ ] 8. Extract common logic to shared utilities
+- [x] Analyze codebase and understand current implementation
+- [x] Update Attendance API to filter by enrollment
+- [x] Update Grades API to filter by enrollment
+- [x] Test the changes
 
-## Phase 3: Vercel Deployment Prep - READY ✅
+## Summary of Changes
 
-- [x] 9. Verify all API routes work with database
-- [x] 10. Test authentication flow
-- [x] 11. Check environment variables
-- [x] 12. Update DEPLOYMENT-GUIDE.md
+### 1. app/api/attendance/route.ts
 
-## Status: READY FOR DEPLOYMENT ✅
+- Added enrollment filter for students so they only see attendance for classes they're enrolled in
+- This ensures students only see data for classes that match their section
+
+### 2. app/api/grades/route.ts
+
+- Added enrollment filter for students so they only see grades for classes they're enrolled in
+- This ensures students only see data for classes that match their section
+
+## How It Works
+
+1. Admin creates a class with specific gradeLevel, section, and strand
+2. During class creation, students are auto-enrolled if they match the section criteria
+3. When a student accesses their dashboard:
+   - Classes API: Already filtered by enrollment (students see only enrolled classes)
+   - Assignments API: Already filtered by enrollment (students see only assignments for enrolled classes)
+   - Attendance API: NOW filtered by enrollment (students see only attendance for enrolled classes)
+   - Grades API: NOW filtered by enrollment (students see only grades for enrolled classes)
+
+This ensures students only see data for classes that match their assigned section and were created by the admin.

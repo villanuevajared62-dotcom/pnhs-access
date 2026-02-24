@@ -11,8 +11,25 @@ export async function GET(req: NextRequest) {
 
   // Students see only their own grades
   if (user.role === "student") {
-    const items = await prisma.grade.findMany({
+    // CRITICAL: Only return grades for classes the student is enrolled in
+    // This ensures students only see data for classes that match their section
+    const enrollments = await prisma.enrollment.findMany({
       where: { studentId: user.id },
+      select: { classId: true },
+    });
+    const enrolledClassIds = enrollments.map((e) => e.classId);
+
+    // If student has no enrollments, return empty array
+    if (enrolledClassIds.length === 0) {
+      return NextResponse.json([]);
+    }
+
+    // Filter grades to only include enrolled classes
+    const items = await prisma.grade.findMany({
+      where: {
+        studentId: user.id,
+        classId: { in: enrolledClassIds },
+      } as any,
     });
     return NextResponse.json(items);
   }

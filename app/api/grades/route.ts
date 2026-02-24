@@ -15,9 +15,12 @@ export async function GET(req: NextRequest) {
     // This ensures students only see data for classes that match their section
     const enrollments = await prisma.enrollment.findMany({
       where: { studentId: user.id },
-      select: { classId: true },
+      include: { class: true },
     });
     const enrolledClassIds = enrollments.map((e) => e.classId);
+    const enrolledClassSubjectNames = enrollments
+      .map((e) => e.class?.subject)
+      .filter((s): s is string => !!s);
 
     // If student has no enrollments, return empty array
     if (enrolledClassIds.length === 0) {
@@ -25,10 +28,14 @@ export async function GET(req: NextRequest) {
     }
 
     // Filter grades to only include enrolled classes
+    // Check both classId AND subjectId to handle grades created with either reference
     const items = await prisma.grade.findMany({
       where: {
         studentId: user.id,
-        classId: { in: enrolledClassIds },
+        OR: [
+          { classId: { in: enrolledClassIds } },
+          { subjectId: { in: enrolledClassSubjectNames } },
+        ],
       } as any,
     });
     return NextResponse.json(items);

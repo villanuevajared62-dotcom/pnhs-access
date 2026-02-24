@@ -21,6 +21,7 @@ Ensure students only see classes, grades, attendance, and assignments that match
 ### 2. app/api/grades/route.ts
 
 - Added enrollment filter for students so they only see grades for classes they're enrolled in
+- Also checks subjectId to handle grades created with either classId or subjectId reference
 - This ensures students only see data for classes that match their section
 
 ## How It Works

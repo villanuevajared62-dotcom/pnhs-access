@@ -1,6 +1,6 @@
 "use client";
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -1578,8 +1578,8 @@ export default function TeacherDashboard() {
   }, [takeAttendanceClass]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filteredStudents = studentRecords.filter((student) => {
-    const effectiveClassId =
-      takeAttendanceClass || (filterClass !== "all" ? filterClass : "");
+    // Use filterClass directly instead of takeAttendanceClass for filtering
+    const effectiveClassId = filterClass !== "all" ? filterClass : "";
     if (effectiveClassId) {
       const selectedClass = myClasses.find((c) => c.id === effectiveClassId);
       const byId = student.enrolledClassIds.includes(effectiveClassId);

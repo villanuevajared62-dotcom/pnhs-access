@@ -1607,6 +1607,24 @@ export default function AdminDashboard() {
                         <BookOpen className="w-4 h-4" />
                         <span>{cls.room}</span>
                       </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <GraduationCap className="w-4 h-4" />
+                        <span>{cls.gradeLevel}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <span className="w-4 h-4 flex items-center justify-center text-xs font-bold">
+                          Sec
+                        </span>
+                        <span>{cls.section}</span>
+                      </div>
+                      {(cls.gradeLevel === "Grade 11" ||
+                        cls.gradeLevel === "Grade 12") &&
+                        cls.strand && (
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <FileText className="w-4 h-4" />
+                            <span>{cls.strand}</span>
+                          </div>
+                        )}
                     </div>
                   </div>
                 ))

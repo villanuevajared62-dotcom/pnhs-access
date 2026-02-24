@@ -1,37 +1,35 @@
-# TODO: Section-Based Filtering for Student Dashboard
+# TODO: Show Grade Level, Section, and Strand in Class Display
 
-## Task
+## Problem
 
-Ensure students only see classes, grades, attendance, and assignments that match their assigned section and were encoded by the admin.
+When admin adds a class, the grade level, section, and strand are saved but not displayed in the class cards. Users can only see the class name.
 
-## Progress
+## Plan
 
-- [x] Analyze codebase and understand current implementation
-- [x] Update Attendance API to filter by enrollment
-- [x] Update Grades API to filter by enrollment
-- [x] Test the changes
+### Information Gathered:
 
-## Summary of Changes
+- `Class` interface in `lib/shared-data.ts` already has `gradeLevel`, `section`, and `strand` properties
+- Admin dashboard's "Add/Edit Class" modal already has fields for these values
+- The classes ARE being saved with these values
+- The issue is only in the DISPLAY of class cards in the "Classes" tab
 
-### 1. app/api/attendance/route.ts
+### Files to Edit:
 
-- Added enrollment filter for students so they only see attendance for classes they're enrolled in
-- This ensures students only see data for classes that match their section
+1. `app/admin/dashboard/page.tsx`
+   - Update the class card display in the "classes" case to show:
+     - `cls.gradeLevel`
+     - `cls.section`
+     - `cls.strand` (for Grade 11-12)
 
-### 2. app/api/grades/route.ts
+### Implementation:
 
-- Added enrollment filter for students so they only see grades for classes they're enrolled in
-- Also checks subjectId to handle grades created with either classId or subjectId reference
-- This ensures students only see data for classes that match their section
+Add display items in the class card showing:
 
-## How It Works
+- Grade Level with BookOpen icon
+- Section with Users icon
+- Strand (conditionally, only for Grade 11-12) with GraduationCap icon
 
-1. Admin creates a class with specific gradeLevel, section, and strand
-2. During class creation, students are auto-enrolled if they match the section criteria
-3. When a student accesses their dashboard:
-   - Classes API: Already filtered by enrollment (students see only enrolled classes)
-   - Assignments API: Already filtered by enrollment (students see only assignments for enrolled classes)
-   - Attendance API: NOW filtered by enrollment (students see only attendance for enrolled classes)
-   - Grades API: NOW filtered by enrollment (students see only grades for enrolled classes)
+### Changes:
 
-This ensures students only see data for classes that match their assigned section and were created by the admin.
+- Find the classes display section (around line 1080-1117)
+- Add gradeLevel, section, and strand display items to the card

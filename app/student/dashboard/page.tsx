@@ -853,6 +853,9 @@ export default function StudentDashboard() {
         time: (c as any).time || "",
         room: c.room || "",
         teacher: c.teacher || "",
+        gradeLevel: c.gradeLevel || "",
+        section: c.section || "",
+        strand: c.strand || "",
       }));
       setClassSchedule(mapped);
     } catch (error) {
@@ -1561,6 +1564,10 @@ export default function StudentDashboard() {
                           </div>
                           <span className="text-xs md:text-sm text-gray-600">
                             {item.room}
+                          </span>
+                          <span className="text-xs md:text-sm text-gray-600">
+                            {item.gradeLevel} • {item.section}
+                            {item.strand ? ` • ${item.strand}` : ""}
                           </span>
                         </div>
                       </div>

@@ -27,7 +27,6 @@ import {
   ChevronRight,
   Home,
   RefreshCw,
-  UserCheck,
   BarChart3,
   Settings,
   Mail,
@@ -1770,7 +1769,6 @@ export default function TeacherDashboard() {
     },
     { icon: BookOpen, label: "My Classes", key: "classes" },
     { icon: FileText, label: "Assignments", key: "assignments" },
-    { icon: UserCheck, label: "Attendance", key: "attendance" },
     { icon: FileText, label: "Grades", key: "grades" },
     { icon: BarChart3, label: "Analytics", key: "analytics" },
     {
@@ -1982,23 +1980,12 @@ export default function TeacherDashboard() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => {
-                          prepareTakeAttendance(cls.id);
-                          setShowAttendanceModal(true);
+                          setFilterClass(cls.id);
+                          handleNavigation("students");
                         }}
                         className="flex-1 py-2 md:py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-xs md:text-sm font-semibold"
                       >
-                        <ClipboardCheck className="w-3 h-3 md:w-4 md:h-4 inline mr-1" />
-                        Set Attendance
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedClassForHistory(cls.id);
-                          setShowAttendanceHistoryModal(true);
-                        }}
-                        className="flex-1 py-2 md:py-2.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-xs md:text-sm font-semibold"
-                      >
-                        <Clock className="w-3 h-3 md:w-4 md:h-4 inline mr-1" />
-                        History
+                        View Students
                       </button>
                     </div>
                     <div className="flex gap-2 mt-2">
@@ -2221,16 +2208,6 @@ export default function TeacherDashboard() {
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
-                  onClick={() => {
-                    prepareTakeAttendance();
-                    setShowAttendanceModal(true);
-                  }}
-                  className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl hover:from-green-700 hover:to-green-800 text-sm md:text-base"
-                >
-                  <ClipboardCheck className="w-4 h-4 md:w-5 md:h-5" />
-                  Take Attendance
-                </button>
-                <button
                   onClick={handleExportData}
                   className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white text-green-700 border-2 border-green-200 rounded-xl hover:bg-green-50 text-sm md:text-base"
                 >
@@ -2349,49 +2326,16 @@ export default function TeacherDashboard() {
                           </span>
                         </td>
                         <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm">
-                          <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
-                            <button
-                              onClick={() =>
-                                openStudentAttendance(student.id, student.name)
-                              }
-                              className="px-2 md:px-3 py-1.5 md:py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-medium text-xs md:text-sm transition-colors flex items-center gap-1.5"
-                              title="View attendance history"
-                            >
-                              <Clock className="w-3 h-3 md:w-4 md:h-4" />
-                              <span>View History</span>
-                            </button>
-                            <div className="flex gap-2">
-                              <select
-                                value={
-                                  quickAttendanceStatus[student.id] ||
-                                  student.status
-                                }
-                                onChange={(e) =>
-                                  setQuickAttendanceStatus((prev) => ({
-                                    ...prev,
-                                    [student.id]: e.target.value as
-                                      | "present"
-                                      | "late"
-                                      | "absent",
-                                  }))
-                                }
-                                className="px-2 py-1.5 border border-gray-200 rounded-lg text-xs md:text-sm bg-white"
-                              >
-                                <option value="present">Present</option>
-                                <option value="late">Late</option>
-                                <option value="absent">Absent</option>
-                              </select>
-                              <button
-                                onClick={async () =>
-                                  await handleQuickSaveAttendance(student)
-                                }
-                                className="px-3 py-1.5 bg-green-600 text-white hover:bg-green-700 rounded-lg font-medium text-xs md:text-sm"
-                                title="Save today's attendance"
-                              >
-                                Save Today
-                              </button>
-                            </div>
-                          </div>
+                          <button
+                            onClick={() =>
+                              openStudentAttendance(student.id, student.name)
+                            }
+                            className="px-2 md:px-3 py-1.5 md:py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-medium text-xs md:text-sm transition-colors flex items-center gap-1.5"
+                            title="View attendance history"
+                          >
+                            <Clock className="w-3 h-3 md:w-4 md:h-4" />
+                            <span>View History</span>
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -4137,95 +4081,11 @@ export default function TeacherDashboard() {
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-2 ml-2 flex-shrink-0">
-                            <div className="flex gap-1">
-                              <button
-                                onClick={async () =>
-                                  await updateAttendanceRecord(
-                                    rec.id,
-                                    "present",
-                                  )
-                                }
-                                className={`px-2 py-1 text-xs rounded font-semibold transition-colors ${
-                                  rec.status === "present"
-                                    ? "bg-green-500 text-white"
-                                    : "bg-gray-200 text-gray-600 hover:bg-green-200"
-                                }`}
-                                title="Mark as Present"
-                              >
-                                ✓
-                              </button>
-                              <button
-                                onClick={async () =>
-                                  await updateAttendanceRecord(rec.id, "late")
-                                }
-                                className={`px-2 py-1 text-xs rounded font-semibold transition-colors ${
-                                  rec.status === "late"
-                                    ? "bg-yellow-500 text-white"
-                                    : "bg-gray-200 text-gray-600 hover:bg-yellow-200"
-                                }`}
-                                title="Mark as Late"
-                              >
-                                ⏱
-                              </button>
-                              <button
-                                onClick={async () =>
-                                  await updateAttendanceRecord(rec.id, "absent")
-                                }
-                                className={`px-2 py-1 text-xs rounded font-semibold transition-colors ${
-                                  rec.status === "absent"
-                                    ? "bg-red-500 text-white"
-                                    : "bg-gray-200 text-gray-600 hover:bg-red-200"
-                                }`}
-                                title="Mark as Absent"
-                              >
-                                ✗
-                              </button>
-                            </div>
-                          </div>
+                          <div className="flex items-center gap-2 ml-2 flex-shrink-0"></div>
                         </div>
                       ),
                     )
                   )}
-                </div>
-              </div>
-
-              <div className="pt-3 border-t">
-                <h4 className="font-semibold text-gray-900 mb-3">
-                  Add / Edit Today's Attendance
-                </h4>
-                <div className="flex gap-2 items-center">
-                  <select
-                    id="today-status"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                  >
-                    <option value="present">Present</option>
-                    <option value="late">Late</option>
-                    <option value="absent">Absent</option>
-                  </select>
-                  <button
-                    onClick={async () => {
-                      const sel = document.getElementById(
-                        "today-status",
-                      ) as HTMLSelectElement | null;
-                      const status = sel?.value || "present";
-                      // classId fallback: first class taught by teacher
-                      const cls = myClasses[0];
-                      const classId = cls?.id || "";
-                      await addOrUpdateTodayAttendance(
-                        attendanceModalStudent!.id,
-                        classId,
-                        status as any,
-                      );
-                      await openStudentAttendance(
-                        attendanceModalStudent!.id,
-                        attendanceModalStudent!.name,
-                      );
-                    }}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm whitespace-nowrap"
-                  >
-                    Save
-                  </button>
                 </div>
               </div>
             </div>

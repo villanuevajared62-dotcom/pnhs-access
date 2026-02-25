@@ -369,18 +369,43 @@ export default function AdminDashboard() {
   // When Add Student modal opens or grade/section/strand change, pre-select matching classes
   useEffect(() => {
     if (!showAddModal) return;
+
+
+
     const matching = classes
       .filter((c) => {
-        if (c.gradeLevel !== studentForm.gradeLevel) return false;
-        if (
-          studentForm.gradeLevel === "Grade 11" ||
-          studentForm.gradeLevel === "Grade 12"
-        ) {
-          return (c.strand || "") === (studentForm.strand || "");
+        // Normalize comparison - trim whitespace and convert to uppercase for section/strand
+        const classGrade = (c.gradeLevel || "").trim();
+        const formGrade = (studentForm.gradeLevel || "").trim();
+
+        // First check if grade level matches
+        if (classGrade !== formGrade) {
+          return false;
         }
-        return (c.section || "") === (studentForm.section || "");
+
+        // For Senior High (Grade 11-12), match both section AND strand
+        if (formGrade === "Grade 11" || formGrade === "Grade 12") {
+          const classSection = (c.section || "").trim().toUpperCase();
+          const formSection = (studentForm.section || "").trim().toUpperCase();
+          const classStrand = (c.strand || "").trim().toUpperCase();
+          const formStrand = (studentForm.strand || "").trim().toUpperCase();
+
+          const sectionMatch = classSection === formSection;
+          const strandMatch = classStrand === formStrand;
+
+          return sectionMatch && strandMatch;
+        }
+
+        // For Junior High (Grade 7-10), match section only
+        const classSection = (c.section || "").trim().toUpperCase();
+        const formSection = (studentForm.section || "").trim().toUpperCase();
+
+        const sectionMatch = classSection === formSection;
+
+        return sectionMatch;
       })
       .map((c) => c.id);
+
     setStudentSelectedClassIds(matching);
   }, [
     showAddModal,
@@ -2620,37 +2645,37 @@ export default function AdminDashboard() {
                   Subjects
                 </label>
                 <div className="space-y-2 max-h-40 overflow-y-auto border border-gray-100 rounded-md p-3 bg-gray-50">
-                  {classes.filter((c) => {
-                    if (c.gradeLevel !== studentForm.gradeLevel) return false;
-                    if (
-                      studentForm.gradeLevel === "Grade 11" ||
-                      studentForm.gradeLevel === "Grade 12"
-                    ) {
-                      return (c.strand || "") === (studentForm.strand || "");
-                    }
-                    return (c.section || "") === (studentForm.section || "");
-                  }).length === 0 ? (
+                  {(() => {
+                    // Filter classes based on grade/section/strand
+                    const filtered = classes.filter((c) => {
+                      const classGrade = (c.gradeLevel || "").trim();
+                      const formGrade = (studentForm.gradeLevel || "").trim();
+                      
+                      if (classGrade !== formGrade) return false;
+                      
+                      // Senior High: match section AND strand
+                      if (formGrade === "Grade 11" || formGrade === "Grade 12") {
+                        const classSection = (c.section || "").trim().toUpperCase();
+                        const formSection = (studentForm.section || "").trim().toUpperCase();
+                        const classStrand = (c.strand || "").trim().toUpperCase();
+                        const formStrand = (studentForm.strand || "").trim().toUpperCase();
+                        
+                        return classSection === formSection && classStrand === formStrand;
+                      }
+                      
+                      // Junior High: match section only
+                      const classSection = (c.section || "").trim().toUpperCase();
+                      const formSection = (studentForm.section || "").trim().toUpperCase();
+                      
+                      return classSection === formSection;
+                    });
+                    
+                    return filtered.length === 0 ? (
                     <p className="text-xs text-gray-500">
                       No matching subjects for selected grade/section/strand.
                     </p>
                   ) : (
-                    classes
-                      .filter((c) => {
-                        if (c.gradeLevel !== studentForm.gradeLevel)
-                          return false;
-                        if (
-                          studentForm.gradeLevel === "Grade 11" ||
-                          studentForm.gradeLevel === "Grade 12"
-                        ) {
-                          return (
-                            (c.strand || "") === (studentForm.strand || "")
-                          );
-                        }
-                        return (
-                          (c.section || "") === (studentForm.section || "")
-                        );
-                      })
-                      .map((c) => (
+                    filtered.map((c) => (
                         <label
                           key={c.id}
                           className="flex items-center gap-2 text-sm"

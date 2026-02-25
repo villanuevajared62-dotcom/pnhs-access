@@ -247,10 +247,26 @@ export default function TeacherDashboard() {
   >({});
   const [gradesData, setGradesData] = useState<any[]>([]);
 
+  // Simplified class label generator: "Grade X - Section Y" or "Grade X - Section Y • Strand"
+  const getSimplifiedClassLabel = (cls: ClassData): string => {
+    const gradeMatch = cls.name.match(/Grade\s*\d+/i);
+    const gradeLevel = gradeMatch ? gradeMatch[0] : "";
+    const section = (cls.section || "").trim() || "";
+
+    if (gradeLevel && section) {
+      return `${gradeLevel} - ${section}`;
+    } else if (section) {
+      return section;
+    } else if (gradeLevel) {
+      return gradeLevel;
+    }
+    return cls.name;
+  };
+
   const attendanceContextOptions = useMemo(() => {
     const sectionCounts = myClasses.reduce<Record<string, number>>(
       (acc, cls) => {
-        const key = (cls.section || "").trim() || "No Section";
+        const key = getSimplifiedClassLabel(cls);
         acc[key] = (acc[key] || 0) + 1;
         return acc;
       },
@@ -258,11 +274,11 @@ export default function TeacherDashboard() {
     );
 
     return myClasses.map((cls) => {
-      const sectionLabel = (cls.section || "").trim() || "No Section";
-      const needsDetail = (sectionCounts[sectionLabel] || 0) > 1;
+      const simpleLabel = getSimplifiedClassLabel(cls);
+      const needsDetail = (sectionCounts[simpleLabel] || 0) > 1;
       return {
         id: cls.id,
-        label: needsDetail ? `${sectionLabel} - ${cls.name}` : sectionLabel,
+        label: needsDetail ? `${simpleLabel} - ${cls.name}` : simpleLabel,
       };
     });
   }, [myClasses]);
@@ -826,9 +842,11 @@ export default function TeacherDashboard() {
         const classNames = studentEnrollments
           .map((e: any) => e.class?.name)
           .filter(Boolean);
+        // Remove duplicates using Set
+        const uniqueClassNames = [...new Set(classNames)];
         const classDisplay =
-          classNames.length > 0
-            ? classNames.join(", ")
+          uniqueClassNames.length > 0
+            ? uniqueClassNames.join(", ")
             : `${s.gradeLevel} - ${s.section}`;
         const primaryEnrollment = studentEnrollments[0];
         const resolvedSection =
@@ -861,9 +879,13 @@ export default function TeacherDashboard() {
           class: classDisplay,
           section: resolvedSection,
           strand: resolvedStrand,
-          enrolledClassIds: studentEnrollments
-            .map((e: any) => String(e.classId || ""))
-            .filter((id: string) => id.length > 0),
+          enrolledClassIds: [
+            ...new Set(
+              studentEnrollments
+                .map((e: any) => String(e.classId || ""))
+                .filter((id: string) => id.length > 0),
+            ),
+          ],
           attendance: `${pct}%`,
           status: records.length
             ? records[records.length - 1].status
@@ -2254,7 +2276,7 @@ export default function TeacherDashboard() {
                   <option value="all">All Classes</option>
                   {myClasses.map((cls) => (
                     <option key={cls.id} value={cls.id}>
-                      {cls.name}
+                      {getSimplifiedClassLabel(cls)}
                     </option>
                   ))}
                 </select>
@@ -2463,7 +2485,7 @@ export default function TeacherDashboard() {
                 <option value="all">All Classes</option>
                 {myClasses.map((cls) => (
                   <option key={cls.id} value={cls.id}>
-                    {cls.name}
+                    {getSimplifiedClassLabel(cls)}
                   </option>
                 ))}
               </select>
@@ -2601,7 +2623,7 @@ export default function TeacherDashboard() {
                 <option value="all">All Classes</option>
                 {myClasses.map((cls) => (
                   <option key={cls.id} value={cls.id}>
-                    {cls.name}
+                    {getSimplifiedClassLabel(cls)}
                   </option>
                 ))}
               </select>

@@ -366,7 +366,7 @@ export default function AdminDashboard() {
     return () => clearTimeout(t);
   }, [toast.open]);
 
-  // When Add Student modal opens or grade/section/strand change, pre-select matching classes
+  // When Add Student modal opens or grade/section/strand change, auto-select matching classes
   useEffect(() => {
     if (!showAddModal) return;
 
@@ -403,6 +403,9 @@ export default function AdminDashboard() {
         return sectionMatch;
       })
       .map((c) => c.id);
+
+    // Auto-select the matching classes
+    setStudentSelectedClassIds(matching);
   }, [
     showAddModal,
     studentForm.gradeLevel,
@@ -2642,15 +2645,25 @@ export default function AdminDashboard() {
                 </label>
                 <div className="space-y-2 max-h-40 overflow-y-auto border border-gray-100 rounded-md p-3 bg-gray-50">
                   {(() => {
-                    // Filter classes based on grade/section/strand
+                    // Filter classes based on grade/section/strand (matching the auto-select logic)
                     const filteredClasses = classes.filter((c) => {
                       if (c.gradeLevel !== studentForm.gradeLevel) return false;
+
+                      // For Senior High (Grade 11-12), match both section AND strand
                       if (
                         studentForm.gradeLevel === "Grade 11" ||
                         studentForm.gradeLevel === "Grade 12"
                       ) {
-                        return (c.strand || "") === (studentForm.strand || "");
+                        const sectionMatch =
+                          (c.section || "").toUpperCase() ===
+                          (studentForm.section || "").toUpperCase();
+                        const strandMatch =
+                          (c.strand || "").toUpperCase() ===
+                          (studentForm.strand || "").toUpperCase();
+                        return sectionMatch && strandMatch;
                       }
+
+                      // For Junior High (Grade 7-10), match section only
                       return (c.section || "") === (studentForm.section || "");
                     });
 

@@ -43,6 +43,7 @@ import {
 } from "lucide-react";
 import { getUserFromStorage, saveUserToStorage, type User } from "@/lib/auth";
 import { type Announcement } from "@/lib/shared-data";
+import AttendanceHistoryModal from "@/components/teacher/AttendanceHistoryModal";
 
 interface ClassData {
   id: string;
@@ -135,7 +136,8 @@ export default function TeacherDashboard() {
     {
       studentId: string;
       name: string;
-      status: "present" | "late" | "absent";
+      status: "present" | "late" | "absent" | "excused";
+      remarks?: string;
     }[]
   >([]);
   const [quickAttendanceStatus, setQuickAttendanceStatus] = useState<
@@ -148,6 +150,12 @@ export default function TeacherDashboard() {
     attendanceRecords: { present: number; late: number; absent: number };
     attendanceHistory: Array<{ id: string; date: string; status: string }>;
   }>(null);
+
+  // Attendance History Modal states
+  const [showAttendanceHistoryModal, setShowAttendanceHistoryModal] =
+    useState(false);
+  const [selectedClassForHistory, setSelectedClassForHistory] =
+    useState<string>("");
   const [showGradeModal, setShowGradeModal] = useState<StudentRecord | null>(
     null,
   );
@@ -1950,6 +1958,28 @@ export default function TeacherDashboard() {
                     </div>
 
                     <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          prepareTakeAttendance(cls.id);
+                          setShowAttendanceModal(true);
+                        }}
+                        className="flex-1 py-2 md:py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-xs md:text-sm font-semibold"
+                      >
+                        <ClipboardCheck className="w-3 h-3 md:w-4 md:h-4 inline mr-1" />
+                        Set Attendance
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedClassForHistory(cls.id);
+                          setShowAttendanceHistoryModal(true);
+                        }}
+                        className="flex-1 py-2 md:py-2.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-xs md:text-sm font-semibold"
+                      >
+                        <Clock className="w-3 h-3 md:w-4 md:h-4 inline mr-1" />
+                        History
+                      </button>
+                    </div>
+                    <div className="flex gap-2 mt-2">
                       <button
                         onClick={() => {
                           setFilterClass(cls.id);
@@ -4179,6 +4209,22 @@ export default function TeacherDashboard() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Class Attendance History Modal */}
+      {showAttendanceHistoryModal && (
+        <AttendanceHistoryModal
+          isOpen={showAttendanceHistoryModal}
+          onClose={() => setShowAttendanceHistoryModal(false)}
+          classId={selectedClassForHistory}
+          className={
+            myClasses.find((c) => c.id === selectedClassForHistory)?.name ||
+            "Class"
+          }
+          studentRecords={studentRecords}
+          showToast={showToast}
+          refreshData={loadStudentsFromApi}
+        />
       )}
     </div>
   );

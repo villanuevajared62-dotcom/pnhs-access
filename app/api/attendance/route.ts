@@ -12,12 +12,14 @@ export async function GET(req: NextRequest) {
 
   const url = new URL(req.url);
   const qStudentId = url.searchParams.get("studentId");
+  const qClassId = url.searchParams.get("classId");
   const qFrom = url.searchParams.get("from");
   const qTo = url.searchParams.get("to");
 
   // Build where clause with optional date range
   const where: any = {};
   if (qStudentId) where.studentId = qStudentId;
+  if (qClassId) where.classId = qClassId;
   if (qFrom || qTo) {
     where.date = {};
     if (qFrom) where.date.gte = new Date(qFrom);
@@ -217,11 +219,16 @@ export async function POST(req: NextRequest) {
     // Create attendance record
     const newItem = await prisma.attendance.create({
       data: {
-        studentId: body.studentId,
-        classId: body.classId,
+        studentId: body.studentId as string,
+        classId: body.classId as string,
         // Store as daily attendance (normalized day)
         date: startOfDay,
         status: status,
+        remarks: body.remarks || null,
+        teacherId: user.id,
+        updatedBy: user.id,
+        updatedAt: new Date(),
+        locked: false,
       },
     });
 

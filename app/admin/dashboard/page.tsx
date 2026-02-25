@@ -370,8 +370,6 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!showAddModal) return;
 
-
-
     const matching = classes
       .filter((c) => {
         // Normalize comparison - trim whitespace and convert to uppercase for section/strand
@@ -405,8 +403,6 @@ export default function AdminDashboard() {
         return sectionMatch;
       })
       .map((c) => c.id);
-
-    setStudentSelectedClassIds(matching);
   }, [
     showAddModal,
     studentForm.gradeLevel,
@@ -2647,60 +2643,52 @@ export default function AdminDashboard() {
                 <div className="space-y-2 max-h-40 overflow-y-auto border border-gray-100 rounded-md p-3 bg-gray-50">
                   {(() => {
                     // Filter classes based on grade/section/strand
-                    const filtered = classes.filter((c) => {
-                      const classGrade = (c.gradeLevel || "").trim();
-                      const formGrade = (studentForm.gradeLevel || "").trim();
-                      
-                      if (classGrade !== formGrade) return false;
-                      
-                      // Senior High: match section AND strand
-                      if (formGrade === "Grade 11" || formGrade === "Grade 12") {
-                        const classSection = (c.section || "").trim().toUpperCase();
-                        const formSection = (studentForm.section || "").trim().toUpperCase();
-                        const classStrand = (c.strand || "").trim().toUpperCase();
-                        const formStrand = (studentForm.strand || "").trim().toUpperCase();
-                        
-                        return classSection === formSection && classStrand === formStrand;
+                    const filteredClasses = classes.filter((c) => {
+                      if (c.gradeLevel !== studentForm.gradeLevel) return false;
+                      if (
+                        studentForm.gradeLevel === "Grade 11" ||
+                        studentForm.gradeLevel === "Grade 12"
+                      ) {
+                        return (c.strand || "") === (studentForm.strand || "");
                       }
-                      
-                      // Junior High: match section only
-                      const classSection = (c.section || "").trim().toUpperCase();
-                      const formSection = (studentForm.section || "").trim().toUpperCase();
-                      
-                      return classSection === formSection;
+                      return (c.section || "") === (studentForm.section || "");
                     });
-                    
-                    return filtered.length === 0 ? (
-                    <p className="text-xs text-gray-500">
-                      No matching subjects for selected grade/section/strand.
-                    </p>
-                  ) : (
-                    filtered.map((c) => (
-                        <label
-                          key={c.id}
-                          className="flex items-center gap-2 text-sm"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={studentSelectedClassIds.includes(c.id)}
-                            onChange={(e) => {
-                              const checked = e.target.checked;
-                              setStudentSelectedClassIds((cur) =>
-                                checked
-                                  ? [...cur, c.id]
-                                  : cur.filter((id) => id !== c.id),
-                              );
-                            }}
-                            className="w-4 h-4"
-                          />
-                          <span className="font-medium">{c.name}</span>
-                          <span className="text-xs text-gray-400">
-                            {" "}
-                            — {(c as any).teacherName || c.teacher}
-                          </span>
-                        </label>
-                      ))
-                  )}
+
+                    if (filteredClasses.length === 0) {
+                      return (
+                        <p className="text-xs text-gray-500">
+                          No matching subjects for selected
+                          grade/section/strand.
+                        </p>
+                      );
+                    }
+
+                    return filteredClasses.map((c) => (
+                      <label
+                        key={c.id}
+                        className="flex items-center gap-2 text-sm"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={studentSelectedClassIds.includes(c.id)}
+                          onChange={(e) => {
+                            const checked = e.target.checked;
+                            setStudentSelectedClassIds((cur) =>
+                              checked
+                                ? [...cur, c.id]
+                                : cur.filter((id) => id !== c.id),
+                            );
+                          }}
+                          className="w-4 h-4"
+                        />
+                        <span className="font-medium">{c.name}</span>
+                        <span className="text-xs text-gray-400">
+                          {" "}
+                          — {(c as any).teacherName || c.teacher}
+                        </span>
+                      </label>
+                    ));
+                  })()}
                 </div>
                 <p className="text-xs text-gray-400 mt-1">
                   Selected subjects will be enrolled automatically when the

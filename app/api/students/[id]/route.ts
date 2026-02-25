@@ -213,10 +213,16 @@ export async function DELETE(
     return NextResponse.json({ message: "Admin only" }, { status: 403 });
 
   try {
-    // Soft-delete the student
+    // Soft-delete the student and clear unique fields so they can be reused
     await prisma.student.update({
       where: { id },
-      data: { deletedAt: new Date() },
+      data: {
+        deletedAt: new Date(),
+        username: "",
+        email: "",
+        studentId: "",
+        password: "",
+      },
     });
 
     // Invalidate all existing sessions for this student

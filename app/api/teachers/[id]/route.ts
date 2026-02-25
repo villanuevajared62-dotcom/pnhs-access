@@ -100,10 +100,15 @@ export async function DELETE(
 
   try {
     const prisma = await prismaPromise;
-    // Soft-delete the teacher
+    // Soft-delete the teacher and clear unique fields so they can be reused
     await prisma.teacher.update({
       where: { id },
-      data: { deletedAt: new Date() },
+      data: {
+        deletedAt: new Date(),
+        username: "",
+        email: "",
+        password: "",
+      },
     });
 
     // Invalidate all existing sessions for this teacher

@@ -139,6 +139,14 @@ async function authenticateFromDatabase(
   });
 
   if (student) {
+    // Check if student has been deleted (soft-delete)
+    if (student.deletedAt) {
+      return {
+        success: false,
+        message: "Account has been deleted. Please contact administrator.",
+      };
+    }
+
     const storedHash = student.password;
     const provided = passwordInput;
 
@@ -174,6 +182,14 @@ async function authenticateFromDatabase(
   });
 
   if (teacher) {
+    // Check if teacher has been deleted (soft-delete)
+    if (teacher.deletedAt) {
+      return {
+        success: false,
+        message: "Account has been deleted. Please contact administrator.",
+      };
+    }
+
     const storedHash = teacher.password;
     const provided = passwordInput;
 

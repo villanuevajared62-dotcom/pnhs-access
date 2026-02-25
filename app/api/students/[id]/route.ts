@@ -213,10 +213,18 @@ export async function DELETE(
     return NextResponse.json({ message: "Admin only" }, { status: 403 });
 
   try {
+    // Soft-delete the student
     await prisma.student.update({
       where: { id },
       data: { deletedAt: new Date() },
     });
+
+    // Invalidate all existing sessions for this student
+    await prisma.session.updateMany({
+      where: { userId: id },
+      data: { revoked: true },
+    });
+
     await prisma.auditLog.create({
       data: {
         actorId: auth.user?.id || null,
@@ -233,4 +241,4 @@ export async function DELETE(
   }
 }
 
-export const runtime = "nodejs"
+export const runtime = "nodejs";

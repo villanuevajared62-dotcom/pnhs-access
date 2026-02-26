@@ -3520,7 +3520,7 @@ export default function TeacherDashboard() {
                         />
                         <div className="flex-1">
                           <p className="text-sm font-medium text-gray-900">
-                            {c.name}
+                            {getSimplifiedClassLabel(c)}
                           </p>
                           <p className="text-xs text-gray-500">
                             {c.students} students

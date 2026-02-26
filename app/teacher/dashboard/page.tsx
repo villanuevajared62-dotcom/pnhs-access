@@ -1961,17 +1961,29 @@ export default function TeacherDashboard() {
                       </div>
                     </div>
 
-                    {/* Attendance button for each class */}
-                    <button
-                      onClick={() => {
-                        prepareTakeAttendance(cls.id);
-                        setShowAttendanceModal(true);
-                      }}
-                      className="w-full mt-3 flex items-center justify-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
-                    >
-                      <ClipboardCheck className="w-4 h-4" />
-                      Take Attendance
-                    </button>
+                    {/* Attendance buttons for each class */}
+                    <div className="flex gap-2 mt-3">
+                      <button
+                        onClick={() => {
+                          prepareTakeAttendance(cls.id);
+                          setShowAttendanceModal(true);
+                        }}
+                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
+                      >
+                        <ClipboardCheck className="w-4 h-4" />
+                        Take
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedClassForHistory(cls.id);
+                          setShowAttendanceHistoryModal(true);
+                        }}
+                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+                      >
+                        <Clock className="w-4 h-4" />
+                        History
+                      </button>
+                    </div>
                   </div>
                 ))
               )}

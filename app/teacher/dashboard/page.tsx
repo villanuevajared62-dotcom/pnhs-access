@@ -1961,7 +1961,17 @@ export default function TeacherDashboard() {
                       </div>
                     </div>
 
-                    {/* No action buttons - view only */}
+                    {/* Attendance button for each class */}
+                    <button
+                      onClick={() => {
+                        prepareTakeAttendance(cls.id);
+                        setShowAttendanceModal(true);
+                      }}
+                      className="w-full mt-3 flex items-center justify-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
+                    >
+                      <ClipboardCheck className="w-4 h-4" />
+                      Take Attendance
+                    </button>
                   </div>
                 ))
               )}

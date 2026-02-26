@@ -231,6 +231,7 @@ export default function TeacherDashboard() {
     subject: "",
     dueDate: "",
     classId: "",
+    selectedClassIds: [] as string[],
     description: "",
     points: "",
   });
@@ -1064,7 +1065,7 @@ export default function TeacherDashboard() {
     if (
       !newAssignment.title ||
       !newAssignment.dueDate ||
-      !newAssignment.classId
+      newAssignment.selectedClassIds.length === 0
     ) {
       showToast("Please fill in required fields", "warning");
       return;
@@ -1077,7 +1078,7 @@ export default function TeacherDashboard() {
       if (assignmentAttachmentFile) {
         const formData = new FormData();
         formData.append("file", assignmentAttachmentFile);
-        formData.append("classId", newAssignment.classId);
+        formData.append("classId", newAssignment.selectedClassIds[0]); // Use first class for upload
 
         const uploadRes = await fetch("/api/assignments/upload", {
           method: "POST",
@@ -1099,57 +1100,64 @@ export default function TeacherDashboard() {
         attachmentName = uploadResult.fileName;
       }
 
-      const res = await fetch("/api/assignments", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: newAssignment.title,
-          subject: newAssignment.subject,
-          dueDate: newAssignment.dueDate,
-          classId: newAssignment.classId,
-          description: newAssignment.description,
-          points: newAssignment.points,
-          attachmentPath,
-          attachmentName,
-        }),
-      });
+      // Create assignments for each selected class
+      const assignmentPromises = newAssignment.selectedClassIds.map(
+        async (classId) => {
+          const res = await fetch("/api/assignments", {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              title: newAssignment.title,
+              subject: newAssignment.subject,
+              dueDate: newAssignment.dueDate,
+              classId: classId,
+              description: newAssignment.description,
+              points: newAssignment.points,
+              attachmentPath,
+              attachmentName,
+            }),
+          });
 
-      if (!res.ok) {
-        const raw = await res.text();
-        let parsed: any = {};
-        try {
-          parsed = raw ? JSON.parse(raw) : {};
-        } catch {
-          parsed = {};
-        }
-        const message =
-          parsed.error ||
-          parsed.details ||
-          parsed.message ||
-          raw ||
-          `Failed to create assignment (HTTP ${res.status})`;
-        showToast(message, "error");
-        console.error("Create assignment failed:", {
-          status: res.status,
-          parsed,
-          raw,
-        });
-        return;
-      }
+          if (!res.ok) {
+            const raw = await res.text();
+            let parsed: any = {};
+            try {
+              parsed = raw ? JSON.parse(raw) : {};
+            } catch {
+              parsed = {};
+            }
+            const message =
+              parsed.error ||
+              parsed.details ||
+              parsed.message ||
+              raw ||
+              `Failed to create assignment (HTTP ${res.status})`;
+            throw new Error(message);
+          }
+
+          return res.json();
+        },
+      );
+
+      await Promise.all(assignmentPromises);
 
       setNewAssignment({
         title: "",
         subject: "",
         dueDate: "",
         classId: "",
+        selectedClassIds: [],
         description: "",
         points: "",
       });
       setAssignmentAttachmentFile(null);
       setShowAddAssignmentModal(false);
       await loadAssignmentsFromApi();
-      showToast("Assignment created successfully!", "success");
+      showToast(
+        `Assignment created for ${newAssignment.selectedClassIds.length} class(es) successfully!`,
+        "success",
+      );
     } catch (error) {
       console.error(error);
       showToast("Error creating assignment", "error");
@@ -3464,23 +3472,70 @@ export default function TeacherDashboard() {
                 }
                 className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
               />
-              <select
-                value={newAssignment.classId}
-                onChange={(e) =>
-                  setNewAssignment({
-                    ...newAssignment,
-                    classId: e.target.value,
-                  })
-                }
-                className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
-              >
-                <option value="">Select class</option>
-                {myClasses.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
+
+              {/* Multi-class selection with checkboxes */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Select Class(es) <span className="text-red-500">*</span>
+                </label>
+                <div className="border border-gray-300 rounded-xl max-h-40 overflow-y-auto p-2 space-y-2">
+                  {myClasses.length === 0 ? (
+                    <p className="text-sm text-gray-500 p-2">
+                      No classes available
+                    </p>
+                  ) : (
+                    myClasses.map((c) => (
+                      <label
+                        key={c.id}
+                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={newAssignment.selectedClassIds.includes(
+                            c.id,
+                          )}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setNewAssignment({
+                                ...newAssignment,
+                                selectedClassIds: [
+                                  ...newAssignment.selectedClassIds,
+                                  c.id,
+                                ],
+                                classId: c.id, // Keep classId for backwards compatibility
+                              });
+                            } else {
+                              const newIds =
+                                newAssignment.selectedClassIds.filter(
+                                  (id) => id !== c.id,
+                                );
+                              setNewAssignment({
+                                ...newAssignment,
+                                selectedClassIds: newIds,
+                                classId: newIds.length > 0 ? newIds[0] : "",
+                              });
+                            }
+                          }}
+                          className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
+                        />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-gray-900">
+                            {c.name}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {c.students} students
+                          </p>
+                        </div>
+                      </label>
+                    ))
+                  )}
+                </div>
+                {newAssignment.selectedClassIds.length === 0 && (
+                  <p className="text-xs text-red-500 mt-1">
+                    Please select at least one class
+                  </p>
+                )}
+              </div>
               <input
                 type="text"
                 placeholder="Title ng Assignment"

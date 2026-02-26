@@ -1977,34 +1977,7 @@ export default function TeacherDashboard() {
                       </div>
                     </div>
 
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          setFilterClass(cls.id);
-                          handleNavigation("students");
-                        }}
-                        className="flex-1 py-2 md:py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-xs md:text-sm font-semibold"
-                      >
-                        View Students
-                      </button>
-                    </div>
-                    <div className="flex gap-2 mt-2">
-                      <button
-                        onClick={() => {
-                          setFilterClass(cls.id);
-                          handleNavigation("students");
-                        }}
-                        className="flex-1 py-2 md:py-2.5 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors text-xs md:text-sm font-semibold"
-                      >
-                        View Students
-                      </button>
-                      <button
-                        onClick={() => handleDeleteClass(cls.id)}
-                        className="p-2 md:p-2.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
+                    {/* No action buttons - view only */}
                   </div>
                 ))
               )}

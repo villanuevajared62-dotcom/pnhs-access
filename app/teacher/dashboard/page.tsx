@@ -1901,24 +1901,8 @@ export default function TeacherDashboard() {
                   My Classes
                 </h2>
                 <p className="text-gray-600 mt-1 text-sm md:text-base">
-                  Manage your classes and students
+                  View your classes
                 </p>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={() => setShowAddClassModal(true)}
-                  className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl hover:from-green-700 hover:to-green-800 shadow-md hover:shadow-lg transition-all text-sm md:text-base"
-                >
-                  <PlusCircle className="w-4 h-4 md:w-5 md:h-5" />
-                  Add Class
-                </button>
-                <button
-                  onClick={handleExportData}
-                  className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white text-green-700 border-2 border-green-200 rounded-xl hover:bg-green-50 shadow-sm hover:shadow-md transition-all text-sm md:text-base"
-                >
-                  <Download className="w-4 h-4" />
-                  Export
-                </button>
               </div>
             </div>
 

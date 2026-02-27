@@ -103,34 +103,32 @@ export async function POST(req: NextRequest) {
     } catch (localError) {
       console.error("Local upload failed, trying Vercel Blob:", localError);
 
-      // Fallback to Vercel Blob if local fails
-      if (isServerless) {
-        const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
-        if (!blobToken) {
+      // Fallback to Vercel Blob if local fails (works on Vercel and can be used locally too)
+      const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
+      if (!blobToken) {
+        if (isServerless) {
           console.error("Vercel Blob token not configured");
           return NextResponse.json(
             { message: "Upload storage not configured. Please contact admin." },
-            { status: 500 },
+            { status: 503 },
           );
         }
-
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-
-        const blobOptions = { access: "public" as const, token: blobToken };
-        const blob = await put(safeName, buffer, blobOptions);
-
-        return NextResponse.json(
-          {
-            filePath: blob.url,
-            fileName: originalName,
-          },
-          { status: 201 },
-        );
+        throw localError;
       }
 
-      // If we get here, both local and blob failed
-      throw localError;
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      const blobOptions = { access: "public" as const, token: blobToken };
+      const blob = await put(safeName, buffer, blobOptions);
+
+      return NextResponse.json(
+        {
+          filePath: blob.url,
+          fileName: originalName,
+        },
+        { status: 201 },
+      );
     }
   } catch (error) {
     console.error("Error uploading assignment attachment:", error);

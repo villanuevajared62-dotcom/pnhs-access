@@ -1226,6 +1226,7 @@ export default function TeacherDashboard() {
     try {
       let attachmentPath: string | undefined;
       let attachmentName: string | undefined;
+      let attachmentUploadWarning: string | null = null;
 
       if (assignmentAttachmentFile) {
         const formData = new FormData();
@@ -1243,16 +1244,15 @@ export default function TeacherDashboard() {
 
         if (!uploadRes.ok) {
           const uploadBody = await uploadRes.json().catch(() => ({}));
-          showToast(
-            uploadBody.message || "Failed to upload attachment",
-            "error",
-          );
-          return;
+          attachmentUploadWarning =
+            uploadBody.message ||
+            `Failed to upload attachment (HTTP ${uploadRes.status})`;
+          setAssignmentAttachmentFile(null);
+        } else {
+          const uploadResult = await uploadRes.json();
+          attachmentPath = uploadResult.filePath;
+          attachmentName = uploadResult.fileName;
         }
-
-        const uploadResult = await uploadRes.json();
-        attachmentPath = uploadResult.filePath;
-        attachmentName = uploadResult.fileName;
       }
 
       const targetIds = needsClassTargets
@@ -1326,10 +1326,17 @@ export default function TeacherDashboard() {
       setAssignmentAttachmentFile(null);
       setShowAddAssignmentModal(false);
       await loadAssignmentsFromApi();
-      showToast(
-        `Assignment sent to ${recipientCount} student(s) successfully!`,
-        "success",
-      );
+      if (attachmentUploadWarning) {
+        showToast(
+          `Assignment sent to ${recipientCount} student(s). Attachment failed: ${attachmentUploadWarning}`,
+          "warning",
+        );
+      } else {
+        showToast(
+          `Assignment sent to ${recipientCount} student(s) successfully!`,
+          "success",
+        );
+      }
     } catch (error: unknown) {
       console.error(error);
       showToast(`Error creating assignment: ${getErrorMessage(error)}`, "error");
@@ -1378,13 +1385,18 @@ export default function TeacherDashboard() {
 
         if (!uploadRes.ok) {
           const uploadBody = await uploadRes.json().catch(() => ({}));
-          showToast(uploadBody.message || "Failed to upload file", "error");
-          return;
+          showToast(
+            uploadBody.message ||
+              `Failed to upload file (HTTP ${uploadRes.status}). Keeping current attachment.`,
+            "warning",
+          );
+          setEditAttachmentFile(null);
+          setEditRemoveAttachment(false);
+        } else {
+          const uploadResult = await uploadRes.json();
+          attachmentPath = uploadResult.filePath || null;
+          attachmentName = uploadResult.fileName || null;
         }
-
-        const uploadResult = await uploadRes.json();
-        attachmentPath = uploadResult.filePath || null;
-        attachmentName = uploadResult.fileName || null;
       }
 
       const res = await fetch(`/api/assignments/${editingAssignment.id}`, {

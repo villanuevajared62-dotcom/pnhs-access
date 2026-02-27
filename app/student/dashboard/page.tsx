@@ -1771,11 +1771,21 @@ export default function StudentDashboard() {
                       {section.items.map((assignment) => (
                         <div
                           key={assignment.id}
-                          className="bg-white/95 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-lg p-4 md:p-6 border border-green-100 hover:border-green-300 transition-all cursor-pointer"
+                          role="button"
+                          tabIndex={0}
+                          className="group bg-white/95 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-lg p-4 md:p-6 border border-green-100 hover:border-green-300 hover:shadow-xl hover:-translate-y-0.5 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-500"
                           onClick={() => {
                             setAssignmentFile(null);
                             setShowAssignmentModal(assignment);
                           }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              setAssignmentFile(null);
+                              setShowAssignmentModal(assignment);
+                            }
+                          }}
+                          aria-label={`Open assignment ${assignment.title}`}
                         >
                           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 md:mb-4 gap-3">
                             <div className="flex-1 w-full sm:w-auto">
@@ -1795,17 +1805,20 @@ export default function StudentDashboard() {
                                   "No instructions provided by teacher."}
                               </p>
                             </div>
-                            <span
-                              className={`px-2 md:px-3 py-1 rounded-full text-xs font-semibold self-start sm:self-auto ${
-                                assignment.status === "pending"
-                                  ? "bg-orange-100 text-orange-700"
-                                  : assignment.status === "submitted"
-                                    ? "bg-blue-100 text-blue-700"
-                                    : "bg-green-100 text-green-700"
-                              }`}
-                            >
-                              {assignment.status.toUpperCase()}
-                            </span>
+                            <div className="flex items-center gap-2 self-start sm:self-auto">
+                              <span
+                                className={`px-2 md:px-3 py-1 rounded-full text-xs font-semibold ${
+                                  assignment.status === "pending"
+                                    ? "bg-orange-100 text-orange-700"
+                                    : assignment.status === "submitted"
+                                      ? "bg-blue-100 text-blue-700"
+                                      : "bg-green-100 text-green-700"
+                                }`}
+                              >
+                                {assignment.status.toUpperCase()}
+                              </span>
+                              <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-green-700 transition-colors" />
+                            </div>
                           </div>
 
                           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pt-3 md:pt-4 border-t border-gray-100 gap-3">
@@ -1816,10 +1829,12 @@ export default function StudentDashboard() {
                                   Due:{" "}
                                   {new Date(
                                     assignment.dueDate,
-                                  ).toLocaleDateString("en-US", {
+                                  ).toLocaleString("en-US", {
                                     month: "short",
                                     day: "numeric",
                                     year: "numeric",
+                                    hour: "numeric",
+                                    minute: "2-digit",
                                   })}
                                 </span>
                               </div>
@@ -1829,7 +1844,7 @@ export default function StudentDashboard() {
                                   target="_blank"
                                   rel="noreferrer"
                                   onClick={(e) => e.stopPropagation()}
-                                  className="inline-flex items-center gap-2 text-xs md:text-sm text-green-700 hover:text-green-800 underline"
+                                  className="inline-flex items-center gap-2 text-xs md:text-sm text-green-700 hover:text-green-800 underline decoration-green-300 hover:decoration-green-700"
                                 >
                                   <Download className="w-4 h-4" />
                                   {assignment.attachmentName ||
@@ -1884,6 +1899,10 @@ export default function StudentDashboard() {
                                   </span>
                                 </div>
                               )}
+                          </div>
+
+                          <div className="mt-3 flex items-center justify-end text-xs text-gray-500 group-hover:text-green-700 transition-colors">
+                            Click to view details
                           </div>
                         </div>
                       ))}
@@ -3166,13 +3185,15 @@ export default function StudentDashboard() {
                     Due Date
                   </label>
                   <div className="px-3 md:px-4 py-2 md:py-3 bg-gray-50 rounded-xl text-sm md:text-base">
-                    {new Date(showAssignmentModal.dueDate).toLocaleDateString(
+                    {new Date(showAssignmentModal.dueDate).toLocaleString(
                       "en-US",
                       {
                         weekday: "long",
                         year: "numeric",
                         month: "long",
                         day: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit",
                       },
                     )}
                   </div>

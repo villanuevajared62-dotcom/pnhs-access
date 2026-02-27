@@ -26,6 +26,9 @@ export async function GET(req: NextRequest) {
     if (qTo) where.date.lte = new Date(qTo);
   }
 
+  // Never return attendance for deleted classes
+  where.class = { deletedAt: null };
+
   // Authorization rules
   if (user.role === "student") {
     // Students may only request their own attendance
@@ -37,7 +40,7 @@ export async function GET(req: NextRequest) {
     // CRITICAL: Only return attendance for classes the student is enrolled in
     // This ensures students only see data for classes that match their section
     const enrollments = await prisma.enrollment.findMany({
-      where: { studentId: user.id },
+      where: { studentId: user.id, class: { deletedAt: null } },
       select: { classId: true },
     });
     const enrolledClassIds = enrollments.map((e) => e.classId);
@@ -60,7 +63,7 @@ export async function GET(req: NextRequest) {
   if (user.role === "teacher") {
     // Teachers may only see attendance for their classes
     const classes = await prisma.class.findMany({
-      where: { teacherId: user.id },
+      where: { teacherId: user.id, deletedAt: null },
       select: { id: true },
     });
     const classIds = classes.map((c) => c.id);
@@ -150,7 +153,7 @@ export async function POST(req: NextRequest) {
     const classRecord = await prisma.class.findUnique({
       where: { id: body.classId },
     });
-    if (!classRecord) {
+    if (!classRecord || (classRecord as any).deletedAt) {
       return NextResponse.json({ message: "Class not found" }, { status: 404 });
     }
 

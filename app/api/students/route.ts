@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
   // Teacher: students in their classes
   if (user.role === "teacher") {
     const classes = await prisma.class.findMany({
-      where: { teacherId: user.id },
+      where: { teacherId: user.id, deletedAt: null },
       select: { id: true },
     });
     const classIds = classes.map((c) => c.id);

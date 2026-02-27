@@ -110,20 +110,55 @@ export async function DELETE(
     return NextResponse.json({ message: "Admin only" }, { status: 403 });
 
   try {
-    await prisma.class.update({
-      where: { id },
-      data: { deletedAt: new Date() },
+    const cls = await prisma.class.findUnique({ where: { id } });
+    if (!cls) {
+      return NextResponse.json({ message: "Not found" }, { status: 404 });
+    }
+
+    await prisma.$transaction(async (tx) => {
+      const assignmentIds = (
+        await tx.assignment.findMany({
+          where: { classId: id },
+          select: { id: true },
+        })
+      ).map((a) => a.id);
+
+      if (assignmentIds.length > 0) {
+        await tx.submission.deleteMany({
+          where: { assignmentId: { in: assignmentIds } },
+        });
+      }
+
+      await tx.assignment.deleteMany({ where: { classId: id } });
+      await tx.attendance.deleteMany({ where: { classId: id } });
+      await tx.grade.deleteMany({ where: { classId: id } });
+      await tx.enrollment.deleteMany({ where: { classId: id } });
+
+      await tx.class.update({
+        where: { id },
+        data: { deletedAt: new Date() },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          actorId: auth.user?.id || null,
+          actorRole: auth.user?.role || null,
+          action: "soft-delete",
+          resource: "Class",
+          resourceId: id,
+          metadata:
+            assignmentIds.length > 0
+              ? JSON.stringify({
+                  purge: {
+                    submissionsForAssignments: assignmentIds.length,
+                    classId: id,
+                  },
+                })
+              : null,
+        },
+      });
     });
-    await prisma.auditLog.create({
-      data: {
-        actorId: auth.user?.id || null,
-        actorRole: auth.user?.role || null,
-        action: "soft-delete",
-        resource: "Class",
-        resourceId: id,
-        metadata: null,
-      },
-    });
+
     return NextResponse.json({ success: true });
   } catch (e) {
     return NextResponse.json({ message: "Not found" }, { status: 404 });

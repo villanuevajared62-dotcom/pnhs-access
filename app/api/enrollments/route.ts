@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   // Student: only their enrollments
   if (user.role === "student") {
     const items = await prisma.enrollment.findMany({
-      where: { studentId: user.id },
+      where: { studentId: user.id, class: { deletedAt: null } },
       include: { class: true },
     });
     return NextResponse.json(items);
@@ -19,12 +19,16 @@ export async function GET(req: NextRequest) {
   // Teacher: enrollments for classes they teach
   if (user.role === "teacher") {
     const classes = await prisma.class.findMany({
-      where: { teacherId: user.id },
+      where: { teacherId: user.id, deletedAt: null },
       select: { id: true },
     });
     const classIds = classes.map((c) => c.id);
     const items = await prisma.enrollment.findMany({
-      where: { classId: { in: classIds } },
+      where: {
+        classId: { in: classIds },
+        class: { deletedAt: null },
+        student: { deletedAt: null },
+      },
       include: { student: true, class: true },
     });
     return NextResponse.json(items);
@@ -32,6 +36,7 @@ export async function GET(req: NextRequest) {
 
   // Admin: all
   const items = await prisma.enrollment.findMany({
+    where: { class: { deletedAt: null }, student: { deletedAt: null } },
     include: { student: true, class: true },
   });
   return NextResponse.json(items);

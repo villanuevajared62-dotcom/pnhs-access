@@ -153,7 +153,7 @@ export async function GET(req: NextRequest) {
 
     if (user.role === "student") {
       const enrollments = await prisma.enrollment.findMany({
-        where: { studentId: user.id },
+        where: { studentId: user.id, class: { deletedAt: null } },
         select: { classId: true },
       });
       const classIds = enrollments.map((e) => e.classId);
@@ -161,6 +161,11 @@ export async function GET(req: NextRequest) {
       const assignments = await db.assignment.findMany({
         where: {
           OR: [{ studentId: user.id }, { classId: { in: classIds } }],
+          AND: [
+            {
+              OR: [{ classId: null }, { class: { is: { deletedAt: null } } }],
+            },
+          ],
         },
         include: {
           class: true,
@@ -217,13 +222,13 @@ export async function GET(req: NextRequest) {
 
     if (user.role === "teacher") {
       const teacherClasses = await db.class.findMany({
-        where: { teacherId: user.id },
+        where: { teacherId: user.id, deletedAt: null },
         select: { id: true },
       });
       const teacherClassIds = teacherClasses.map((c: any) => c.id);
       const studentIds = (
         await db.class.findMany({
-          where: { id: { in: teacherClassIds } },
+          where: { id: { in: teacherClassIds }, deletedAt: null },
           select: { enrollments: { select: { studentId: true } } },
         })
       ).flatMap((c: any) => c.enrollments.map((e: any) => e.studentId));
@@ -233,6 +238,11 @@ export async function GET(req: NextRequest) {
           OR: [
             { classId: { in: teacherClassIds } },
             { studentId: { in: studentIds } },
+          ],
+          AND: [
+            {
+              OR: [{ classId: null }, { class: { is: { deletedAt: null } } }],
+            },
           ],
         },
         include: {
@@ -261,6 +271,7 @@ export async function GET(req: NextRequest) {
     }
 
     const assignments = await db.assignment.findMany({
+      where: { OR: [{ classId: null }, { class: { is: { deletedAt: null } } }] },
       include: {
         class: true,
         student: { select: { id: true, name: true, email: true } },
@@ -328,9 +339,12 @@ export async function POST(req: NextRequest) {
     if (user.role === "teacher" && body.classId) {
       const cls = await db.class.findUnique({
         where: { id: body.classId },
-        select: { id: true, teacherId: true },
+        select: { id: true, teacherId: true, deletedAt: true },
       });
       if (!cls) {
+        return NextResponse.json({ error: "Class not found" }, { status: 404 });
+      }
+      if (cls.deletedAt) {
         return NextResponse.json({ error: "Class not found" }, { status: 404 });
       }
       if (cls.teacherId !== user.id) {

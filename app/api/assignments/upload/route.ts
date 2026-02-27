@@ -50,13 +50,20 @@ export async function POST(req: NextRequest) {
     if (user.role === "teacher" && classId) {
       const cls = await db.class.findUnique({
         where: { id: classId },
-        select: { teacherId: true },
+        select: { teacherId: true, deletedAt: true },
       });
 
       if (!cls || cls.teacherId !== user.id) {
         return NextResponse.json(
           { message: "Forbidden - not your class" },
           { status: 403 },
+        );
+      }
+
+      if (cls.deletedAt) {
+        return NextResponse.json(
+          { message: "Class not found" },
+          { status: 404 },
         );
       }
     }

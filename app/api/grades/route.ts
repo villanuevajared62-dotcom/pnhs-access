@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     // CRITICAL: Only return grades for classes the student is enrolled in
     // This ensures students only see data for classes that match their section
     const enrollments = await prisma.enrollment.findMany({
-      where: { studentId: user.id },
+      where: { studentId: user.id, class: { deletedAt: null } },
       include: { class: true },
     });
     const enrolledClassIds = enrollments.map((e) => e.classId);
@@ -51,14 +51,14 @@ export async function GET(req: NextRequest) {
 
     const classIds = (
       await prisma.class.findMany({
-        where: { teacherId: user.id },
+        where: { teacherId: user.id, deletedAt: null },
         select: { id: true },
       })
     ).map((c) => c.id);
 
     const studentIds = (
       await prisma.enrollment.findMany({
-        where: { classId: { in: classIds } },
+        where: { classId: { in: classIds }, class: { deletedAt: null } },
         select: { studentId: true },
       })
     ).map((e) => e.studentId);

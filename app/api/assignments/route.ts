@@ -22,6 +22,28 @@ interface AssignmentPayload {
 
 const ATTACHMENT_PREFIX = "ATTACHMENT_META:";
 
+function sanitizeAttachmentPath(value?: string | null): string | null {
+  const raw = (value || "").trim();
+  if (!raw) return null;
+
+  // Allow local dev/public uploads
+  if (raw.startsWith("/uploads/")) return raw;
+
+  // Allow http(s) URLs, but block Vercel dashboard/storage browser links
+  if (!/^https?:\/\//i.test(raw)) return null;
+
+  try {
+    const u = new URL(raw);
+    const host = u.host.toLowerCase();
+    const path = u.pathname.toLowerCase();
+    if (host === "vercel.com") return null;
+    if (path.includes("/stores/blob/") || path.includes("/browser")) return null;
+    return raw;
+  } catch {
+    return null;
+  }
+}
+
 function parseSubmissionRequirements(value?: string | null) {
   if (!value) {
     return { text: "", attachmentPath: null as string | null, attachmentName: null as string | null };
@@ -39,7 +61,7 @@ function parseSubmissionRequirements(value?: string | null) {
     };
     return {
       text: parsed.text || "",
-      attachmentPath: parsed.attachmentPath || null,
+      attachmentPath: sanitizeAttachmentPath(parsed.attachmentPath) || null,
       attachmentName: parsed.attachmentName || null,
     };
   } catch {
@@ -53,7 +75,7 @@ function serializeSubmissionRequirements(
   attachmentName?: string | null,
 ) {
   const cleanText = text?.trim() || "";
-  const cleanPath = attachmentPath?.trim() || "";
+  const cleanPath = sanitizeAttachmentPath(attachmentPath) || "";
   const cleanName = attachmentName?.trim() || "";
 
   if (!cleanPath && !cleanName) {

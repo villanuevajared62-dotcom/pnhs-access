@@ -1578,7 +1578,11 @@ export default function TeacherDashboard() {
       });
 
       if (!res.ok) {
-        showToast("Failed to update grade. Please try again.", "error");
+        const body = await res.json().catch(() => ({}));
+        showToast(
+          body.message || "Failed to update grade. Please try again.",
+          "error",
+        );
         return;
       }
 

@@ -92,10 +92,24 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
+    const subjectIdRaw =
+      typeof body.subjectId === "string" ? body.subjectId.trim() : "";
+    const subjectId = subjectIdRaw || null;
+
+    // Ensure referenced Subject exists to avoid FK constraint failures.
+    // This codebase sometimes uses "general" or human-readable identifiers as subjectId.
+    if (subjectId) {
+      await prisma.subject.upsert({
+        where: { id: subjectId },
+        update: {},
+        create: { id: subjectId, name: subjectId },
+      });
+    }
+
     const existing = await prisma.grade.findFirst({
       where: {
         studentId: body.studentId,
-        subjectId: body.subjectId,
+        subjectId,
         quarter: body.quarter,
       },
     });
@@ -108,7 +122,7 @@ export async function POST(req: NextRequest) {
             .updateMany({
               where: {
                 studentId: body.studentId,
-                subjectId: body.subjectId,
+                subjectId,
                 quarter: body.quarter,
               },
               data: {
@@ -120,7 +134,7 @@ export async function POST(req: NextRequest) {
               const refreshed = await prisma.grade.findFirst({
                 where: {
                   studentId: body.studentId,
-                  subjectId: body.subjectId,
+                  subjectId,
                   quarter: body.quarter,
                 },
                 orderBy: { id: "desc" },
@@ -131,7 +145,7 @@ export async function POST(req: NextRequest) {
       : await prisma.grade.create({
           data: {
             studentId: body.studentId,
-            subjectId: body.subjectId,
+            subjectId,
             grade: body.grade,
             quarter: body.quarter,
             remarks: body.remarks ?? "",

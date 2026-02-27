@@ -28,8 +28,26 @@ export async function GET(
         select: { subjectId: true },
       });
       const subjectIds = tSubjects.map((s) => s.subjectId);
-      if (!subjectIds.includes(item.subjectId))
-        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+      const itemSubjectId = item.subjectId ? String(item.subjectId) : "";
+      const hasSubjectAccess =
+        itemSubjectId.length > 0 && subjectIds.includes(itemSubjectId);
+
+      if (!hasSubjectAccess) {
+        // Fallback: allow if teacher teaches any class the student is enrolled in.
+        const classIds = (
+          await prisma.class.findMany({
+            where: { teacherId: user.id, deletedAt: null },
+            select: { id: true },
+          })
+        ).map((c) => c.id);
+        const enrolled = await prisma.enrollment.findFirst({
+          where: { studentId: item.studentId, classId: { in: classIds } },
+          select: { id: true },
+        });
+        if (!enrolled) {
+          return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+        }
+      }
     }
 
     return NextResponse.json(item);
@@ -66,8 +84,27 @@ export async function PUT(
         select: { subjectId: true },
       });
       const subjectIds = tSubjects.map((s) => s.subjectId);
-      if (!subjectIds.includes(existing.subjectId))
-        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+      const existingSubjectId = existing.subjectId
+        ? String(existing.subjectId)
+        : "";
+      const hasSubjectAccess =
+        existingSubjectId.length > 0 && subjectIds.includes(existingSubjectId);
+
+      if (!hasSubjectAccess) {
+        const classIds = (
+          await prisma.class.findMany({
+            where: { teacherId: user.id, deletedAt: null },
+            select: { id: true },
+          })
+        ).map((c) => c.id);
+        const enrolled = await prisma.enrollment.findFirst({
+          where: { studentId: existing.studentId, classId: { in: classIds } },
+          select: { id: true },
+        });
+        if (!enrolled) {
+          return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+        }
+      }
     }
 
     const updates = await req.json();
@@ -117,8 +154,27 @@ export async function DELETE(
         select: { subjectId: true },
       });
       const subjectIds = tSubjects.map((s) => s.subjectId);
-      if (!subjectIds.includes(existing.subjectId))
-        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+      const existingSubjectId = existing.subjectId
+        ? String(existing.subjectId)
+        : "";
+      const hasSubjectAccess =
+        existingSubjectId.length > 0 && subjectIds.includes(existingSubjectId);
+
+      if (!hasSubjectAccess) {
+        const classIds = (
+          await prisma.class.findMany({
+            where: { teacherId: user.id, deletedAt: null },
+            select: { id: true },
+          })
+        ).map((c) => c.id);
+        const enrolled = await prisma.enrollment.findFirst({
+          where: { studentId: existing.studentId, classId: { in: classIds } },
+          select: { id: true },
+        });
+        if (!enrolled) {
+          return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+        }
+      }
     }
 
     await prisma.grade.delete({ where: { id } });

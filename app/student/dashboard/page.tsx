@@ -1048,6 +1048,17 @@ export default function StudentDashboard() {
   };
   const handleSubmitAssignment = async (assignmentId: string) => {
     try {
+      if (!user || user.role !== "student") {
+        showToast("Session is not a student account. Please log in again.", "error");
+        try {
+          await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+        } catch {
+          // ignore
+        }
+        removeUserFromStorage();
+        router.push("/login");
+        return;
+      }
       if (!assignmentFile) {
         showToast(
           "Please attach a file (PDF, DOC, image, etc.) before submitting.",
@@ -1089,6 +1100,24 @@ export default function StudentDashboard() {
 
         if (!res.ok) {
           const body = await res.json().catch(() => ({}));
+          if (res.status === 403) {
+            showToast(
+              body.message ||
+                "Your session does not have student permissions. Please log in again.",
+              "error",
+            );
+            try {
+              await fetch("/api/auth/logout", {
+                method: "POST",
+                credentials: "include",
+              });
+            } catch {
+              // ignore
+            }
+            removeUserFromStorage();
+            router.push("/login");
+            return;
+          }
           showToast(
             body.message || `Failed to submit assignment (HTTP ${res.status})`,
             "error",

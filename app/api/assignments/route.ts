@@ -393,7 +393,7 @@ export async function POST(req: NextRequest) {
           ),
         );
 
-        if (uniqueStudentIds.length > 0) {
+          if (uniqueStudentIds.length > 0) {
           await db.submission.createMany({
             data: uniqueStudentIds.map((studentId: string) => ({
               assignmentId: assignment.id,
@@ -401,6 +401,7 @@ export async function POST(req: NextRequest) {
               filePath: "",
               status: "pending",
             })),
+            skipDuplicates: true,
           });
         }
       } else if (assignment.studentId) {

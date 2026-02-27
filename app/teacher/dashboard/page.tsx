@@ -77,6 +77,8 @@ interface TeacherAssignment {
   attachmentName?: string | null;
   classId?: string;
   studentId?: string | null;
+  createdAt?: string;
+  student?: { id: string; name: string; email?: string } | null;
   class?: { id: string; name: string } | null;
   submissions?: Array<{
     id: string;
@@ -250,8 +252,41 @@ export default function TeacherDashboard() {
     description: "",
     points: "",
   });
+  const [newAssignmentTargetMode, setNewAssignmentTargetMode] = useState<
+    "classes" | "students"
+  >("classes");
+  const [newAssignmentSelectedStudentIds, setNewAssignmentSelectedStudentIds] =
+    useState<string[]>([]);
+  const [newAssignmentStudentClassFilter, setNewAssignmentStudentClassFilter] =
+    useState<string>("all");
+  const [newAssignmentStudentSearch, setNewAssignmentStudentSearch] =
+    useState<string>("");
+  const [newAssignmentSubmitAttempted, setNewAssignmentSubmitAttempted] =
+    useState(false);
   const [assignmentAttachmentFile, setAssignmentAttachmentFile] =
     useState<File | null>(null);
+  const [assignmentListSearch, setAssignmentListSearch] = useState("");
+  const [assignmentListClassFilter, setAssignmentListClassFilter] =
+    useState<string>("all");
+  const [assignmentListTypeFilter, setAssignmentListTypeFilter] = useState<
+    "all" | "class" | "student"
+  >("all");
+  const [assignmentListSort, setAssignmentListSort] = useState<
+    "createdDesc" | "dueAsc" | "dueDesc"
+  >("createdDesc");
+  const [editingAssignment, setEditingAssignment] =
+    useState<TeacherAssignment | null>(null);
+  const [editAssignmentForm, setEditAssignmentForm] = useState({
+    title: "",
+    subject: "",
+    dueDate: "",
+    description: "",
+    points: "",
+  });
+  const [editAttachmentFile, setEditAttachmentFile] = useState<File | null>(
+    null,
+  );
+  const [editRemoveAttachment, setEditRemoveAttachment] = useState(false);
   const assignmentsRequestSeq = useRef(0);
   const assignmentEmptyStreakRef = useRef(0);
   const lastNonEmptyAssignmentsRef = useRef<TeacherAssignment[]>([]);
@@ -390,6 +425,93 @@ export default function TeacherDashboard() {
     },
     {},
   );
+
+  const toDateTimeLocalValue = (raw: string) => {
+    const d = new Date(raw);
+    if (Number.isNaN(d.getTime())) return "";
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+
+  const newAssignmentStudentCandidates = useMemo(() => {
+    let list = Array.isArray(studentRecords) ? studentRecords : [];
+    if (newAssignmentStudentClassFilter !== "all") {
+      list = list.filter((s) =>
+        (s.enrolledClassIds || []).includes(newAssignmentStudentClassFilter),
+      );
+    }
+    const q = newAssignmentStudentSearch.trim().toLowerCase();
+    if (!q) return list;
+    return list.filter((s) => {
+      const name = String(s.name || "").toLowerCase();
+      const email = String(s.email || "").toLowerCase();
+      return name.includes(q) || email.includes(q);
+    });
+  }, [studentRecords, newAssignmentStudentClassFilter, newAssignmentStudentSearch]);
+
+  const filteredAssignments = useMemo(() => {
+    const query = assignmentListSearch.trim().toLowerCase();
+    let list = Array.isArray(assignments) ? [...assignments] : [];
+
+    if (assignmentListTypeFilter !== "all") {
+      list = list.filter((a) => {
+        const isStudent = Boolean(a.studentId);
+        return assignmentListTypeFilter === "student" ? isStudent : !isStudent;
+      });
+    }
+
+    if (assignmentListClassFilter !== "all") {
+      list = list.filter(
+        (a) => String(a.classId || "") === String(assignmentListClassFilter),
+      );
+    }
+
+    if (query) {
+      list = list.filter((a) => {
+        const classLabel =
+          a.className ||
+          a.class?.name ||
+          (a.classId ? classNameById[String(a.classId)] : "") ||
+          "";
+        const studentLabel = a.student?.name || "";
+        const haystack = [
+          a.title,
+          a.subject,
+          a.description,
+          classLabel,
+          studentLabel,
+        ]
+          .filter(Boolean)
+          .map((v) => String(v).toLowerCase());
+        return haystack.some((v) => v.includes(query));
+      });
+    }
+
+    const byTime = (value?: string) => {
+      if (!value) return 0;
+      const t = new Date(value).getTime();
+      return Number.isFinite(t) ? t : 0;
+    };
+
+    list.sort((a, b) => {
+      if (assignmentListSort === "dueAsc") {
+        return byTime(a.dueDate) - byTime(b.dueDate);
+      }
+      if (assignmentListSort === "dueDesc") {
+        return byTime(b.dueDate) - byTime(a.dueDate);
+      }
+      return byTime(b.createdAt) - byTime(a.createdAt);
+    });
+
+    return list;
+  }, [
+    assignments,
+    assignmentListSearch,
+    assignmentListTypeFilter,
+    assignmentListClassFilter,
+    assignmentListSort,
+    classNameById,
+  ]);
 
   const getSubmittedStudents = (a: TeacherAssignment) => {
     const allSubs = Array.isArray(a.submissions) ? a.submissions : [];
@@ -1077,11 +1199,13 @@ export default function TeacherDashboard() {
   };
 
   const handleAddAssignment = async () => {
-    if (
-      !newAssignment.title ||
-      !newAssignment.dueDate ||
-      newAssignment.selectedClassIds.length === 0
-    ) {
+    setNewAssignmentSubmitAttempted(true);
+    const needsClassTargets = newAssignmentTargetMode === "classes";
+    const hasTargets = needsClassTargets
+      ? newAssignment.selectedClassIds.length > 0
+      : newAssignmentSelectedStudentIds.length > 0;
+
+    if (!newAssignment.title || !newAssignment.dueDate || !hasTargets) {
       showToast("Please fill in required fields", "warning");
       return;
     }
@@ -1093,7 +1217,10 @@ export default function TeacherDashboard() {
       if (assignmentAttachmentFile) {
         const formData = new FormData();
         formData.append("file", assignmentAttachmentFile);
-        formData.append("classId", newAssignment.selectedClassIds[0]); // Use first class for upload
+        formData.append(
+          "classId",
+          needsClassTargets ? newAssignment.selectedClassIds[0] : "",
+        );
 
         const uploadRes = await fetch("/api/assignments/upload", {
           method: "POST",
@@ -1115,47 +1242,59 @@ export default function TeacherDashboard() {
         attachmentName = uploadResult.fileName;
       }
 
-      // Create assignments for each selected class
-      const assignmentPromises = newAssignment.selectedClassIds.map(
-        async (classId) => {
-          const res = await fetch("/api/assignments", {
-            method: "POST",
-            credentials: "include",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              title: newAssignment.title,
-              subject: newAssignment.subject,
-              dueDate: newAssignment.dueDate,
-              classId: classId,
-              description: newAssignment.description,
-              points: newAssignment.points,
-              attachmentPath,
-              attachmentName,
-            }),
-          });
+      const targetIds = needsClassTargets
+        ? newAssignment.selectedClassIds
+        : newAssignmentSelectedStudentIds;
 
-          if (!res.ok) {
-            const raw = await res.text();
-            let parsed: any = {};
-            try {
-              parsed = raw ? JSON.parse(raw) : {};
-            } catch {
-              parsed = {};
-            }
-            const message =
-              parsed.error ||
-              parsed.details ||
-              parsed.message ||
-              raw ||
-              `Failed to create assignment (HTTP ${res.status})`;
-            throw new Error(message);
+      const assignmentPromises = targetIds.map(async (id) => {
+        const res = await fetch("/api/assignments", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: newAssignment.title,
+            subject: newAssignment.subject,
+            dueDate: newAssignment.dueDate,
+            ...(needsClassTargets ? { classId: id } : { studentId: id }),
+            description: newAssignment.description,
+            points: newAssignment.points,
+            attachmentPath,
+            attachmentName,
+          }),
+        });
+
+        if (!res.ok) {
+          const raw = await res.text();
+          let parsed: any = {};
+          try {
+            parsed = raw ? JSON.parse(raw) : {};
+          } catch {
+            parsed = {};
           }
+          const message =
+            parsed.error ||
+            parsed.details ||
+            parsed.message ||
+            raw ||
+            `Failed to create assignment (HTTP ${res.status})`;
+          throw new Error(message);
+        }
 
-          return res.json();
-        },
-      );
+        return res.json();
+      });
 
       await Promise.all(assignmentPromises);
+
+      const recipientCount = needsClassTargets
+        ? newAssignment.selectedClassIds.reduce((sum, classId) => {
+            const key = String(classId || "");
+            const fromRecords = enrolledCountByClassId[key] || 0;
+            if (fromRecords > 0) return sum + fromRecords;
+            const fallback = myClasses.find((c) => String(c.id) === key)
+              ?.students;
+            return sum + (Number(fallback) || 0);
+          }, 0)
+        : newAssignmentSelectedStudentIds.length;
 
       setNewAssignment({
         title: "",
@@ -1166,16 +1305,104 @@ export default function TeacherDashboard() {
         description: "",
         points: "",
       });
+      setNewAssignmentTargetMode("classes");
+      setNewAssignmentSelectedStudentIds([]);
+      setNewAssignmentStudentClassFilter("all");
+      setNewAssignmentStudentSearch("");
+      setNewAssignmentSubmitAttempted(false);
       setAssignmentAttachmentFile(null);
       setShowAddAssignmentModal(false);
       await loadAssignmentsFromApi();
       showToast(
-        `Assignment created for ${newAssignment.selectedClassIds.length} class(es) successfully!`,
+        `Assignment sent to ${recipientCount} student(s) successfully!`,
         "success",
       );
     } catch (error: unknown) {
       console.error(error);
       showToast(`Error creating assignment: ${getErrorMessage(error)}`, "error");
+    }
+  };
+
+  const openEditAssignment = (a: TeacherAssignment) => {
+    setEditingAssignment(a);
+    setEditRemoveAttachment(false);
+    setEditAttachmentFile(null);
+    setEditAssignmentForm({
+      title: a.title || "",
+      subject: a.subject || "",
+      dueDate: a.dueDate ? toDateTimeLocalValue(a.dueDate) : "",
+      description: a.description || "",
+      points: a.points || "",
+    });
+  };
+
+  const handleUpdateAssignment = async () => {
+    if (!editingAssignment) return;
+    if (!editAssignmentForm.title || !editAssignmentForm.dueDate) {
+      showToast("Title and due date are required", "warning");
+      return;
+    }
+
+    try {
+      let attachmentPath: string | null | undefined = undefined;
+      let attachmentName: string | null | undefined = undefined;
+
+      if (editRemoveAttachment) {
+        attachmentPath = null;
+        attachmentName = null;
+      }
+
+      if (editAttachmentFile) {
+        const formData = new FormData();
+        formData.append("file", editAttachmentFile);
+        formData.append("classId", String(editingAssignment.classId || ""));
+
+        const uploadRes = await fetch("/api/assignments/upload", {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        });
+
+        if (!uploadRes.ok) {
+          const uploadBody = await uploadRes.json().catch(() => ({}));
+          showToast(uploadBody.message || "Failed to upload file", "error");
+          return;
+        }
+
+        const uploadResult = await uploadRes.json();
+        attachmentPath = uploadResult.filePath || null;
+        attachmentName = uploadResult.fileName || null;
+      }
+
+      const res = await fetch(`/api/assignments/${editingAssignment.id}`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: editAssignmentForm.title,
+          subject: editAssignmentForm.subject,
+          dueDate: editAssignmentForm.dueDate,
+          description: editAssignmentForm.description,
+          points: editAssignmentForm.points,
+          ...(attachmentPath !== undefined ? { attachmentPath } : {}),
+          ...(attachmentName !== undefined ? { attachmentName } : {}),
+        }),
+      });
+
+      if (!res.ok) {
+        const raw = await res.text();
+        showToast(raw || "Failed to update assignment", "error");
+        return;
+      }
+
+      setEditingAssignment(null);
+      setEditAttachmentFile(null);
+      setEditRemoveAttachment(false);
+      await loadAssignmentsFromApi();
+      showToast("Assignment updated", "success");
+    } catch (error: unknown) {
+      console.error(error);
+      showToast(`Error updating assignment: ${getErrorMessage(error)}`, "error");
     }
   };
 
@@ -2043,17 +2270,77 @@ export default function TeacherDashboard() {
               </div>
             </div>
 
+            <div className="flex flex-col gap-3 md:gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search assignments (title, class, student, subject)..."
+                    className="w-full pl-10 md:pl-12 pr-4 py-2.5 md:py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm md:text-base"
+                    value={assignmentListSearch}
+                    onChange={(e) => setAssignmentListSearch(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <select
+                  value={assignmentListClassFilter}
+                  onChange={(e) => setAssignmentListClassFilter(e.target.value)}
+                  className="px-3 md:px-4 py-2.5 md:py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm md:text-base"
+                >
+                  <option value="all">All Classes</option>
+                  {myClasses.map((cls) => (
+                    <option key={cls.id} value={cls.id}>
+                      {getSimplifiedClassLabel(cls)}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={assignmentListTypeFilter}
+                  onChange={(e) =>
+                    setAssignmentListTypeFilter(
+                      e.target.value as "all" | "class" | "student",
+                    )
+                  }
+                  className="px-3 md:px-4 py-2.5 md:py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm md:text-base"
+                >
+                  <option value="all">All Types</option>
+                  <option value="class">Class Assignments</option>
+                  <option value="student">Individual Students</option>
+                </select>
+                <select
+                  value={assignmentListSort}
+                  onChange={(e) =>
+                    setAssignmentListSort(
+                      e.target.value as "createdDesc" | "dueAsc" | "dueDesc",
+                    )
+                  }
+                  className="px-3 md:px-4 py-2.5 md:py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm md:text-base"
+                >
+                  <option value="createdDesc">Newest first</option>
+                  <option value="dueAsc">Due soon</option>
+                  <option value="dueDesc">Due latest</option>
+                </select>
+              </div>
+            </div>
+
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <div className="bg-white rounded-2xl p-4 border border-green-100">
-                <p className="text-xs text-gray-500">Total Assignments</p>
+                <p className="text-xs text-gray-500">Assignments</p>
                 <p className="text-2xl font-bold text-green-700">
-                  {assignments.length}
+                  {filteredAssignments.length}
                 </p>
+                {filteredAssignments.length !== assignments.length && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Filtered from {assignments.length} total
+                  </p>
+                )}
               </div>
               <div className="bg-white rounded-2xl p-4 border border-blue-100">
                 <p className="text-xs text-gray-500">Pending Submissions</p>
                 <p className="text-2xl font-bold text-blue-700">
-                  {assignments.reduce((sum, a) => {
+                  {filteredAssignments.reduce((sum, a) => {
                     const submitted = getSubmittedStudents(a).length;
                     const expected = getExpectedSubmissionCount(a);
                     return sum + Math.max(expected - submitted, 0);
@@ -2063,7 +2350,7 @@ export default function TeacherDashboard() {
               <div className="bg-white rounded-2xl p-4 border border-emerald-100">
                 <p className="text-xs text-gray-500">Submitted</p>
                 <p className="text-2xl font-bold text-emerald-700">
-                  {assignments.reduce(
+                  {filteredAssignments.reduce(
                     (sum, a) => sum + getSubmittedStudents(a).length,
                     0,
                   )}
@@ -2080,7 +2367,7 @@ export default function TeacherDashboard() {
                         Title
                       </th>
                       <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
-                        Class
+                        Class / Student
                       </th>
                       <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
                         Due Date
@@ -2094,7 +2381,7 @@ export default function TeacherDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {assignments.map((a) => {
+                    {filteredAssignments.map((a) => {
                       const submittedSubs = getSubmittedStudents(a);
                       const expectedCount = getExpectedSubmissionCount(a);
                       return (
@@ -2120,13 +2407,24 @@ export default function TeacherDashboard() {
                             </div>
                           </td>
                           <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-700">
-                            {a.className ||
+                            {a.studentId ? (
+                              <div className="space-y-0.5">
+                                <div className="font-medium text-gray-900">
+                                  {a.student?.name || "Student"}
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                  Individual assignment
+                                </div>
+                              </div>
+                            ) : (
+                              a.className ||
                               a.class?.name ||
                               (a.classId
                                 ? classNameById[String(a.classId)]
                                 : null) ||
                               a.classId ||
-                              "N/A"}
+                              "N/A"
+                            )}
                           </td>
                           <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-700">
                             {new Date(a.dueDate).toLocaleDateString("en-US")}
@@ -2171,27 +2469,41 @@ export default function TeacherDashboard() {
                             </div>
                           </td>
                           <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-700">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                void handleDeleteAssignment(a.id);
-                              }}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-red-200 text-red-700 hover:bg-red-50"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                              Delete
-                            </button>
+                            <div className="flex flex-col sm:flex-row gap-2">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  openEditAssignment(a);
+                                }}
+                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 text-gray-800 hover:bg-gray-50"
+                              >
+                                <Edit className="w-3.5 h-3.5" />
+                                Edit
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  void handleDeleteAssignment(a.id);
+                                }}
+                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-red-200 text-red-700 hover:bg-red-50"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                Delete
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       );
                     })}
-                    {assignments.length === 0 && (
+                    {filteredAssignments.length === 0 && (
                       <tr>
                         <td
                           colSpan={5}
                           className="px-3 md:px-6 py-8 text-center text-gray-500 text-sm"
                         >
-                          No assignments yet
+                          {assignments.length === 0
+                            ? "No assignments yet"
+                            : "No assignments match your filters"}
                         </td>
                       </tr>
                     )}
@@ -3472,6 +3784,11 @@ export default function TeacherDashboard() {
               <button
                 onClick={() => {
                   setAssignmentAttachmentFile(null);
+                  setNewAssignmentTargetMode("classes");
+                  setNewAssignmentSelectedStudentIds([]);
+                  setNewAssignmentStudentClassFilter("all");
+                  setNewAssignmentStudentSearch("");
+                  setNewAssignmentSubmitAttempted(false);
                   setShowAddAssignmentModal(false);
                 }}
                 className="p-2 hover:bg-gray-100 rounded-lg"
@@ -3481,6 +3798,40 @@ export default function TeacherDashboard() {
             </div>
 
             <div className="space-y-4">
+              <div className="rounded-xl border border-gray-200 bg-gray-50 p-3">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Assign to
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setNewAssignmentTargetMode("classes")}
+                    className={`px-3 py-2 rounded-lg text-sm font-semibold border ${
+                      newAssignmentTargetMode === "classes"
+                        ? "bg-green-600 text-white border-green-600"
+                        : "bg-white text-gray-800 border-gray-200 hover:bg-gray-50"
+                    }`}
+                  >
+                    Class(es)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setNewAssignmentTargetMode("students")}
+                    className={`px-3 py-2 rounded-lg text-sm font-semibold border ${
+                      newAssignmentTargetMode === "students"
+                        ? "bg-green-600 text-white border-green-600"
+                        : "bg-white text-gray-800 border-gray-200 hover:bg-gray-50"
+                    }`}
+                  >
+                    Student(s)
+                  </button>
+                </div>
+                <p className="text-xs text-gray-600 mt-2">
+                  Class assignments are sent to all enrolled students. Student
+                  assignments are sent only to selected students.
+                </p>
+              </div>
+
               <input
                 type="text"
                 placeholder="Subject"
@@ -3495,68 +3846,154 @@ export default function TeacherDashboard() {
               />
 
               {/* Multi-class selection with checkboxes */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Select Class(es) <span className="text-red-500">*</span>
-                </label>
-                <div className="border border-gray-300 rounded-xl max-h-40 overflow-y-auto p-2 space-y-2">
-                  {myClasses.length === 0 ? (
-                    <p className="text-sm text-gray-500 p-2">
-                      No classes available
+              {newAssignmentTargetMode === "classes" && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Select Class(es) <span className="text-red-500">*</span>
+                  </label>
+                  <div className="border border-gray-300 rounded-xl max-h-40 overflow-y-auto p-2 space-y-2">
+                    {myClasses.length === 0 ? (
+                      <p className="text-sm text-gray-500 p-2">
+                        No classes available
+                      </p>
+                    ) : (
+                      myClasses.map((c) => (
+                        <label
+                          key={c.id}
+                          className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={newAssignment.selectedClassIds.includes(
+                              c.id,
+                            )}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setNewAssignment({
+                                  ...newAssignment,
+                                  selectedClassIds: [
+                                    ...newAssignment.selectedClassIds,
+                                    c.id,
+                                  ],
+                                  classId: c.id, // Keep classId for backwards compatibility
+                                });
+                              } else {
+                                const newIds =
+                                  newAssignment.selectedClassIds.filter(
+                                    (id) => id !== c.id,
+                                  );
+                                setNewAssignment({
+                                  ...newAssignment,
+                                  selectedClassIds: newIds,
+                                  classId: newIds.length > 0 ? newIds[0] : "",
+                                });
+                              }
+                            }}
+                            className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
+                          />
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-gray-900">
+                              {getSimplifiedClassLabel(c)}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {c.students} students
+                            </p>
+                          </div>
+                        </label>
+                      ))
+                    )}
+                  </div>
+                  {newAssignmentSubmitAttempted &&
+                    newAssignment.selectedClassIds.length === 0 && (
+                    <p className="text-xs text-red-500 mt-1">
+                      Please select at least one class
                     </p>
-                  ) : (
-                    myClasses.map((c) => (
-                      <label
-                        key={c.id}
-                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={newAssignment.selectedClassIds.includes(
-                            c.id,
-                          )}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setNewAssignment({
-                                ...newAssignment,
-                                selectedClassIds: [
-                                  ...newAssignment.selectedClassIds,
-                                  c.id,
-                                ],
-                                classId: c.id, // Keep classId for backwards compatibility
-                              });
-                            } else {
-                              const newIds =
-                                newAssignment.selectedClassIds.filter(
-                                  (id) => id !== c.id,
-                                );
-                              setNewAssignment({
-                                ...newAssignment,
-                                selectedClassIds: newIds,
-                                classId: newIds.length > 0 ? newIds[0] : "",
-                              });
-                            }
-                          }}
-                          className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
-                        />
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900">
-                            {getSimplifiedClassLabel(c)}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {c.students} students
-                          </p>
-                        </div>
-                      </label>
-                    ))
                   )}
                 </div>
-                {newAssignment.selectedClassIds.length === 0 && (
-                  <p className="text-xs text-red-500 mt-1">
-                    Please select at least one class
+              )}
+
+              {newAssignmentTargetMode === "students" && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Select Student(s) <span className="text-red-500">*</span>
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
+                    <select
+                      value={newAssignmentStudentClassFilter}
+                      onChange={(e) =>
+                        setNewAssignmentStudentClassFilter(e.target.value)
+                      }
+                      className="px-3 py-2.5 bg-white border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
+                    >
+                      <option value="all">All my classes</option>
+                      {myClasses.map((cls) => (
+                        <option key={cls.id} value={cls.id}>
+                          {getSimplifiedClassLabel(cls)}
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      type="text"
+                      placeholder="Search students..."
+                      value={newAssignmentStudentSearch}
+                      onChange={(e) => setNewAssignmentStudentSearch(e.target.value)}
+                      className="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
+                    />
+                  </div>
+                  <div className="border border-gray-300 rounded-xl max-h-44 overflow-y-auto p-2 space-y-2">
+                    {newAssignmentStudentCandidates.length === 0 ? (
+                      <p className="text-sm text-gray-500 p-2">
+                        No students found
+                      </p>
+                    ) : (
+                      newAssignmentStudentCandidates.map((s) => (
+                        <label
+                          key={s.id}
+                          className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={newAssignmentSelectedStudentIds.includes(
+                              s.id,
+                            )}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setNewAssignmentSelectedStudentIds((prev) => [
+                                  ...prev,
+                                  s.id,
+                                ]);
+                              } else {
+                                setNewAssignmentSelectedStudentIds((prev) =>
+                                  prev.filter((id) => id !== s.id),
+                                );
+                              }
+                            }}
+                            className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 truncate">
+                              {s.name}
+                            </p>
+                            <p className="text-xs text-gray-500 truncate">
+                              {s.email || "No email"}
+                            </p>
+                          </div>
+                        </label>
+                      ))
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-600 mt-1">
+                    Selected: {newAssignmentSelectedStudentIds.length}
                   </p>
-                )}
-              </div>
+                  {newAssignmentSubmitAttempted &&
+                    newAssignmentSelectedStudentIds.length === 0 && (
+                    <p className="text-xs text-red-500 mt-1">
+                      Please select at least one student
+                    </p>
+                  )}
+                </div>
+              )}
+
               <input
                 type="text"
                 placeholder="Title ng Assignment"
@@ -3608,6 +4045,7 @@ export default function TeacherDashboard() {
                 </label>
                 <input
                   type="file"
+                  accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,image/*,text/*"
                   onChange={(e) => {
                     const file = e.target.files?.[0] || null;
                     if (file && file.size > uploadMaxBytes) {
@@ -3627,9 +4065,18 @@ export default function TeacherDashboard() {
                   Max file size: {uploadMaxMB}MB
                 </p>
                 {assignmentAttachmentFile && (
-                  <p className="text-xs text-gray-600 mt-2">
-                    Selected: {assignmentAttachmentFile.name}
-                  </p>
+                  <div className="flex items-center justify-between gap-3 mt-2">
+                    <p className="text-xs text-gray-600 truncate">
+                      Selected: {assignmentAttachmentFile.name}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setAssignmentAttachmentFile(null)}
+                      className="text-xs text-red-700 hover:text-red-800 underline flex-shrink-0"
+                    >
+                      Remove
+                    </button>
+                  </div>
                 )}
               </div>
 
@@ -3637,6 +4084,11 @@ export default function TeacherDashboard() {
                 <button
                   onClick={() => {
                     setAssignmentAttachmentFile(null);
+                    setNewAssignmentTargetMode("classes");
+                    setNewAssignmentSelectedStudentIds([]);
+                    setNewAssignmentStudentClassFilter("all");
+                    setNewAssignmentStudentSearch("");
+                    setNewAssignmentSubmitAttempted(false);
                     setShowAddAssignmentModal(false);
                   }}
                   className="px-4 py-2 bg-gray-200 rounded-xl"
@@ -3648,6 +4100,188 @@ export default function TeacherDashboard() {
                   className="px-4 py-2 bg-green-600 text-white rounded-xl"
                 >
                   Create
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Assignment Modal */}
+      {editingAssignment && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl md:rounded-2xl shadow-2xl max-w-lg w-full p-4 md:p-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4 md:mb-6">
+              <div>
+                <h3 className="text-xl md:text-2xl font-bold text-green-900">
+                  Edit Assignment
+                </h3>
+                <p className="text-xs md:text-sm text-gray-600 mt-1">
+                  Expected recipients: {getExpectedSubmissionCount(editingAssignment)}
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setEditingAssignment(null);
+                  setEditAttachmentFile(null);
+                  setEditRemoveAttachment(false);
+                }}
+                className="p-2 hover:bg-gray-100 rounded-lg"
+              >
+                <X className="w-5 h-5 md:w-6 md:h-6" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <input
+                type="text"
+                placeholder="Title"
+                value={editAssignmentForm.title}
+                onChange={(e) =>
+                  setEditAssignmentForm({
+                    ...editAssignmentForm,
+                    title: e.target.value,
+                  })
+                }
+                className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+              <input
+                type="text"
+                placeholder="Subject"
+                value={editAssignmentForm.subject}
+                onChange={(e) =>
+                  setEditAssignmentForm({
+                    ...editAssignmentForm,
+                    subject: e.target.value,
+                  })
+                }
+                className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+              <input
+                type="datetime-local"
+                value={editAssignmentForm.dueDate}
+                onChange={(e) =>
+                  setEditAssignmentForm({
+                    ...editAssignmentForm,
+                    dueDate: e.target.value,
+                  })
+                }
+                className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+              <textarea
+                placeholder="Instructions / Description"
+                value={editAssignmentForm.description}
+                onChange={(e) =>
+                  setEditAssignmentForm({
+                    ...editAssignmentForm,
+                    description: e.target.value,
+                  })
+                }
+                className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+              <input
+                type="number"
+                min="0"
+                step="1"
+                placeholder="Points / Score"
+                value={editAssignmentForm.points}
+                onChange={(e) =>
+                  setEditAssignmentForm({
+                    ...editAssignmentForm,
+                    points: e.target.value,
+                  })
+                }
+                className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Attachment (optional)
+                </label>
+
+                {editingAssignment.attachmentPath &&
+                  !editRemoveAttachment &&
+                  !editAttachmentFile && (
+                    <div className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 p-3 bg-gray-50">
+                      <a
+                        href={editingAssignment.attachmentPath}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-sm text-blue-700 underline truncate"
+                      >
+                        {editingAssignment.attachmentName || "Current attachment"}
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditRemoveAttachment(true);
+                          setEditAttachmentFile(null);
+                        }}
+                        className="text-xs text-red-700 hover:text-red-800 underline flex-shrink-0"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  )}
+
+                <input
+                  type="file"
+                  accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,image/*,text/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    if (file && file.size > uploadMaxBytes) {
+                      showToast(
+                        `File too large. Max allowed is ${uploadMaxMB}MB.`,
+                        "warning",
+                      );
+                      e.target.value = "";
+                      setEditAttachmentFile(null);
+                      return;
+                    }
+                    setEditAttachmentFile(file);
+                    if (file) setEditRemoveAttachment(false);
+                  }}
+                  className="w-full text-sm border border-gray-300 rounded-xl px-3 py-2"
+                />
+
+                {editAttachmentFile && (
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-xs text-gray-600 truncate">
+                      New file: {editAttachmentFile.name}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setEditAttachmentFile(null)}
+                      className="text-xs text-red-700 hover:text-red-800 underline flex-shrink-0"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                )}
+
+                {editRemoveAttachment && (
+                  <p className="text-xs text-gray-600">
+                    Attachment will be removed when you save.
+                  </p>
+                )}
+              </div>
+
+              <div className="flex gap-3 justify-end pt-2">
+                <button
+                  onClick={() => {
+                    setEditingAssignment(null);
+                    setEditAttachmentFile(null);
+                    setEditRemoveAttachment(false);
+                  }}
+                  className="px-4 py-2 bg-gray-200 rounded-xl"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleUpdateAssignment}
+                  className="px-4 py-2 bg-green-600 text-white rounded-xl"
+                >
+                  Save
                 </button>
               </div>
             </div>

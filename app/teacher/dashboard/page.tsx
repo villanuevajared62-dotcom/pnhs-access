@@ -1564,6 +1564,14 @@ export default function TeacherDashboard() {
     }
 
     try {
+      const teacherClassIds = new Set(myClasses.map((c) => String(c.id || "")));
+      const preferredClassId = String(takeAttendanceClass || "").trim();
+      const candidateClassId = preferredClassId
+        ? preferredClassId
+        : (editingStudent.enrolledClassIds || []).find((id) =>
+            teacherClassIds.has(String(id || "")),
+          ) || "";
+
       const res = await fetch("/api/grades", {
         method: "POST",
         credentials: "include",
@@ -1571,6 +1579,7 @@ export default function TeacherDashboard() {
         body: JSON.stringify({
           studentId: String(editingStudent.id),
           subjectId: "general",
+          classId: candidateClassId || undefined,
           grade: String(Math.round(numericGrade)),
           quarter: "Q2",
           remarks: "Updated by teacher",

@@ -95,6 +95,9 @@ export async function POST(req: NextRequest) {
     const subjectIdRaw =
       typeof body.subjectId === "string" ? body.subjectId.trim() : "";
     const subjectId = subjectIdRaw || null;
+    const classIdRaw =
+      typeof body.classId === "string" ? body.classId.trim() : "";
+    const classId = classIdRaw || null;
 
     // Ensure referenced Subject exists to avoid FK constraint failures.
     // This codebase sometimes uses "general" or human-readable identifiers as subjectId.
@@ -111,6 +114,7 @@ export async function POST(req: NextRequest) {
         studentId: body.studentId,
         subjectId,
         quarter: body.quarter,
+        ...(classId ? { classId } : {}),
       },
     });
 
@@ -124,6 +128,7 @@ export async function POST(req: NextRequest) {
                 studentId: body.studentId,
                 subjectId,
                 quarter: body.quarter,
+                ...(classId ? { classId } : {}),
               },
               data: {
                 grade: body.grade,
@@ -136,6 +141,7 @@ export async function POST(req: NextRequest) {
                   studentId: body.studentId,
                   subjectId,
                   quarter: body.quarter,
+                  ...(classId ? { classId } : {}),
                 },
                 orderBy: { id: "desc" },
               });
@@ -146,6 +152,8 @@ export async function POST(req: NextRequest) {
           data: {
             studentId: body.studentId,
             subjectId,
+            classId,
+            teacherId: user.role === "teacher" ? user.id : body.teacherId || null,
             grade: body.grade,
             quarter: body.quarter,
             remarks: body.remarks ?? "",

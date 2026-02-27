@@ -48,6 +48,7 @@ import {
 } from "@/lib/auth";
 import { type Announcement } from "@/lib/shared-data";
 import AttendanceHistoryModal from "@/components/teacher/AttendanceHistoryModal";
+import { upload } from "@vercel/blob/client";
 
 interface ClassData {
   id: string;
@@ -144,6 +145,20 @@ export default function TeacherDashboard() {
   })();
   const uploadMaxBytes =
     uploadMaxMB === 0 ? Number.POSITIVE_INFINITY : uploadMaxMB * 1024 * 1024;
+
+  const safeFileName = (name: string) => {
+    const raw = String(name || "file");
+    const base = raw.split(/[\\/]/).pop() || "file";
+    const cleaned = base.replace(/[^a-zA-Z0-9._-]/g, "_");
+    return cleaned.slice(0, 120) || "file";
+  };
+
+  const uploadToBlobIfPossible = async (file: File, pathname: string) => {
+    return upload(pathname, file, {
+      access: "public",
+      handleUploadUrl: "/api/blob",
+    });
+  };
   const [user, setUser] = useState<User | null>(null);
   const [teacherLabel, setTeacherLabel] = useState<string>("Teacher");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -1234,29 +1249,46 @@ export default function TeacherDashboard() {
       let attachmentUploadWarning: string | null = null;
 
       if (assignmentAttachmentFile) {
-        const formData = new FormData();
-        formData.append("file", assignmentAttachmentFile);
-        formData.append(
-          "classId",
-          needsClassTargets ? newAssignment.selectedClassIds[0] : "",
-        );
+        const firstClassId = needsClassTargets
+          ? newAssignment.selectedClassIds[0]
+          : "";
+        const cleanedName = safeFileName(assignmentAttachmentFile.name);
+        const pathname = `assignments/${user?.id || "teacher"}/${Date.now()}_${cleanedName}`;
 
-        const uploadRes = await fetch("/api/assignments/upload", {
-          method: "POST",
-          credentials: "include",
-          body: formData,
-        });
+        try {
+          const blob = await uploadToBlobIfPossible(
+            assignmentAttachmentFile,
+            pathname,
+          );
+          attachmentPath = blob.url;
+          attachmentName = assignmentAttachmentFile.name;
+        } catch (e) {
+          try {
+            const formData = new FormData();
+            formData.append("file", assignmentAttachmentFile);
+            formData.append("classId", firstClassId);
 
-        if (!uploadRes.ok) {
-          const uploadBody = await uploadRes.json().catch(() => ({}));
-          attachmentUploadWarning =
-            uploadBody.message ||
-            `Failed to upload attachment (HTTP ${uploadRes.status})`;
-          setAssignmentAttachmentFile(null);
-        } else {
-          const uploadResult = await uploadRes.json();
-          attachmentPath = uploadResult.filePath;
-          attachmentName = uploadResult.fileName;
+            const uploadRes = await fetch("/api/assignments/upload", {
+              method: "POST",
+              credentials: "include",
+              body: formData,
+            });
+
+            if (!uploadRes.ok) {
+              const uploadBody = await uploadRes.json().catch(() => ({}));
+              attachmentUploadWarning =
+                uploadBody.message ||
+                `Failed to upload attachment (HTTP ${uploadRes.status})`;
+              setAssignmentAttachmentFile(null);
+            } else {
+              const uploadResult = await uploadRes.json();
+              attachmentPath = uploadResult.filePath;
+              attachmentName = uploadResult.fileName;
+            }
+          } catch (fallbackError) {
+            attachmentUploadWarning = getErrorMessage(fallbackError);
+            setAssignmentAttachmentFile(null);
+          }
         }
       }
 
@@ -1378,29 +1410,49 @@ export default function TeacherDashboard() {
       }
 
       if (editAttachmentFile) {
-        const formData = new FormData();
-        formData.append("file", editAttachmentFile);
-        formData.append("classId", String(editingAssignment.classId || ""));
+        const cleanedName = safeFileName(editAttachmentFile.name);
+        const pathname = `assignments/${user?.id || "teacher"}/${Date.now()}_${cleanedName}`;
 
-        const uploadRes = await fetch("/api/assignments/upload", {
-          method: "POST",
-          credentials: "include",
-          body: formData,
-        });
+        try {
+          const blob = await uploadToBlobIfPossible(editAttachmentFile, pathname);
+          attachmentPath = blob.url;
+          attachmentName = editAttachmentFile.name || null;
+        } catch (e) {
+          try {
+            const formData = new FormData();
+            formData.append("file", editAttachmentFile);
+            formData.append("classId", String(editingAssignment.classId || ""));
 
-        if (!uploadRes.ok) {
-          const uploadBody = await uploadRes.json().catch(() => ({}));
-          showToast(
-            uploadBody.message ||
-              `Failed to upload file (HTTP ${uploadRes.status}). Keeping current attachment.`,
-            "warning",
-          );
-          setEditAttachmentFile(null);
-          setEditRemoveAttachment(false);
-        } else {
-          const uploadResult = await uploadRes.json();
-          attachmentPath = uploadResult.filePath || null;
-          attachmentName = uploadResult.fileName || null;
+            const uploadRes = await fetch("/api/assignments/upload", {
+              method: "POST",
+              credentials: "include",
+              body: formData,
+            });
+
+            if (!uploadRes.ok) {
+              const uploadBody = await uploadRes.json().catch(() => ({}));
+              showToast(
+                uploadBody.message ||
+                  `Failed to upload file (HTTP ${uploadRes.status}). Keeping current attachment.`,
+                "warning",
+              );
+              setEditAttachmentFile(null);
+              setEditRemoveAttachment(false);
+            } else {
+              const uploadResult = await uploadRes.json();
+              attachmentPath = uploadResult.filePath || null;
+              attachmentName = uploadResult.fileName || null;
+            }
+          } catch (fallbackError) {
+            showToast(
+              `Failed to upload file. Keeping current attachment: ${getErrorMessage(
+                fallbackError,
+              )}`,
+              "warning",
+            );
+            setEditAttachmentFile(null);
+            setEditRemoveAttachment(false);
+          }
         }
       }
 

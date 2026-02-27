@@ -46,6 +46,7 @@ import {
   saveUserToStorage,
   type User,
 } from "@/lib/auth";
+import { upload } from "@vercel/blob/client";
 import { type Announcement, type Grade, type Class } from "@/lib/shared-data";
 
 interface Subject {
@@ -130,6 +131,20 @@ export default function StudentDashboard() {
   })();
   const uploadMaxBytes =
     uploadMaxMB === 0 ? Number.POSITIVE_INFINITY : uploadMaxMB * 1024 * 1024;
+
+  const safeFileName = (name: string) => {
+    const raw = String(name || "file");
+    const base = raw.split(/[\\/]/).pop() || "file";
+    const cleaned = base.replace(/[^a-zA-Z0-9._-]/g, "_");
+    return cleaned.slice(0, 120) || "file";
+  };
+
+  const uploadToBlobIfPossible = async (file: File, pathname: string) => {
+    return upload(pathname, file, {
+      access: "public",
+      handleUploadUrl: "/api/blob",
+    });
+  };
   const [user, setUser] = useState<User | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false); // Default closed on mobile
   const [loading, setLoading] = useState(true);
@@ -1041,22 +1056,45 @@ export default function StudentDashboard() {
         return;
       }
       setSubmittingAssignment(true);
-      const formData = new FormData();
-      formData.append("assignmentId", assignmentId);
-      formData.append("file", assignmentFile);
-      const res = await fetch("/api/submissions/upload", {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
+      const cleanedName = safeFileName(assignmentFile.name);
+      const pathname = `submissions/${user?.id || "student"}/${assignmentId}/${Date.now()}_${cleanedName}`;
 
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        showToast(
-          body.message || `Failed to submit assignment (HTTP ${res.status})`,
-          "error",
-        );
-        return;
+      try {
+        const blob = await uploadToBlobIfPossible(assignmentFile, pathname);
+        const completeRes = await fetch("/api/submissions/complete", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ assignmentId, filePath: blob.url }),
+        });
+        if (!completeRes.ok) {
+          const body = await completeRes.json().catch(() => ({}));
+          showToast(
+            body.message ||
+              `Failed to submit assignment (HTTP ${completeRes.status})`,
+            "error",
+          );
+          return;
+        }
+      } catch (e) {
+        // Fallback: legacy server upload (works for local dev / small files)
+        const formData = new FormData();
+        formData.append("assignmentId", assignmentId);
+        formData.append("file", assignmentFile);
+        const res = await fetch("/api/submissions/upload", {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        });
+
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          showToast(
+            body.message || `Failed to submit assignment (HTTP ${res.status})`,
+            "error",
+          );
+          return;
+        }
       }
 
       if (user) {

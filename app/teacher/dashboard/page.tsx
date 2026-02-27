@@ -117,6 +117,21 @@ interface DashboardMessage {
 export default function TeacherDashboard() {
   type ToastType = "success" | "error" | "warning" | "info";
   const router = useRouter();
+  const getErrorMessage = (error: unknown) => {
+    if (error instanceof Error) return error.message;
+    if (typeof error === "string") return error;
+    try {
+      return JSON.stringify(error);
+    } catch {
+      return "Unknown error";
+    }
+  };
+  const uploadMaxMB = (() => {
+    const raw = process.env.NEXT_PUBLIC_UPLOAD_MAX_MB;
+    const parsed = raw ? Number(raw) : Number.NaN;
+    return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 50;
+  })();
+  const uploadMaxBytes = uploadMaxMB * 1024 * 1024;
   const [user, setUser] = useState<User | null>(null);
   const [teacherLabel, setTeacherLabel] = useState<string>("Teacher");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -1055,7 +1070,7 @@ export default function TeacherDashboard() {
       });
       setShowAddTaskModal(false);
       await loadTasksFromApi();
-    } catch (error) {
+    } catch (error: unknown) {
       showToast("Error adding task", "error");
       console.error(error);
     }
@@ -1158,9 +1173,9 @@ export default function TeacherDashboard() {
         `Assignment created for ${newAssignment.selectedClassIds.length} class(es) successfully!`,
         "success",
       );
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
-      showToast("Error creating assignment", "error");
+      showToast(`Error creating assignment: ${getErrorMessage(error)}`, "error");
     }
   };
 
@@ -1184,8 +1199,9 @@ export default function TeacherDashboard() {
       if (res.ok) {
         await loadTasksFromApi();
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
+      showToast(getErrorMessage(error), "error");
     }
   };
 
@@ -1199,8 +1215,9 @@ export default function TeacherDashboard() {
       if (res.ok) {
         await loadTasksFromApi();
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
+      showToast(getErrorMessage(error), "error");
     }
   };
 
@@ -1222,9 +1239,9 @@ export default function TeacherDashboard() {
       setAssignments((prev) => prev.filter((a) => a.id !== id));
       await loadAssignmentsFromApi();
       showToast("Assignment deleted", "success");
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
-      showToast("Error deleting assignment", "error");
+      showToast(getErrorMessage(error) || "Error deleting assignment", "error");
     }
   };
 
@@ -1270,7 +1287,7 @@ export default function TeacherDashboard() {
       setEditingStudent(null);
       await loadGradesFromApi();
       await loadStudentsFromApi();
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error updating grade:", error);
       showToast("An error occurred while updating the grade.", "error");
     }
@@ -1329,9 +1346,13 @@ export default function TeacherDashboard() {
       // reload students/attendance so percentages update
       await loadStudentsFromApi();
       setShowAttendanceModal(false);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
-      showToast("Failed to record attendance. Please try again.", "error");
+      showToast(
+        getErrorMessage(error) ||
+          "Failed to record attendance. Please try again.",
+        "error",
+      );
     }
   };
 
@@ -3587,11 +3608,24 @@ export default function TeacherDashboard() {
                 </label>
                 <input
                   type="file"
-                  onChange={(e) =>
-                    setAssignmentAttachmentFile(e.target.files?.[0] || null)
-                  }
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    if (file && file.size > uploadMaxBytes) {
+                      showToast(
+                        `File too large. Max allowed is ${uploadMaxMB}MB.`,
+                        "warning",
+                      );
+                      e.target.value = "";
+                      setAssignmentAttachmentFile(null);
+                      return;
+                    }
+                    setAssignmentAttachmentFile(file);
+                  }}
                   className="w-full text-sm border border-gray-300 rounded-xl px-3 py-2"
                 />
+                <p className="text-xs text-gray-500 mt-2">
+                  Max file size: {uploadMaxMB}MB
+                </p>
                 {assignmentAttachmentFile && (
                   <p className="text-xs text-gray-600 mt-2">
                     Selected: {assignmentAttachmentFile.name}

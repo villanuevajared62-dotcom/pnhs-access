@@ -7,11 +7,12 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
+  if (!id) return NextResponse.json({ message: "Invalid id" }, { status: 400 });
   const user = await getSessionUser(req);
   if (!user)
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   try {
-    const item = await prisma.grade.findUnique({ where: { id } });
+    const item = await prisma.grade.findUnique({ where: { id: id! } });
     if (!item)
       return NextResponse.json({ message: "Not found" }, { status: 404 });
 
@@ -43,6 +44,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
+  if (!id) return NextResponse.json({ message: "Invalid id" }, { status: 400 });
   const user = await getSessionUser(req);
   if (!user)
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -52,7 +54,7 @@ export async function PUT(
 
   try {
     const existing = await prisma.grade.findUnique({
-      where: { id },
+      where: { id: id! },
     });
     if (!existing)
       return NextResponse.json({ message: "Not found" }, { status: 404 });
@@ -70,7 +72,7 @@ export async function PUT(
 
     const updates = await req.json();
     const updated = await prisma.grade.update({
-      where: { id },
+      where: { id: id! },
       data: {
         studentId: updates.studentId,
         subjectId: updates.subjectId,
@@ -94,6 +96,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
+  if (!id) return NextResponse.json({ message: "Invalid id" }, { status: 400 });
   const user = await getSessionUser(req);
   if (!user)
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -126,4 +129,4 @@ export async function DELETE(
   }
 }
 
-export const runtime = "nodejs"
+export const runtime = "nodejs";

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getSessionUser } from "@/lib/server-session-node";
+import { getUploadMaxBytes, getUploadMaxMB } from "@/lib/upload-limits";
 import { put } from "@vercel/blob";
 
 export const runtime = "nodejs";
@@ -38,6 +39,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { message: "file is required" },
         { status: 400 },
+      );
+    }
+
+    const maxBytes = getUploadMaxBytes();
+    if (file.size > maxBytes) {
+      return NextResponse.json(
+        {
+          message: `File size must be ${getUploadMaxMB()}MB or less`,
+          maxBytes,
+        },
+        { status: 413 },
       );
     }
 
@@ -153,8 +165,10 @@ export async function POST(req: NextRequest) {
     }
   } catch (error) {
     console.error("Error uploading submission:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { message: "Failed to upload submission" },
+      { message: `Failed to upload submission: ${errorMessage}` },
       { status: 500 },
     );
   }

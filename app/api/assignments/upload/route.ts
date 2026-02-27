@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getSessionUser } from "@/lib/server-session-node";
+import { getUploadMaxBytes, getUploadMaxMB } from "@/lib/upload-limits";
 import { put } from "@vercel/blob";
 
 export const runtime = "nodejs";
@@ -35,11 +36,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check file size (limit to 10MB)
-    if (file.size > 10 * 1024 * 1024) {
+    const maxBytes = getUploadMaxBytes();
+    if (file.size > maxBytes) {
       return NextResponse.json(
-        { message: "File size must be less than 10MB" },
-        { status: 400 },
+        {
+          message: `File size must be ${getUploadMaxMB()}MB or less`,
+          maxBytes,
+        },
+        { status: 413 },
       );
     }
 

@@ -105,6 +105,21 @@ interface DashboardMessage {
 export default function StudentDashboard() {
   type ToastType = "success" | "error" | "warning" | "info";
   const router = useRouter();
+  const getErrorMessage = (error: unknown) => {
+    if (error instanceof Error) return error.message;
+    if (typeof error === "string") return error;
+    try {
+      return JSON.stringify(error);
+    } catch {
+      return "Unknown error";
+    }
+  };
+  const uploadMaxMB = (() => {
+    const raw = process.env.NEXT_PUBLIC_UPLOAD_MAX_MB;
+    const parsed = raw ? Number(raw) : Number.NaN;
+    return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 50;
+  })();
+  const uploadMaxBytes = uploadMaxMB * 1024 * 1024;
   const [user, setUser] = useState<User | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false); // Default closed on mobile
   const [loading, setLoading] = useState(true);
@@ -1018,7 +1033,11 @@ export default function StudentDashboard() {
       });
 
       if (!res.ok) {
-        showToast("Failed to submit assignment", "error");
+        const body = await res.json().catch(() => ({}));
+        showToast(
+          body.message || `Failed to submit assignment (HTTP ${res.status})`,
+          "error",
+        );
         return;
       }
 
@@ -1029,7 +1048,7 @@ export default function StudentDashboard() {
       setShowAssignmentModal(null);
       showToast("Assignment submitted successfully!", "success");
     } catch (error) {
-      showToast("Error submitting assignment", "error");
+      showToast(`Error submitting assignment: ${getErrorMessage(error)}`, "error");
       console.error(error);
     } finally {
       setSubmittingAssignment(false);
@@ -3194,11 +3213,24 @@ export default function StudentDashboard() {
                     </p>
                     <input
                       type="file"
-                      onChange={(e) =>
-                        setAssignmentFile(e.target.files?.[0] || null)
-                      }
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] || null;
+                        if (file && file.size > uploadMaxBytes) {
+                          showToast(
+                            `File too large. Max allowed is ${uploadMaxMB}MB.`,
+                            "warning",
+                          );
+                          e.target.value = "";
+                          setAssignmentFile(null);
+                          return;
+                        }
+                        setAssignmentFile(file);
+                      }}
                       className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2"
                     />
+                    <p className="text-xs text-gray-500">
+                      Max file size: {uploadMaxMB}MB
+                    </p>
                     <button
                       onClick={() =>
                         handleSubmitAssignment(showAssignmentModal.id)

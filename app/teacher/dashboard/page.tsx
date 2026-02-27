@@ -923,20 +923,17 @@ export default function TeacherDashboard() {
         return;
       }
 
-      // Protect against transient empty responses that cause flicker/disappearing rows.
-      assignmentEmptyStreakRef.current += 1;
-      setAssignments((prev) => {
-        if (prev.length > 0 && assignmentEmptyStreakRef.current < 3) {
-          return prev;
+      // Empty list is authoritative (e.g., class/assignment deletions). Clear caches.
+      assignmentEmptyStreakRef.current = 0;
+      lastNonEmptyAssignmentsRef.current = [];
+      if (user?.id) {
+        try {
+          localStorage.removeItem(`teacher_assignments_cache_${user.id}`);
+        } catch {
+          // ignore storage errors
         }
-        if (
-          lastNonEmptyAssignmentsRef.current.length > 0 &&
-          assignmentEmptyStreakRef.current < 3
-        ) {
-          return lastNonEmptyAssignmentsRef.current;
-        }
-        return [];
-      });
+      }
+      setAssignments([]);
     } catch (error) {
       // Ignore
     }

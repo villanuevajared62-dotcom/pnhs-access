@@ -9,8 +9,7 @@ export const runtime = "nodejs";
 const db = prisma as any;
 
 // Check if we're running on Vercel (serverless) or local
-const isServerless =
-  process.env.VERCEL === "1" || !process.cwd().includes("pnhs-access");
+const isServerless = process.env.VERCEL === "1";
 
 export async function POST(req: NextRequest) {
   const user = await getSessionUser(req);
@@ -83,12 +82,23 @@ export async function POST(req: NextRequest) {
     // For Vercel serverless: store in DB with placeholder path
     // For local: save to filesystem
     if (isServerless) {
+      const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
+      if (!blobToken) {
+        return NextResponse.json(
+          {
+            message:
+              "Upload storage not configured. Please contact admin (missing BLOB_READ_WRITE_TOKEN).",
+          },
+          { status: 503 },
+        );
+      }
+
       // Upload to Vercel Blob for persistent storage
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
       const blobOptions = {
         access: "public",
-        token: process.env.BLOB_READ_WRITE_TOKEN,
+        token: blobToken,
       } as const;
       const blob = await put(safeName, buffer, blobOptions);
 

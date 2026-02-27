@@ -97,7 +97,7 @@ async function hydrateSubmissionStudents(assignments: any[]) {
   if (studentIds.length === 0) return assignments;
 
   const students = await prisma.student.findMany({
-    where: { id: { in: studentIds } },
+    where: { id: { in: studentIds }, deletedAt: null },
     select: { id: true, name: true, email: true },
   });
   const studentMap = new Map(students.map((s) => [String(s.id), s]));

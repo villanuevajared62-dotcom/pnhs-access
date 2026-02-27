@@ -24,7 +24,7 @@ export async function GET(
     where: { id },
     include: { teacherSubjects: { include: { subject: true } } },
   });
-  if (!teacherRaw)
+  if (!teacherRaw || (teacherRaw as any).deletedAt)
     return NextResponse.json({ message: "Not found" }, { status: 404 });
   const { password, subjects, teacherSubjects, ...rest } = teacherRaw as any;
   const teacher = {

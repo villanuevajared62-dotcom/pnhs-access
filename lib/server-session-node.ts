@@ -54,6 +54,34 @@ export function signSessionUser(user: User): string {
 }
 
 export async function getSessionUser(req: NextRequest): Promise<User | null> {
+  const ensureActiveUser = async (candidate: User | null): Promise<User | null> => {
+    if (!candidate) return null;
+    const role = candidate.role;
+    if (role !== "student" && role !== "teacher") return candidate;
+
+    const prisma = await loadPrisma();
+    if (!prisma) return candidate; // best-effort; allow local dev without DB
+
+    try {
+      if (role === "student") {
+        const s = await prisma.student.findFirst({
+          where: { id: candidate.id, deletedAt: null },
+          select: { id: true },
+        });
+        return s ? candidate : null;
+      }
+
+      const t = await prisma.teacher.findFirst({
+        where: { id: candidate.id, deletedAt: null },
+        select: { id: true },
+      });
+      return t ? candidate : null;
+    } catch (e) {
+      console.error("[server-session-node] ensureActiveUser error:", e);
+      return null;
+    }
+  };
+
   // Prefer explicit DB-backed session cookie when present (revocable)
   const tokenCookieObj = req.cookies.get("pnhs_session_token");
   const tokenCookie = tokenCookieObj?.value;
@@ -64,7 +92,19 @@ export async function getSessionUser(req: NextRequest): Promise<User | null> {
         const session = await prisma.session.findUnique({ where: { token: tokenCookie } });
         if (session && !session.revoked && new Date(session.expiresAt) > new Date()) {
           try {
-            return JSON.parse(session.data) as User;
+            const parsed = JSON.parse(session.data) as User;
+            const active = await ensureActiveUser(parsed);
+            if (!active) {
+              try {
+                await prisma.session.updateMany({
+                  where: { token: tokenCookie },
+                  data: { revoked: true },
+                });
+              } catch (e) {
+                console.error("[server-session-node] failed to revoke deleted-user session:", e);
+              }
+            }
+            return active;
           } catch {
             return null;
           }
@@ -87,7 +127,19 @@ export async function getSessionUser(req: NextRequest): Promise<User | null> {
         const session = await prisma.session.findUnique({ where: { token: cookie } });
         if (session && !session.revoked && new Date(session.expiresAt) > new Date()) {
           try {
-            return JSON.parse(session.data) as User;
+            const parsed = JSON.parse(session.data) as User;
+            const active = await ensureActiveUser(parsed);
+            if (!active) {
+              try {
+                await prisma.session.updateMany({
+                  where: { token: cookie },
+                  data: { revoked: true },
+                });
+              } catch (e) {
+                console.error("[server-session-node] failed to revoke deleted-user session:", e);
+              }
+            }
+            return active;
           } catch {
             return null;
           }
@@ -101,13 +153,13 @@ export async function getSessionUser(req: NextRequest): Promise<User | null> {
 
   // 2) Prefer signed cookie (legacy path)
   const signed = verifyAndParse(cookie);
-  if (signed) return signed;
+  if (signed) return ensureActiveUser(signed);
 
   // 3) Backwards-compat fallback: parse raw JSON (deprecated)
   try {
     const legacy = JSON.parse(cookie) as User;
     console.warn("[server-session-node] legacy unsigned cookie detected; rotate sessions");
-    return legacy;
+    return ensureActiveUser(legacy);
   } catch {
     return null;
   }

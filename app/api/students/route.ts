@@ -30,7 +30,10 @@ export async function GET(req: NextRequest) {
     const classIds = classes.map((c) => c.id);
     if (classIds.length === 0) return NextResponse.json([]);
     const students = await prisma.student.findMany({
-      where: { enrollments: { some: { classId: { in: classIds } } } },
+      where: {
+        deletedAt: null,
+        enrollments: { some: { classId: { in: classIds } } },
+      },
     });
     const items = students.map((s) => ({
       ...s,
@@ -42,7 +45,9 @@ export async function GET(req: NextRequest) {
 
   // Student: only own record
   if (user.role === "student") {
-    const s = await prisma.student.findUnique({ where: { id: user.id } });
+    const s = await prisma.student.findFirst({
+      where: { id: user.id, deletedAt: null },
+    });
     if (!s) return NextResponse.json([], { status: 200 });
     return NextResponse.json({
       ...s,

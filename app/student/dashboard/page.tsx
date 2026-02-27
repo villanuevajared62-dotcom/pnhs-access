@@ -40,7 +40,12 @@ import {
   Users,
   Send,
 } from "lucide-react";
-import { getUserFromStorage, saveUserToStorage, type User } from "@/lib/auth";
+import {
+  getUserFromStorage,
+  removeUserFromStorage,
+  saveUserToStorage,
+  type User,
+} from "@/lib/auth";
 import { type Announcement, type Grade, type Class } from "@/lib/shared-data";
 
 interface Subject {
@@ -402,6 +407,7 @@ export default function StudentDashboard() {
           const data = await res.json();
           const sessionUser: User | null = data?.user || null;
           if (!sessionUser || sessionUser.role !== "student") {
+            removeUserFromStorage();
             router.push("/login");
             return;
           }
@@ -422,6 +428,12 @@ export default function StudentDashboard() {
             loadAttendance(sessionUser.id),
             loadAssignments(sessionUser.id),
           ]);
+          return;
+        }
+
+        if (res.status === 401 || res.status === 403) {
+          removeUserFromStorage();
+          router.push("/login");
           return;
         }
 
@@ -447,6 +459,7 @@ export default function StudentDashboard() {
         throw new Error("Failed to check session");
       } catch (error) {
         console.error("Error initializing dashboard:", error);
+        removeUserFromStorage();
         router.push("/login");
         return;
       } finally {

@@ -40,7 +40,12 @@ import {
   Plus,
   EyeOff,
 } from "lucide-react";
-import { getUserFromStorage, saveUserToStorage, type User } from "@/lib/auth";
+import {
+  getUserFromStorage,
+  removeUserFromStorage,
+  saveUserToStorage,
+  type User,
+} from "@/lib/auth";
 import { type Announcement } from "@/lib/shared-data";
 import AttendanceHistoryModal from "@/components/teacher/AttendanceHistoryModal";
 
@@ -561,6 +566,7 @@ export default function TeacherDashboard() {
           const data = await res.json();
           const currentUser = data.user as User;
           if (!currentUser || currentUser.role !== "teacher") {
+            removeUserFromStorage();
             router.push("/login");
             return;
           }
@@ -570,6 +576,12 @@ export default function TeacherDashboard() {
           // Load grades first, then load other data that depends on it
           await loadGradesFromApi();
           await loadData();
+          return;
+        }
+
+        if (res.status === 401 || res.status === 403) {
+          removeUserFromStorage();
+          router.push("/login");
           return;
         }
 
@@ -593,6 +605,7 @@ export default function TeacherDashboard() {
           await loadData();
           return;
         }
+        removeUserFromStorage();
         router.push("/login");
       } finally {
         setLoading(false);

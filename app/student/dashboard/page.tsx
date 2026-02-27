@@ -121,10 +121,15 @@ export default function StudentDashboard() {
   };
   const uploadMaxMB = (() => {
     const raw = process.env.NEXT_PUBLIC_UPLOAD_MAX_MB;
+    const v = (raw || "").trim().toLowerCase();
+    if (v === "0" || v === "unlimited" || v === "infinite" || v === "inf") {
+      return 0;
+    }
     const parsed = raw ? Number(raw) : Number.NaN;
     return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 50;
   })();
-  const uploadMaxBytes = uploadMaxMB * 1024 * 1024;
+  const uploadMaxBytes =
+    uploadMaxMB === 0 ? Number.POSITIVE_INFINITY : uploadMaxMB * 1024 * 1024;
   const [user, setUser] = useState<User | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false); // Default closed on mobile
   const [loading, setLoading] = useState(true);
@@ -3242,7 +3247,8 @@ export default function StudentDashboard() {
                       className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2"
                     />
                     <p className="text-xs text-gray-500">
-                      Max file size: {uploadMaxMB}MB
+                      Max file size:{" "}
+                      {uploadMaxMB === 0 ? "No limit" : `${uploadMaxMB}MB`}
                     </p>
                     <button
                       onClick={() =>

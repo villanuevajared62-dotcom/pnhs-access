@@ -135,10 +135,15 @@ export default function TeacherDashboard() {
   };
   const uploadMaxMB = (() => {
     const raw = process.env.NEXT_PUBLIC_UPLOAD_MAX_MB;
+    const v = (raw || "").trim().toLowerCase();
+    if (v === "0" || v === "unlimited" || v === "infinite" || v === "inf") {
+      return 0;
+    }
     const parsed = raw ? Number(raw) : Number.NaN;
     return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 50;
   })();
-  const uploadMaxBytes = uploadMaxMB * 1024 * 1024;
+  const uploadMaxBytes =
+    uploadMaxMB === 0 ? Number.POSITIVE_INFINITY : uploadMaxMB * 1024 * 1024;
   const [user, setUser] = useState<User | null>(null);
   const [teacherLabel, setTeacherLabel] = useState<string>("Teacher");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -4087,7 +4092,8 @@ export default function TeacherDashboard() {
                   className="w-full text-sm border border-gray-300 rounded-xl px-3 py-2"
                 />
                 <p className="text-xs text-gray-500 mt-2">
-                  Max file size: {uploadMaxMB}MB
+                  Max file size:{" "}
+                  {uploadMaxMB === 0 ? "No limit" : `${uploadMaxMB}MB`}
                 </p>
                 {assignmentAttachmentFile && (
                   <div className="flex items-center justify-between gap-3 mt-2">

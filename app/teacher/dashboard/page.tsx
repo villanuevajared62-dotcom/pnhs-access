@@ -244,6 +244,11 @@ export default function TeacherDashboard() {
   );
   const [selectedGradePeriod, setSelectedGradePeriod] = useState<string>("Q1");
   const [savingGrade, setSavingGrade] = useState(false);
+  const [gradeApprovalStatus, setGradeApprovalStatus] = useState<
+    Record<string, { approved: boolean; approvedAt: string | null }>
+  >({});
+  const [submittingGrade, setSubmittingGrade] = useState(false);
+  const [selectedSemester, setSelectedSemester] = useState<"S1" | "S2">("S1");
 
   const [myClasses, setMyClasses] = useState<ClassData[]>([
     {

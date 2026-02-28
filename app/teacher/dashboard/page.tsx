@@ -2,7 +2,7 @@
 
 export const dynamic = "force-dynamic";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   BookOpen,
@@ -101,6 +101,7 @@ interface StudentRecord {
   class: string;
   section?: string;
   strand?: string;
+  gradeLevel?: number;
   enrolledClassIds: string[];
   attendance: string;
   status: "present" | "late" | "absent";
@@ -125,6 +126,12 @@ interface DashboardMessage {
 export default function TeacherDashboard() {
   type ToastType = "success" | "error" | "warning" | "info";
   const router = useRouter();
+  const parseGradeLevelNumber = (value: string): number | null => {
+    const m = String(value || "").match(/grade\s*(\d+)/i);
+    if (!m) return null;
+    const n = Number(m[1]);
+    return Number.isFinite(n) ? n : null;
+  };
   const getErrorMessage = (error: unknown) => {
     if (error instanceof Error) return error.message;
     if (typeof error === "string") return error;
@@ -235,6 +242,7 @@ export default function TeacherDashboard() {
   const [editingStudent, setEditingStudent] = useState<StudentRecord | null>(
     null,
   );
+  const [selectedGradePeriod, setSelectedGradePeriod] = useState<string>("Q1");
 
   const [myClasses, setMyClasses] = useState<ClassData[]>([
     {
@@ -321,6 +329,65 @@ export default function TeacherDashboard() {
     Record<string, string>
   >({});
   const [gradesData, setGradesData] = useState<any[]>([]);
+
+  const selectedClassGradeLevel = useMemo((): number | null => {
+    if (filterClass === "all") return null;
+    const cls = myClasses.find((c) => String(c.id) === String(filterClass));
+    if (!cls) return null;
+    return parseGradeLevelNumber(cls.name);
+  }, [filterClass, myClasses]);
+
+  const gradePeriodOptions = useMemo(() => {
+    if (!selectedClassGradeLevel) return [];
+    if (selectedClassGradeLevel >= 11) {
+      return [
+        { value: "S1-P1", label: "Semester 1 • P1" },
+        { value: "S1-P2", label: "Semester 1 • P2" },
+        { value: "S1-P3", label: "Semester 1 • P3" },
+        { value: "S2-P1", label: "Semester 2 • P1" },
+        { value: "S2-P2", label: "Semester 2 • P2" },
+        { value: "S2-P3", label: "Semester 2 • P3" },
+      ];
+    }
+    return [
+      { value: "Q1", label: "Quarter 1 (Q1)" },
+      { value: "Q2", label: "Quarter 2 (Q2)" },
+      { value: "Q3", label: "Quarter 3 (Q3)" },
+      { value: "Q4", label: "Quarter 4 (Q4)" },
+    ];
+  }, [selectedClassGradeLevel]);
+
+  useEffect(() => {
+    if (filterClass === "all") return;
+    if (gradePeriodOptions.length === 0) return;
+    const allowed = new Set(gradePeriodOptions.map((o) => o.value));
+    if (!allowed.has(selectedGradePeriod)) {
+      setSelectedGradePeriod(gradePeriodOptions[0].value);
+    }
+  }, [filterClass, gradePeriodOptions, selectedGradePeriod]);
+
+  const getGradeRecordForStudent = useCallback(
+    (studentId: string, classId: string, period: string) => {
+      const items = Array.isArray(gradesData) ? gradesData : [];
+      const scoped = items.filter((g: any) => {
+        const sid = String(g?.studentId || "");
+        if (sid !== String(studentId)) return false;
+        const q = String(g?.quarter || "");
+        if (q !== String(period)) return false;
+        if (classId) {
+          const cid = String(g?.classId || "");
+          if (cid !== String(classId)) return false;
+        }
+        return true;
+      });
+      if (scoped.length === 0) return null;
+      return (
+        scoped.find((g: any) => String(g?.subjectId || "") === "general") ||
+        scoped[0]
+      );
+    },
+    [gradesData],
+  );
 
   // Simplified class label generator: "Grade X - Section Y" or "Grade X - Section Y • Strand"
   const getSimplifiedClassLabel = (cls: ClassData): string => {
@@ -1040,12 +1107,15 @@ export default function TeacherDashboard() {
             ? String(Math.round(Number(currentGradeRecord.grade)))
             : s.gpa || "0";
 
+        const gradeLevelNum = parseGradeLevelNumber(String(s.gradeLevel || ""));
+
         return {
           id: String(s.id) || String(idx + 1),
           name: s.name,
           class: classDisplay,
           section: resolvedSection,
           strand: resolvedStrand,
+          gradeLevel: gradeLevelNum ?? undefined,
           enrolledClassIds: [
             ...new Set(
               studentEnrollments
@@ -1562,6 +1632,10 @@ export default function TeacherDashboard() {
       showToast("Grade must be a number between 0 and 100.", "warning");
       return;
     }
+    if (filterClass === "all") {
+      showToast("Please select a class first.", "warning");
+      return;
+    }
 
     try {
       const teacherClassIds = new Set(myClasses.map((c) => String(c.id || "")));
@@ -1571,6 +1645,7 @@ export default function TeacherDashboard() {
         : (editingStudent.enrolledClassIds || []).find((id) =>
             teacherClassIds.has(String(id || "")),
           ) || "";
+      const effectiveClassId = String(filterClass) || candidateClassId || "";
 
       const res = await fetch("/api/grades", {
         method: "POST",
@@ -1579,10 +1654,10 @@ export default function TeacherDashboard() {
         body: JSON.stringify({
           studentId: String(editingStudent.id),
           subjectId: "general",
-          classId: candidateClassId || undefined,
+          classId: effectiveClassId || undefined,
           grade: String(Math.round(numericGrade)),
-          quarter: "Q2",
-          remarks: "Updated by teacher",
+          quarter: String(selectedGradePeriod),
+          remarks: `Updated by teacher (${selectedGradePeriod})`,
         }),
       });
 
@@ -2032,21 +2107,33 @@ export default function TeacherDashboard() {
     return true;
   });
 
-  const gradeSummary = {
-    total: filteredGradeStudents.length,
-    passing: filteredGradeStudents.filter((s) => Number(s.grade) >= 75).length,
-    atRisk: filteredGradeStudents.filter((s) => Number(s.grade) < 75).length,
-    average:
-      filteredGradeStudents.length > 0
-        ? Math.round(
-            filteredGradeStudents.reduce(
-              (sum, s) =>
-                sum + (Number.isFinite(Number(s.grade)) ? Number(s.grade) : 0),
-              0,
-            ) / filteredGradeStudents.length,
-          )
-        : 0,
-  };
+  const getDisplayedGradeValue = useCallback(
+    (student: StudentRecord): string => {
+      if (filterClass === "all") return String(student.grade || "0");
+      const rec = getGradeRecordForStudent(
+        String(student.id),
+        String(filterClass),
+        String(selectedGradePeriod),
+      );
+      const n = rec && Number.isFinite(Number(rec.grade)) ? Number(rec.grade) : NaN;
+      return Number.isFinite(n) ? String(Math.round(n)) : "0";
+    },
+    [filterClass, getGradeRecordForStudent, selectedGradePeriod],
+  );
+
+  const gradeSummary = (() => {
+    const values = filteredGradeStudents
+      .map((s) => Number(getDisplayedGradeValue(s)))
+      .filter((n) => Number.isFinite(n));
+    const total = filteredGradeStudents.length;
+    const passing = values.filter((n) => n >= 75).length;
+    const atRisk = values.filter((n) => n < 75).length;
+    const average =
+      values.length > 0
+        ? Math.round(values.reduce((sum, n) => sum + n, 0) / values.length)
+        : 0;
+    return { total, passing, atRisk, average };
+  })();
 
   const filteredAnnouncements = announcements.filter((announcement) => {
     if (!searchTerm) return true;
@@ -2874,9 +2961,32 @@ export default function TeacherDashboard() {
                   </option>
                 ))}
               </select>
+              <select
+                value={selectedGradePeriod}
+                onChange={(e) => setSelectedGradePeriod(e.target.value)}
+                disabled={filterClass === "all" || gradePeriodOptions.length === 0}
+                className="px-3 md:px-4 py-2.5 md:py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm md:text-base disabled:bg-gray-50 disabled:text-gray-500"
+                title={
+                  filterClass === "all"
+                    ? "Select a class first to choose grading period"
+                    : "Choose grading period"
+                }
+              >
+                {filterClass === "all" ? (
+                  <option value={selectedGradePeriod}>
+                    Select a class to choose period
+                  </option>
+                ) : (
+                  gradePeriodOptions.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))
+                )}
+              </select>
               <div className="rounded-xl border border-blue-100 bg-blue-50 px-3 py-2 text-xs md:text-sm text-blue-800">
-                Flow: 1) Search/filter class, 2) Click Edit Grade, 3) Save
-                changes in the modal.
+                Flow: 1) Select a class + grading period, 2) Click Edit Grade, 3)
+                Save changes in the modal.
               </div>
             </div>
 
@@ -2892,7 +3002,16 @@ export default function TeacherDashboard() {
                         Class
                       </th>
                       <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
-                        Current Grade
+                        Grade{" "}
+                        {filterClass !== "all" && (
+                          <span className="text-green-700 font-medium">
+                            (
+                            {gradePeriodOptions.find(
+                              (o) => o.value === selectedGradePeriod,
+                            )?.label || selectedGradePeriod}
+                            )
+                          </span>
+                        )}
                       </th>
                       <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900 hidden md:table-cell">
                         Performance
@@ -2903,7 +3022,10 @@ export default function TeacherDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredGradeStudents.map((student) => (
+                    {filteredGradeStudents.map((student) => {
+                      const displayed = getDisplayedGradeValue(student);
+                      const displayedNum = Number(displayed);
+                      return (
                       <tr
                         key={student.id}
                         className="border-t border-green-100 hover:bg-green-50"
@@ -2915,21 +3037,21 @@ export default function TeacherDashboard() {
                           {student.class}
                         </td>
                         <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-bold text-green-600">
-                          {student.grade}
+                          {filterClass === "all" ? student.grade : displayed}
                         </td>
                         <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm hidden md:table-cell">
                           <span
                             className={`px-2 md:px-3 py-1 rounded-full text-xs font-semibold ${
-                              parseInt(student.grade) >= 90
+                              displayedNum >= 90
                                 ? "bg-green-100 text-green-700"
-                                : parseInt(student.grade) >= 80
+                                : displayedNum >= 80
                                   ? "bg-blue-100 text-blue-700"
                                   : "bg-yellow-100 text-yellow-700"
                             }`}
                           >
-                            {parseInt(student.grade) >= 90
+                            {displayedNum >= 90
                               ? "Excellent"
-                              : parseInt(student.grade) >= 80
+                              : displayedNum >= 80
                                 ? "Good"
                                 : "Average"}
                           </span>
@@ -2937,7 +3059,19 @@ export default function TeacherDashboard() {
                         <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm">
                           <button
                             onClick={() => {
-                              setEditingStudent(student);
+                              if (filterClass === "all") {
+                                showToast("Select a class first.", "warning");
+                                return;
+                              }
+                              const rec = getGradeRecordForStudent(
+                                String(student.id),
+                                String(filterClass),
+                                String(selectedGradePeriod),
+                              );
+                              setEditingStudent({
+                                ...student,
+                                grade: String(rec?.grade ?? displayed ?? ""),
+                              });
                             }}
                             className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-lg hover:bg-green-100"
                           >
@@ -2946,7 +3080,8 @@ export default function TeacherDashboard() {
                           </button>
                         </td>
                       </tr>
-                    ))}
+                      );
+                    })}
                     {filteredGradeStudents.length === 0 && (
                       <tr>
                         <td
@@ -3829,7 +3964,49 @@ export default function TeacherDashboard() {
             <div className="space-y-4">
               <div>
                 <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">
-                  Current Grade
+                  Grading Period
+                </label>
+                <select
+                  value={selectedGradePeriod}
+                  onChange={(e) => {
+                    const next = e.target.value;
+                    setSelectedGradePeriod(next);
+                    if (filterClass === "all") return;
+                    const rec = getGradeRecordForStudent(
+                      String(editingStudent.id),
+                      String(filterClass),
+                      next,
+                    );
+                    setEditingStudent({
+                      ...editingStudent,
+                      grade: String(rec?.grade ?? ""),
+                    });
+                  }}
+                  disabled={filterClass === "all" || gradePeriodOptions.length === 0}
+                  className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-50 disabled:text-gray-500"
+                >
+                  {gradePeriodOptions.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+                {filterClass !== "all" && (
+                  <p className="mt-1 text-xs text-gray-500">
+                    Saving to{" "}
+                    {(() => {
+                      const cls =
+                        myClasses.find(
+                          (c) => String(c.id) === String(filterClass),
+                        ) || null;
+                      return cls ? getSimplifiedClassLabel(cls) : "selected class";
+                    })()}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">
+                  Grade (0-100)
                 </label>
                 <input
                   type="number"

@@ -111,6 +111,12 @@ interface DashboardMessage {
 export default function StudentDashboard() {
   type ToastType = "success" | "error" | "warning" | "info";
   const router = useRouter();
+  const parseGradeLevelNumber = (value: string): number | null => {
+    const m = String(value || "").match(/grade\s*(\d+)/i);
+    if (!m) return null;
+    const n = Number(m[1]);
+    return Number.isFinite(n) ? n : null;
+  };
   const getErrorMessage = (error: unknown) => {
     if (error instanceof Error) return error.message;
     if (typeof error === "string") return error;
@@ -159,6 +165,8 @@ export default function StudentDashboard() {
   const [submittingAssignment, setSubmittingAssignment] = useState(false);
   const [showAttendanceModal, setShowAttendanceModal] =
     useState<Subject | null>(null);
+  const [gradeRecords, setGradeRecords] = useState<any[]>([]);
+  const [selectedSemester, setSelectedSemester] = useState<"S1" | "S2">("S1");
   const [teachers, setTeachers] = useState<TeacherContact[]>([]);
   const [teacherSearchTerm, setTeacherSearchTerm] = useState("");
   const [messageTeacher, setMessageTeacher] = useState<TeacherContact | null>(
@@ -756,39 +764,64 @@ export default function StudentDashboard() {
       if (!res.ok) return;
       const all = await res.json();
       const mine = all.filter((g: any) => g.studentId === studentId);
+      setGradeRecords(mine);
 
-      // Merge grade records into currently-loaded enrolled subjects.
-      // If a grade exists for a subject not in `subjects` (rare), add it.
       setSubjects((prev) => {
         const copy = [...prev];
+
+        const byKey = new Map<string, any[]>();
         for (const g of mine) {
-          const subjectId = g.subjectId || g.id || String(Math.random());
-          const idx = copy.findIndex(
-            (s) => s.id === subjectId || s.name === g.subjectId,
-          );
-          const gradeStr = String(g.grade ?? "0");
-          const status =
-            Number(gradeStr) >= 90
-              ? ("excellent" as const)
-              : Number(gradeStr) >= 80
-                ? ("good" as const)
-                : ("average" as const);
-          if (idx !== -1) {
-            copy[idx] = { ...copy[idx], grade: gradeStr, status };
-          } else {
-            copy.push({
-              id: subjectId,
-              name: g.subjectId || `Subject ${copy.length + 1}`,
-              grade: gradeStr,
-              teacher: "",
-              status,
-              attendance: "N/A",
-              attendanceRecords: { present: 0, late: 0, absent: 0, total: 0 },
-              assignments: { completed: 0, total: 0 },
-              attendanceHistory: [],
-            });
-          }
+          const key = String(g?.classId || g?.subjectId || "").trim();
+          if (!key) continue;
+          if (!byKey.has(key)) byKey.set(key, []);
+          byKey.get(key)!.push(g);
         }
+
+        const computeAverage = (items: any[]): string => {
+          const values = items
+            .map((x) => Number(x?.grade))
+            .filter((n) => Number.isFinite(n));
+          if (values.length === 0) return "0";
+          const avg = values.reduce((sum, n) => sum + n, 0) / values.length;
+          return String(Math.round(avg));
+        };
+
+        const statusFromGrade = (gradeStr: string) => {
+          const n = Number(gradeStr);
+          if (Number.isFinite(n) && n >= 90) return "excellent" as const;
+          if (Number.isFinite(n) && n >= 80) return "good" as const;
+          return "average" as const;
+        };
+
+        // Update enrolled subjects (preferred: match by classId === subject.id)
+        for (let i = 0; i < copy.length; i++) {
+          const subj = copy[i];
+          const items = byKey.get(String(subj.id)) || byKey.get(String(subj.name));
+          if (!items) continue;
+          const gradeStr = computeAverage(items);
+          copy[i] = { ...subj, grade: gradeStr, status: statusFromGrade(gradeStr) };
+        }
+
+        // Add any grade entries that don't map to known enrolled subjects (rare)
+        for (const [key, items] of byKey.entries()) {
+          const exists = copy.some(
+            (s) => String(s.id) === key || String(s.name) === key,
+          );
+          if (exists) continue;
+          const gradeStr = computeAverage(items);
+          copy.push({
+            id: key,
+            name: key,
+            grade: gradeStr,
+            teacher: "",
+            status: statusFromGrade(gradeStr),
+            attendance: "N/A",
+            attendanceRecords: { present: 0, late: 0, absent: 0, total: 0 },
+            assignments: { completed: 0, total: 0 },
+            attendanceHistory: [],
+          });
+        }
+
         return copy;
       });
     } catch (e) {
@@ -1174,6 +1207,22 @@ export default function StudentDashboard() {
       0,
     );
     return (total / subjects.length).toFixed(1);
+  };
+
+  const studentGradeLevelNum = parseGradeLevelNumber(String(user?.gradeLevel || ""));
+  const isSeniorHigh = (studentGradeLevelNum ?? 0) >= 11;
+
+  const getGradeForPeriod = (classId: string, period: string): string => {
+    const items = (Array.isArray(gradeRecords) ? gradeRecords : []).filter(
+      (g: any) =>
+        String(g?.classId || "") === String(classId) &&
+        String(g?.quarter || "") === String(period),
+    );
+    if (items.length === 0) return "—";
+    const rec =
+      items.find((g: any) => String(g?.subjectId || "") === "general") || items[0];
+    const n = Number(rec?.grade);
+    return Number.isFinite(n) ? String(Math.round(n)) : "—";
   };
 
   const calculateAttendance = () => {
@@ -1583,43 +1632,132 @@ export default function StudentDashboard() {
                   </p>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-green-50">
-                      <tr>
-                        <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
-                          Subject
-                        </th>
-                        <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
-                          Attendance Rate
-                        </th>
-                        <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
-                          Grade
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {subjects.map((subject) => (
-                        <tr
-                          key={subject.id}
-                          className="border-t border-green-100 hover:bg-green-50"
+                <div>
+                  {isSeniorHigh && (
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-4 md:px-6 py-4 border-b border-green-100 bg-white">
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">
+                          Semester Grades (P1–P3)
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Choose a semester to view your grades per period.
+                        </p>
+                      </div>
+                      <div className="inline-flex rounded-xl border border-gray-200 bg-gray-50 p-1">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedSemester("S1")}
+                          className={`px-3 py-2 text-xs md:text-sm font-semibold rounded-lg ${
+                            selectedSemester === "S1"
+                              ? "bg-green-600 text-white"
+                              : "text-gray-700 hover:bg-white"
+                          }`}
                         >
-                          <td className="px-4 md:px-6 py-3 md:py-4 text-sm text-gray-900">
-                            <div className="font-semibold">{subject.name}</div>
-                            <div className="text-xs text-gray-500">
-                              {subject.teacher || "Teacher not set"}
-                            </div>
-                          </td>
-                          <td className="px-4 md:px-6 py-3 md:py-4 text-sm text-gray-700">
-                            {subject.attendance || "N/A"}
-                          </td>
-                          <td className="px-4 md:px-6 py-3 md:py-4 text-sm font-bold text-green-700">
-                            {subject.grade}
-                          </td>
+                          Semester 1
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedSemester("S2")}
+                          className={`px-3 py-2 text-xs md:text-sm font-semibold rounded-lg ${
+                            selectedSemester === "S2"
+                              ? "bg-green-600 text-white"
+                              : "text-gray-700 hover:bg-white"
+                          }`}
+                        >
+                          Semester 2
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-green-50">
+                        <tr>
+                          <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
+                            Subject
+                          </th>
+                          <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
+                            Attendance Rate
+                          </th>
+                          {isSeniorHigh ? (
+                            <>
+                              <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
+                                P1
+                              </th>
+                              <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
+                                P2
+                              </th>
+                              <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
+                                P3
+                              </th>
+                            </>
+                          ) : (
+                            <>
+                              <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
+                                Q1
+                              </th>
+                              <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
+                                Q2
+                              </th>
+                              <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
+                                Q3
+                              </th>
+                              <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
+                                Q4
+                              </th>
+                            </>
+                          )}
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {subjects.map((subject) => (
+                          <tr
+                            key={subject.id}
+                            className="border-t border-green-100 hover:bg-green-50"
+                          >
+                            <td className="px-4 md:px-6 py-3 md:py-4 text-sm text-gray-900">
+                              <div className="font-semibold">{subject.name}</div>
+                              <div className="text-xs text-gray-500">
+                                {subject.teacher || "Teacher not set"}
+                              </div>
+                            </td>
+                            <td className="px-4 md:px-6 py-3 md:py-4 text-sm text-gray-700">
+                              {subject.attendance || "N/A"}
+                            </td>
+                            {isSeniorHigh ? (
+                              <>
+                                <td className="px-4 md:px-6 py-3 md:py-4 text-sm font-bold text-green-700">
+                                  {getGradeForPeriod(subject.id, `${selectedSemester}-P1`)}
+                                </td>
+                                <td className="px-4 md:px-6 py-3 md:py-4 text-sm font-bold text-green-700">
+                                  {getGradeForPeriod(subject.id, `${selectedSemester}-P2`)}
+                                </td>
+                                <td className="px-4 md:px-6 py-3 md:py-4 text-sm font-bold text-green-700">
+                                  {getGradeForPeriod(subject.id, `${selectedSemester}-P3`)}
+                                </td>
+                              </>
+                            ) : (
+                              <>
+                                <td className="px-4 md:px-6 py-3 md:py-4 text-sm font-bold text-green-700">
+                                  {getGradeForPeriod(subject.id, "Q1")}
+                                </td>
+                                <td className="px-4 md:px-6 py-3 md:py-4 text-sm font-bold text-green-700">
+                                  {getGradeForPeriod(subject.id, "Q2")}
+                                </td>
+                                <td className="px-4 md:px-6 py-3 md:py-4 text-sm font-bold text-green-700">
+                                  {getGradeForPeriod(subject.id, "Q3")}
+                                </td>
+                                <td className="px-4 md:px-6 py-3 md:py-4 text-sm font-bold text-green-700">
+                                  {getGradeForPeriod(subject.id, "Q4")}
+                                </td>
+                              </>
+                            )}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
             </div>

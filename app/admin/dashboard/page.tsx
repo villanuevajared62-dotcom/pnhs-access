@@ -30,6 +30,7 @@ import {
   Send,
   Clock,
   AlertCircle,
+  RefreshCw,
 } from "lucide-react";
 import {
   removeUserFromStorage,
@@ -78,6 +79,12 @@ const DAY_OPTIONS = [
 export default function AdminDashboard() {
   type ToastType = "success" | "error" | "warning" | "info";
   const router = useRouter();
+  const parseGradeLevelNumber = (value: string): number | null => {
+    const m = String(value || "").match(/grade\s*(\d+)/i);
+    if (!m) return null;
+    const n = Number(m[1]);
+    return Number.isFinite(n) ? n : null;
+  };
   const [user, setUser] = useState<User | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -154,6 +161,13 @@ export default function AdminDashboard() {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [classes, setClasses] = useState<Class[]>([]);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [finalizePeriodByClassId, setFinalizePeriodByClassId] = useState<
+    Record<string, string>
+  >({});
+  const [finalizeStatusByKey, setFinalizeStatusByKey] = useState<
+    Record<string, { approved: boolean; approvedAt: string | null }>
+  >({});
+  const [finalizingKey, setFinalizingKey] = useState<string | null>(null);
   const [settings, setSettings] = useState({
     schoolName: "PNHS",
     schoolYear: "2025-2026",
@@ -199,6 +213,87 @@ export default function AdminDashboard() {
     setConfirmDelete({ key, id, deadline: now + 5000 });
     showToast("Tap delete again to confirm", "warning");
     return false;
+  };
+
+  const getFinalizeOptionsForClass = (cls: Class) => {
+    const gradeNum = parseGradeLevelNumber(cls.gradeLevel) ?? 0;
+    if (gradeNum >= 11) {
+      return [
+        { value: "S1", label: "Semester 1 (S1)" },
+        { value: "S2", label: "Semester 2 (S2)" },
+      ];
+    }
+    return [
+      { value: "Q1", label: "Quarter 1 (Q1)" },
+      { value: "Q2", label: "Quarter 2 (Q2)" },
+      { value: "Q3", label: "Quarter 3 (Q3)" },
+      { value: "Q4", label: "Quarter 4 (Q4)" },
+    ];
+  };
+
+  const getSelectedFinalizePeriod = (cls: Class) => {
+    const saved = String(finalizePeriodByClassId[String(cls.id)] || "").trim();
+    if (saved) return saved;
+    const opts = getFinalizeOptionsForClass(cls);
+    return opts[0]?.value || "Q1";
+  };
+
+  const ensureFinalizeStatus = async (classId: string, period: string) => {
+    const key = `${classId}:${period}`;
+    if (finalizeStatusByKey[key]) return finalizeStatusByKey[key];
+    const res = await fetch(
+      `/api/grades/finalize?classId=${encodeURIComponent(classId)}&period=${encodeURIComponent(period)}`,
+      { credentials: "include" },
+    );
+    if (res.status === 401 || res.status === 403) {
+      router.push("/login");
+      return null;
+    }
+    if (!res.ok) return null;
+    const body = await res.json().catch(() => ({}));
+    const next = {
+      approved: Boolean(body?.approved),
+      approvedAt: body?.approvedAt ? String(body.approvedAt) : null,
+    };
+    setFinalizeStatusByKey((prev) => ({ ...prev, [key]: next }));
+    return next;
+  };
+
+  const handleFinalizeGrades = async (cls: Class) => {
+    const period = getSelectedFinalizePeriod(cls);
+    const key = `${cls.id}:${period}`;
+    if (finalizingKey) return;
+
+    try {
+      setFinalizingKey(key);
+      const res = await fetch("/api/grades/finalize", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ classId: cls.id, period }),
+      });
+
+      if (res.status === 401 || res.status === 403) {
+        router.push("/login");
+        return;
+      }
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        showToast(body.message || "Failed to finalize grades", "error");
+        return;
+      }
+
+      setFinalizeStatusByKey((prev) => ({
+        ...prev,
+        [key]: { approved: true, approvedAt: new Date().toISOString() },
+      }));
+      showToast(`Grades finalized for ${period}`, "success");
+    } catch (e) {
+      console.error(e);
+      showToast("Failed to finalize grades", "error");
+    } finally {
+      setFinalizingKey(null);
+    }
   };
 
   // ---------- Schedule helpers ----------
@@ -1649,6 +1744,102 @@ export default function AdminDashboard() {
                             <span>{cls.strand}</span>
                           </div>
                         )}
+                    </div>
+
+                    <div className="mt-4 pt-4 border-t border-gray-100">
+                      <div className="flex items-center justify-between gap-3 mb-2">
+                        <div>
+                          <p className="text-sm font-semibold text-gray-900">
+                            Finalize Grades
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            Required before students can download report cards.
+                          </p>
+                        </div>
+                        {(() => {
+                          const period = getSelectedFinalizePeriod(cls);
+                          const status = finalizeStatusByKey[`${cls.id}:${period}`];
+                          const approved = status?.approved;
+                          return (
+                            <span
+                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${
+                                approved
+                                  ? "bg-green-100 text-green-700"
+                                  : "bg-yellow-100 text-yellow-800"
+                              }`}
+                              title={
+                                approved && status?.approvedAt
+                                  ? `Approved at ${new Date(status.approvedAt).toLocaleString()}`
+                                  : "Not finalized yet"
+                              }
+                            >
+                              {approved ? (
+                                <Check className="w-3.5 h-3.5" />
+                              ) : (
+                                <AlertCircle className="w-3.5 h-3.5" />
+                              )}
+                              {approved ? "Finalized" : "Not Finalized"}
+                            </span>
+                          );
+                        })()}
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <select
+                          value={getSelectedFinalizePeriod(cls)}
+                          onChange={(e) =>
+                            setFinalizePeriodByClassId((prev) => ({
+                              ...prev,
+                              [String(cls.id)]: e.target.value,
+                            }))
+                          }
+                          onFocus={() =>
+                            void ensureFinalizeStatus(
+                              String(cls.id),
+                              getSelectedFinalizePeriod(cls),
+                            )
+                          }
+                          disabled={finalizingKey !== null}
+                          className="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-50 disabled:text-gray-500"
+                        >
+                          {getFinalizeOptionsForClass(cls).map((o) => (
+                            <option key={o.value} value={o.value}>
+                              {o.label}
+                            </option>
+                          ))}
+                        </select>
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            void ensureFinalizeStatus(
+                              String(cls.id),
+                              getSelectedFinalizePeriod(cls),
+                            )
+                          }
+                          disabled={finalizingKey !== null}
+                          className="px-3 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 text-sm inline-flex items-center justify-center gap-2 disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed"
+                          title="Check finalize status"
+                        >
+                          <RefreshCw className="w-4 h-4" />
+                          Check
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => void handleFinalizeGrades(cls)}
+                          disabled={finalizingKey !== null}
+                          className="px-3 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 text-sm inline-flex items-center justify-center gap-2 disabled:bg-green-400 disabled:cursor-not-allowed"
+                          title="Finalize grades for this period"
+                        >
+                          {finalizingKey === `${cls.id}:${getSelectedFinalizePeriod(cls)}` ? (
+                            <RefreshCw className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Check className="w-4 h-4" />
+                          )}
+                          Finalize
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))

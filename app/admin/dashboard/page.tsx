@@ -145,12 +145,10 @@ export default function AdminDashboard() {
     room: "",
   });
 
-  // Selected classes to auto-enroll when adding a student
   const [studentSelectedClassIds, setStudentSelectedClassIds] = useState<
     string[]
   >([]);
 
-  // Announcement form state
   const [announcementForm, setAnnouncementForm] = useState({
     title: "",
     message: "",
@@ -176,11 +174,9 @@ export default function AdminDashboard() {
     classNotifications: true,
   });
 
-  // matched students helper for Add/Edit Class modal
   const [matchedStudentCount, setMatchedStudentCount] = useState<number>(0);
   const lastAutoAppliedMatchedRef = useRef<number | null>(null);
   const manualStudentsEditedRef = useRef<boolean>(false);
-  // Schedule split state
   const [scheduleDays, setScheduleDays] = useState("");
   const [scheduleStart, setScheduleStart] = useState("");
   const [scheduleEnd, setScheduleEnd] = useState("");
@@ -263,7 +259,6 @@ export default function AdminDashboard() {
     const period = getSelectedFinalizePeriod(cls);
     const key = `${cls.id}:${period}`;
     if (finalizingKey) return;
-
     try {
       setFinalizingKey(key);
       const res = await fetch("/api/grades/finalize", {
@@ -272,7 +267,6 @@ export default function AdminDashboard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ classId: cls.id, period }),
       });
-
       if (res.status === 401 || res.status === 403) {
         router.push("/login");
         return;
@@ -282,7 +276,6 @@ export default function AdminDashboard() {
         showToast(body.message || "Failed to finalize grades", "error");
         return;
       }
-
       setFinalizeStatusByKey((prev) => ({
         ...prev,
         [key]: { approved: true, approvedAt: new Date().toISOString() },
@@ -296,33 +289,24 @@ export default function AdminDashboard() {
     }
   };
 
-  // ---------- Schedule helpers ----------
   const parseSchedule = (schedule: string) => {
     if (!schedule) return { days: "", start: "", end: "" };
     const s = schedule.trim();
-    // Robust pattern: "<days> <start> - <end>", where days may contain spaces (e.g., "Mon to Fri")
     const re =
       /^(.+?)\s+(\d{1,2}:\d{2}\s*(?:AM|PM))\s*-\s*(\d{1,2}:\d{2}\s*(?:AM|PM))$/i;
     const m = s.match(re);
-    if (m) {
-      const days = m[1].trim();
-      const start = m[2].trim();
-      const end = m[3].trim();
-      return { days, start, end };
-    }
-    // Fallback: try to find the first time token and split before it
+    if (m) return { days: m[1].trim(), start: m[2].trim(), end: m[3].trim() };
     const timeToken = s.match(/\b\d{1,2}:\d{2}\s*(AM|PM)\b/i);
     if (timeToken && timeToken.index !== undefined) {
       const days = s.slice(0, timeToken.index).trim();
       const timeStr = s.slice(timeToken.index).trim();
       const dashIdx = timeStr.indexOf(" - ");
-      if (dashIdx !== -1) {
+      if (dashIdx !== -1)
         return {
           days,
           start: timeStr.slice(0, dashIdx).trim(),
           end: timeStr.slice(dashIdx + 3).trim(),
         };
-      }
       return { days, start: timeStr, end: "" };
     }
     return { days: s, start: "", end: "" };
@@ -396,7 +380,6 @@ export default function AdminDashboard() {
       );
     }
   };
-  // ---------- End schedule helpers ----------
 
   const isNewClass = Boolean(editingClass && !editingClass.id);
   const teacherMustBeSelectedFirst = Boolean(
@@ -409,7 +392,6 @@ export default function AdminDashboard() {
         const res = await fetch("/api/auth/session", {
           credentials: "include",
         });
-
         if (res.ok) {
           const data = await res.json();
           const sessionUser = data?.user;
@@ -418,26 +400,18 @@ export default function AdminDashboard() {
             return;
           }
           setUser(sessionUser as User);
-          // keep localStorage in sync for page-refresh fallback
           saveUserToStorage(sessionUser as User);
           await loadData();
           return;
         }
-
-        // If server session check failed, fall back to localStorage so a
-        // soft refresh doesn't immediately kick the user back to /login.
         const localUser = getUserFromStorage();
         if (localUser && localUser.role === "admin") {
           setUser(localUser);
-          // try to load data; if backend rejects, loadData will redirect later
           await loadData();
           return;
         }
-
         router.push("/login");
-        return;
       } catch (e) {
-        console.error("Error validating session", e);
         const localUser = getUserFromStorage();
         if (localUser && localUser.role === "admin") {
           setUser(localUser);
@@ -445,7 +419,6 @@ export default function AdminDashboard() {
           return;
         }
         router.push("/login");
-        return;
       } finally {
         setLoading(false);
       }
@@ -461,45 +434,28 @@ export default function AdminDashboard() {
     return () => clearTimeout(t);
   }, [toast.open]);
 
-  // When Add Student modal opens or grade/section/strand change, auto-select matching classes
   useEffect(() => {
     if (!showAddModal) return;
-
     const matching = classes
       .filter((c) => {
-        // Normalize comparison - trim whitespace and convert to uppercase for section/strand
         const classGrade = (c.gradeLevel || "").trim();
         const formGrade = (studentForm.gradeLevel || "").trim();
-
-        // First check if grade level matches
-        if (classGrade !== formGrade) {
-          return false;
-        }
-
-        // For Senior High (Grade 11-12), match both section AND strand
+        if (classGrade !== formGrade) return false;
         if (formGrade === "Grade 11" || formGrade === "Grade 12") {
-          const classSection = (c.section || "").trim().toUpperCase();
-          const formSection = (studentForm.section || "").trim().toUpperCase();
-          const classStrand = (c.strand || "").trim().toUpperCase();
-          const formStrand = (studentForm.strand || "").trim().toUpperCase();
-
-          const sectionMatch = classSection === formSection;
-          const strandMatch = classStrand === formStrand;
-
+          const sectionMatch =
+            (c.section || "").trim().toUpperCase() ===
+            (studentForm.section || "").trim().toUpperCase();
+          const strandMatch =
+            (c.strand || "").trim().toUpperCase() ===
+            (studentForm.strand || "").trim().toUpperCase();
           return sectionMatch && strandMatch;
         }
-
-        // For Junior High (Grade 7-10), match section only
-        const classSection = (c.section || "").trim().toUpperCase();
-        const formSection = (studentForm.section || "").trim().toUpperCase();
-
-        const sectionMatch = classSection === formSection;
-
-        return sectionMatch;
+        return (
+          (c.section || "").trim().toUpperCase() ===
+          (studentForm.section || "").trim().toUpperCase()
+        );
       })
       .map((c) => c.id);
-
-    // Auto-select the matching classes
     setStudentSelectedClassIds(matching);
   }, [
     showAddModal,
@@ -509,22 +465,18 @@ export default function AdminDashboard() {
     classes,
   ]);
 
-  // clear selected classes when the Add modal closes
   useEffect(() => {
     if (!showAddModal) setStudentSelectedClassIds([]);
   }, [showAddModal]);
 
-  // Recompute how many students match the currently-selected grade/section/strand
   useEffect(() => {
     if (!editingClass) {
       setMatchedStudentCount(0);
       return;
     }
-
     const isSenior =
       editingClass.gradeLevel === "Grade 11" ||
       editingClass.gradeLevel === "Grade 12";
-
     const count = students.filter((s) => {
       if (s.gradeLevel !== editingClass.gradeLevel) return false;
       const sectionMatch =
@@ -538,13 +490,9 @@ export default function AdminDashboard() {
         : true;
       return sectionMatch && strandMatch;
     }).length;
-
     setMatchedStudentCount(count);
-
-    // Auto-fill `students` from matches for NEW classes unless the user edited it manually.
     const shouldAutoFill =
       !manualStudentsEditedRef.current && editingClass.id === "";
-
     if (shouldAutoFill) {
       setEditingClass({ ...editingClass, students: count });
       lastAutoAppliedMatchedRef.current = count;
@@ -562,15 +510,12 @@ export default function AdminDashboard() {
     if (typeof window !== "undefined") {
       const isLarge = window.innerWidth >= 1024;
       setSidebarOpen(isLarge);
-
       const onResize = () => setSidebarOpen(window.innerWidth >= 1024);
       window.addEventListener("resize", onResize);
       return () => window.removeEventListener("resize", onResize);
     }
-    return;
   }, []);
 
-  // Parse existing schedule string into parts when a class modal opens
   useEffect(() => {
     if (!editingClass) {
       setScheduleDays("");
@@ -584,11 +529,9 @@ export default function AdminDashboard() {
     setScheduleDays(parsed.days);
     setScheduleStart(parsed.start);
     setScheduleEnd(parsed.end);
-    // Reset manual flag when switching between add/edit contexts
     manualStudentsEditedRef.current = false;
   }, [editingClass?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Re-check conflict whenever teacher or schedule parts change
   useEffect(() => {
     if (!editingClass?.teacherId) {
       setScheduleConflict(null);
@@ -627,8 +570,6 @@ export default function AdminDashboard() {
         fetch("/api/announcements", { credentials: "include" }),
         fetch("/api/settings", { credentials: "include" }),
       ]);
-
-      // If any API returns 401 the session is invalid — redirect to login
       if (
         studentsRes.status === 401 ||
         teachersRes.status === 401 ||
@@ -639,39 +580,13 @@ export default function AdminDashboard() {
         router.push("/login");
         return;
       }
-
-      if (!studentsRes.ok) {
-        console.error("Failed to load students:", studentsRes.status);
-        setStudents([]);
-      } else {
-        const studentsData = await studentsRes.json();
-        setStudents(studentsData || []);
-      }
-      if (!teachersRes.ok) {
-        console.error("Failed to load teachers:", teachersRes.status);
-        setTeachers([]);
-      } else {
-        const teachersData = await teachersRes.json();
-        setTeachers(teachersData || []);
-      }
-      if (!classesRes.ok) {
-        console.error("Failed to load classes:", classesRes.status);
-        setClasses([]);
-      } else {
-        const classesData = await classesRes.json();
-        setClasses(classesData || []);
-      }
-      if (!announcementsRes.ok) {
-        console.error("Failed to load announcements:", announcementsRes.status);
-        setAnnouncements([]);
-      } else {
-        const announcementsData = await announcementsRes.json();
-        setAnnouncements(announcementsData || []);
-      }
-      if (settingsRes.ok) {
-        const settingsData = await settingsRes.json();
-        setSettings(settingsData || {});
-      }
+      setStudents(studentsRes.ok ? await studentsRes.json() : []);
+      setTeachers(teachersRes.ok ? await teachersRes.json() : []);
+      setClasses(classesRes.ok ? await classesRes.json() : []);
+      setAnnouncements(
+        announcementsRes.ok ? await announcementsRes.json() : [],
+      );
+      if (settingsRes.ok) setSettings((await settingsRes.json()) || {});
     } catch (error) {
       console.error("Error loading data", error);
       setStudents([]);
@@ -681,7 +596,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Open modal and fetch attendance rows for a specific student (admin)
   const openStudentAttendance = async (student: Student) => {
     setAttendanceLoading(true);
     try {
@@ -698,7 +612,6 @@ export default function AdminDashboard() {
         return;
       }
       const rows = await res.json();
-      // derive default range from rows
       const dates = rows.map((r: any) => new Date(r.date));
       const from = dates.length
         ? new Date(Math.min(...dates)).toISOString().slice(0, 10)
@@ -708,7 +621,6 @@ export default function AdminDashboard() {
         : undefined;
       setShowStudentAttendance({ student, rows, from, to });
     } catch (e) {
-      console.error("Failed to load student attendance", e);
       setShowStudentAttendance({
         student,
         rows: [],
@@ -735,8 +647,7 @@ export default function AdminDashboard() {
         credentials: "include",
       });
       if (!res.ok) return [];
-      const rows = await res.json();
-      return rows as Attendance[];
+      return (await res.json()) as Attendance[];
     } catch (e) {
       return [] as Attendance[];
     } finally {
@@ -750,15 +661,9 @@ export default function AdminDashboard() {
         method: "POST",
         credentials: "include",
       });
-    } catch (e) {
-      // ignore
-    }
+    } catch (e) {}
     removeUserFromStorage();
     router.push("/login");
-  };
-
-  const handleNavigation = (tab: string) => {
-    setActiveTab(tab);
   };
 
   const handleDeleteStudent = async (id: string) => {
@@ -825,17 +730,14 @@ export default function AdminDashboard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(settings),
       });
-
       if (!res.ok) {
         showToast("Failed to save settings", "error");
         return;
       }
-
       showToast("Settings saved successfully!", "success");
       await loadData();
     } catch (error) {
       showToast("Error saving settings", "error");
-      console.error(error);
     }
   };
 
@@ -879,7 +781,6 @@ export default function AdminDashboard() {
       );
       return;
     }
-
     try {
       const res = await fetch("/api/students", {
         method: "POST",
@@ -898,7 +799,6 @@ export default function AdminDashboard() {
           studentId: studentForm.studentId,
         }),
       });
-
       if (!res.ok) {
         const err = await res.json();
         showToast(
@@ -907,32 +807,19 @@ export default function AdminDashboard() {
         );
         return;
       }
-
       const newStudent = await res.json();
-
-      // Auto-enroll into selected classes (if any)
       if (studentSelectedClassIds.length > 0) {
-        try {
-          await Promise.all(
-            studentSelectedClassIds.map((classId) =>
-              fetch("/api/enrollments", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify({ studentId: newStudent.id, classId }),
-              }).then(async (r) => {
-                if (!r.ok) {
-                  const e = await r.json().catch(() => ({}));
-                  console.warn("Failed to enroll into class", classId, e);
-                }
-              }),
-            ),
-          );
-        } catch (e) {
-          console.error("Error enrolling student into classes:", e);
-        }
+        await Promise.all(
+          studentSelectedClassIds.map((classId) =>
+            fetch("/api/enrollments", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify({ studentId: newStudent.id, classId }),
+            }),
+          ),
+        );
       }
-
       showToast("Student added successfully!", "success");
       setStudentForm({
         name: "",
@@ -951,14 +838,12 @@ export default function AdminDashboard() {
       await loadData();
     } catch (error) {
       showToast("Error creating student account", "error");
-      console.error(error);
     }
   };
 
   const handleUpdateStudent = async () => {
     if (!editingStudent) return;
     try {
-      // Build payload with only the allowed fields — never include id, deletedAt, or relations
       const payload: Record<string, any> = {
         name: editingStudent.name,
         email: editingStudent.email,
@@ -970,28 +855,20 @@ export default function AdminDashboard() {
         status: editingStudent.status,
         studentId: editingStudent.studentId,
       };
-
-      // FIX: Only include password if it's a new plain-text value
-      // Bcrypt hashes start with $2a$ or $2b$ — skip those to prevent double-hashing
       if (
         editingStudent.password &&
         editingStudent.password !== "" &&
         !editingStudent.password.startsWith("$2")
-      ) {
+      )
         payload.password = editingStudent.password;
-      }
-
-      // Sanitize section for junior grades
       const juniorSections = ["A", "B", "C", "D", "E"];
       if (
         editingStudent.gradeLevel !== "Grade 11" &&
         editingStudent.gradeLevel !== "Grade 12"
       ) {
         if (!juniorSections.includes(payload.section)) payload.section = "A";
-        payload.strand = ""; // clear strand for non-senior grades
+        payload.strand = "";
       }
-
-      // Resolve the DB primary key
       const idForUrl =
         editingStudent.id ||
         students.find((s) => s.studentId === editingStudent.studentId)?.id;
@@ -999,16 +876,12 @@ export default function AdminDashboard() {
         showToast("Failed to update student: missing identifier", "error");
         return;
       }
-
-      console.debug("Updating student", { idForUrl, payload });
-
       const res = await fetch(`/api/students/${encodeURIComponent(idForUrl)}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify(payload),
       });
-
       if (!res.ok) {
         const error = await res.json().catch(() => ({}));
         showToast(
@@ -1017,31 +890,12 @@ export default function AdminDashboard() {
         );
         return;
       }
-
       showToast("Student updated successfully!", "success");
       setEditingStudent(null);
       await loadData();
     } catch (error) {
-      console.error("Error updating student:", error);
       showToast("An error occurred while updating the student.", "error");
     }
-  };
-
-  const addSubjectToTeacher = (subject: string) => {
-    if (!editingTeacher || !subject.trim()) return;
-
-    const currentSubjects = editingTeacher.subjects || [];
-    const trimmedSubject = subject.trim();
-
-    if (currentSubjects.includes(trimmedSubject)) {
-      showToast("Subject already added", "warning");
-      return;
-    }
-
-    setEditingTeacher({
-      ...editingTeacher,
-      subjects: [...currentSubjects, trimmedSubject],
-    });
   };
 
   const handleUpdateTeacher = async () => {
@@ -1065,45 +919,28 @@ export default function AdminDashboard() {
           showToast("Please fill in Name and Email", "warning");
           return;
         }
-
-        // Validate email format
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(editingTeacher.email)) {
           showToast("Please enter a valid email address", "warning");
           return;
         }
-
-        // Prepare subjects array properly
         const subjects = editingTeacher.subjects || [];
-        if (!Array.isArray(subjects)) {
-          showToast("Subjects must be formatted correctly", "warning");
-          return;
-        }
-
         const payload: any = {
           ...editingTeacher,
-          subjects: subjects,
+          subjects,
           email: editingTeacher.email.trim().toLowerCase(),
           name: editingTeacher.name.trim(),
         };
-
-        // Clean up payload
         if (typeof payload.__newSubject !== "undefined")
           delete payload.__newSubject;
-        if (payload.username) {
-          payload.username = payload.username.trim();
-        }
-        if (payload.password === "") {
-          delete payload.password;
-        }
-
+        if (payload.username) payload.username = payload.username.trim();
+        if (payload.password === "") delete payload.password;
         const res = await fetch("/api/teachers", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
           body: JSON.stringify(payload),
         });
-
         if (!res.ok) {
           const err = await res.json().catch(() => null);
           throw new Error(err?.message || "Failed to add teacher");
@@ -1113,7 +950,6 @@ export default function AdminDashboard() {
       setEditingTeacher(null);
       await loadData();
     } catch (error) {
-      console.error("Error updating teacher:", error);
       showToast(
         error instanceof Error ? error.message : "Failed to update teacher",
         "error",
@@ -1123,12 +959,9 @@ export default function AdminDashboard() {
 
   const handleUpdateClass = async () => {
     if (!editingClass) return;
-
     const isSenior =
       editingClass.gradeLevel === "Grade 11" ||
       editingClass.gradeLevel === "Grade 12";
-
-    // require common fields; section is required for all grades, strand required for seniors
     if (
       !editingClass.name ||
       !editingClass.teacher ||
@@ -1172,7 +1005,6 @@ export default function AdminDashboard() {
       setEditingClass(null);
       await loadData();
     } catch (error) {
-      console.error("Error updating class:", error);
       showToast(
         error instanceof Error ? error.message : "Failed to update class",
         "error",
@@ -1263,24 +1095,28 @@ export default function AdminDashboard() {
     { icon: Settings, label: "Settings", key: "settings" },
   ];
 
+  const handleNavigation = (tab: string) => {
+    setActiveTab(tab);
+    if (typeof window !== "undefined" && window.innerWidth < 1024)
+      setSidebarOpen(false);
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case "announcements":
         return (
           <div>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-green-900">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-green-900">
                 Announcements Management
               </h2>
               <button
                 onClick={() => setShowAnnouncementModal(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm sm:text-base w-full sm:w-auto"
               >
-                <Plus className="w-5 h-5" />
-                New Announcement
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5" /> New Announcement
               </button>
             </div>
-
             <div className="space-y-4">
               {announcements.length === 0 ? (
                 <div className="bg-blue-50 rounded-2xl p-6 md:p-8 text-center border-2 border-dashed border-blue-300">
@@ -1297,28 +1133,16 @@ export default function AdminDashboard() {
                 announcements.map((announcement) => (
                   <div
                     key={announcement.id}
-                    className={`bg-white rounded-2xl shadow-md p-4 md:p-6 border-l-4 ${
-                      announcement.type === "info"
-                        ? "border-blue-500"
-                        : announcement.type === "warning"
-                          ? "border-yellow-500"
-                          : "border-green-500"
-                    }`}
+                    className={`bg-white rounded-2xl shadow-md p-4 md:p-6 border-l-4 ${announcement.type === "info" ? "border-blue-500" : announcement.type === "warning" ? "border-yellow-500" : "border-green-500"}`}
                   >
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
                       <div className="flex-1 min-w-0">
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
-                          <h3 className="text-lg md:text-xl font-bold text-gray-900 truncate">
+                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                          <h3 className="text-base md:text-lg font-bold text-gray-900 break-words">
                             {announcement.title}
                           </h3>
                           <span
-                            className={`px-2 py-1 md:px-3 rounded-full text-xs font-semibold flex-shrink-0 ${
-                              announcement.type === "info"
-                                ? "bg-blue-100 text-blue-700"
-                                : announcement.type === "warning"
-                                  ? "bg-yellow-100 text-yellow-700"
-                                  : "bg-green-100 text-green-700"
-                            }`}
+                            className={`px-2 py-1 rounded-full text-xs font-semibold flex-shrink-0 ${announcement.type === "info" ? "bg-blue-100 text-blue-700" : announcement.type === "warning" ? "bg-yellow-100 text-yellow-700" : "bg-green-100 text-green-700"}`}
                           >
                             {announcement.type.toUpperCase()}
                           </span>
@@ -1326,7 +1150,7 @@ export default function AdminDashboard() {
                         <p className="text-sm md:text-base text-gray-700 mb-3">
                           {announcement.message}
                         </p>
-                        <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs md:text-sm text-gray-500">
+                        <div className="flex flex-wrap items-center gap-2 text-xs md:text-sm text-gray-500">
                           <span>By: {announcement.author}</span>
                           <span className="hidden sm:inline">•</span>
                           <span>{formatDate(announcement.date)}</span>
@@ -1336,7 +1160,7 @@ export default function AdminDashboard() {
                         onClick={() =>
                           handleDeleteAnnouncement(announcement.id)
                         }
-                        className="p-2 hover:bg-red-50 rounded-lg transition-colors self-start sm:self-auto"
+                        className="p-2 hover:bg-red-50 rounded-lg transition-colors self-start"
                       >
                         <Trash2 className="w-4 h-4 md:w-5 md:h-5 text-red-600" />
                       </button>
@@ -1351,58 +1175,52 @@ export default function AdminDashboard() {
       case "students":
         return (
           <div>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-green-900">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-green-900">
                 Students Management
               </h2>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-2 sm:gap-3">
                 <button
                   onClick={() => setShowAddModal(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                  className="flex items-center justify-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm flex-1 sm:flex-none"
                 >
-                  <Plus className="w-5 h-5" />
-                  Add Student
+                  <Plus className="w-4 h-4" /> Add Student
                 </button>
                 <button
                   onClick={handleExportData}
-                  className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
+                  className="flex items-center justify-center gap-2 px-3 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 text-sm flex-1 sm:flex-none"
                 >
-                  <Download className="w-5 h-5" />
-                  Export
+                  <Download className="w-4 h-4" /> Export
                 </button>
               </div>
             </div>
-
             <div className="bg-white rounded-2xl shadow-md border border-green-100 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[600px] sm:min-w-[768px]">
+              <div className="overflow-x-auto -webkit-overflow-scrolling-touch">
+                <table className="w-full" style={{ minWidth: "600px" }}>
                   <thead className="bg-green-50">
                     <tr>
-                      <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
+                      <th className="px-3 md:px-6 py-3 text-left text-xs font-semibold text-green-900 whitespace-nowrap">
                         Student ID
                       </th>
-                      <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
+                      <th className="px-3 md:px-6 py-3 text-left text-xs font-semibold text-green-900 whitespace-nowrap">
                         Name
                       </th>
-                      <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900 hidden sm:table-cell">
+                      <th className="px-3 md:px-6 py-3 text-left text-xs font-semibold text-green-900 whitespace-nowrap hidden sm:table-cell">
                         Email
                       </th>
-                      <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900 hidden md:table-cell">
+                      <th className="px-3 md:px-6 py-3 text-left text-xs font-semibold text-green-900 whitespace-nowrap hidden md:table-cell">
                         Username
                       </th>
-                      <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900 hidden lg:table-cell">
-                        Password
-                      </th>
-                      <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
+                      <th className="px-3 md:px-6 py-3 text-left text-xs font-semibold text-green-900 whitespace-nowrap">
                         Grade
                       </th>
-                      <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900 hidden sm:table-cell">
+                      <th className="px-3 md:px-6 py-3 text-left text-xs font-semibold text-green-900 whitespace-nowrap hidden sm:table-cell">
                         Section
                       </th>
-                      <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900 hidden md:table-cell">
+                      <th className="px-3 md:px-6 py-3 text-left text-xs font-semibold text-green-900 whitespace-nowrap hidden md:table-cell">
                         Strand
                       </th>
-                      <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
+                      <th className="px-3 md:px-6 py-3 text-left text-xs font-semibold text-green-900 whitespace-nowrap">
                         Actions
                       </th>
                     </tr>
@@ -1410,7 +1228,7 @@ export default function AdminDashboard() {
                   <tbody>
                     {filteredStudents.length === 0 ? (
                       <tr>
-                        <td colSpan={9} className="px-6 py-12 text-center">
+                        <td colSpan={8} className="px-6 py-12 text-center">
                           <Users className="w-10 h-10 text-gray-300 mx-auto mb-2" />
                           <p className="text-gray-500 font-medium">
                             No students found
@@ -1426,55 +1244,50 @@ export default function AdminDashboard() {
                           key={student.id}
                           className="border-t border-green-100 hover:bg-green-50"
                         >
-                          <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900 font-mono">
+                          <td className="px-3 md:px-6 py-3 text-xs text-gray-900 font-mono whitespace-nowrap">
                             {student.studentId}
                           </td>
-                          <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900">
+                          <td className="px-3 md:px-6 py-3 text-xs text-gray-900">
                             <button
                               onClick={() => openStudentAttendance(student)}
-                              className="text-left text-green-700 hover:underline"
+                              className="text-left text-green-700 hover:underline font-medium"
                             >
                               {student.name}
                             </button>
                           </td>
-                          <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-600 hidden sm:table-cell">
+                          <td className="px-3 md:px-6 py-3 text-xs text-gray-600 hidden sm:table-cell max-w-[150px] truncate">
                             {student.email}
                           </td>
-                          <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900 font-mono hidden md:table-cell">
+                          <td className="px-3 md:px-6 py-3 text-xs text-gray-900 font-mono hidden md:table-cell">
                             {student.username}
                           </td>
-                          <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900 font-mono hidden lg:table-cell">
-                            ••••••••
-                          </td>
-                          <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900">
+                          <td className="px-3 md:px-6 py-3 text-xs text-gray-900 whitespace-nowrap">
                             {student.gradeLevel}
                           </td>
-                          <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900 hidden sm:table-cell">
+                          <td className="px-3 md:px-6 py-3 text-xs text-gray-900 hidden sm:table-cell">
                             {student.section || "-"}
                           </td>
-                          <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900 hidden md:table-cell">
+                          <td className="px-3 md:px-6 py-3 text-xs text-gray-900 hidden md:table-cell">
                             {student.strand || "-"}
                           </td>
-                          <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm">
-                            <div className="flex gap-1 md:gap-2">
+                          <td className="px-3 md:px-6 py-3 text-xs">
+                            <div className="flex gap-1">
                               <button
                                 onClick={() =>
-                                  // FIX: Reset password to empty string so we never
-                                  // send the stored bcrypt hash back to the API
                                   setEditingStudent({
                                     ...student,
                                     password: "",
                                   })
                                 }
-                                className="p-1 md:p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                                className="p-1.5 hover:bg-blue-50 rounded-lg transition-colors"
                               >
-                                <Edit className="w-3 h-3 md:w-4 md:h-4 text-blue-600" />
+                                <Edit className="w-3.5 h-3.5 text-blue-600" />
                               </button>
                               <button
                                 onClick={() => handleDeleteStudent(student.id)}
-                                className="p-1 md:p-2 hover:bg-red-50 rounded-lg transition-colors"
+                                className="p-1.5 hover:bg-red-50 rounded-lg transition-colors"
                               >
-                                <Trash2 className="w-3 h-3 md:w-4 md:h-4 text-red-600" />
+                                <Trash2 className="w-3.5 h-3.5 text-red-600" />
                               </button>
                             </div>
                           </td>
@@ -1491,23 +1304,13 @@ export default function AdminDashboard() {
       case "teachers":
         return (
           <div>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-green-900">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-green-900">
                 Teachers Management
               </h2>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-2 sm:gap-3">
                 <button
-                  onClick={() => {
-                    setTeacherForm({
-                      name: "",
-                      email: "",
-                      department: "",
-                      subjects: [""],
-                      status: "active",
-                      students: 0,
-                      username: "",
-                      password: "",
-                    });
+                  onClick={() =>
                     setEditingTeacher({
                       id: "",
                       name: "",
@@ -1518,31 +1321,25 @@ export default function AdminDashboard() {
                       students: 0,
                       username: "",
                       password: "",
-                    } as any);
-                  }}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                    } as any)
+                  }
+                  className="flex items-center justify-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm flex-1 sm:flex-none"
                 >
-                  <Plus className="w-5 h-5" />
-                  Add Teacher
+                  <Plus className="w-4 h-4" /> Add Teacher
                 </button>
                 <button
                   onClick={handleExportData}
-                  className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
+                  className="flex items-center justify-center gap-2 px-3 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 text-sm flex-1 sm:flex-none"
                 >
-                  <Download className="w-5 h-5" />
-                  Export
+                  <Download className="w-4 h-4" /> Export
                 </button>
               </div>
             </div>
-
             <div className="grid gap-4">
               {filteredTeachers.length === 0 ? (
-                <div className="bg-purple-50 rounded-2xl p-6 md:p-8 text-center border-2 border-dashed border-purple-300">
-                  <GraduationCap className="w-10 h-10 md:w-12 md:h-12 text-purple-400 mx-auto mb-3" />
+                <div className="bg-purple-50 rounded-2xl p-8 text-center border-2 border-dashed border-purple-300">
+                  <GraduationCap className="w-12 h-12 text-purple-400 mx-auto mb-3" />
                   <p className="text-gray-600 font-medium">No teachers found</p>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Add a new teacher to get started
-                  </p>
                 </div>
               ) : (
                 filteredTeachers.map((teacher) => (
@@ -1551,39 +1348,33 @@ export default function AdminDashboard() {
                     className="bg-white rounded-2xl shadow-md p-4 md:p-6 border border-green-100"
                   >
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
-                      <div className="flex gap-3 md:gap-4">
-                        <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-green-600 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-lg md:text-xl flex-shrink-0">
+                      <div className="flex gap-3 md:gap-4 min-w-0 flex-1">
+                        <div className="w-12 h-12 bg-gradient-to-br from-green-600 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
                           {teacher.name.charAt(0)}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h3 className="text-base md:text-lg font-bold text-gray-900 truncate">
+                          <h3 className="text-base font-bold text-gray-900 truncate">
                             {teacher.name}
                           </h3>
-                          <p className="text-xs md:text-sm text-gray-600 break-all">
+                          <p className="text-xs text-gray-600 break-all">
                             {teacher.email}
                           </p>
                           {teacher.username && (
-                            <p className="text-xs md:text-sm text-gray-600 mt-1">
+                            <p className="text-xs text-gray-600 mt-1">
                               Username:{" "}
                               <span className="font-mono text-gray-800">
                                 {teacher.username}
                               </span>
                             </p>
                           )}
-                          <p className="text-xs md:text-sm text-gray-600 mt-1">
-                            Password:{" "}
-                            <span className="font-mono text-gray-800">
-                              ••••••••
-                            </span>
-                          </p>
-                          <p className="text-xs md:text-sm text-gray-600 mt-1">
+                          <p className="text-xs text-gray-600 mt-1 truncate">
                             {teacher.department}
                           </p>
                           <div className="flex flex-wrap gap-1 mt-2">
                             {teacher.subjects.map((subject, idx) => (
                               <span
                                 key={idx}
-                                className="px-2 py-1 md:px-3 md:py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium"
+                                className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-medium"
                               >
                                 {subject}
                               </span>
@@ -1596,31 +1387,31 @@ export default function AdminDashboard() {
                           onClick={() => setEditingTeacher(teacher)}
                           className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
                         >
-                          <Edit className="w-4 h-4 md:w-5 md:h-5 text-blue-600" />
+                          <Edit className="w-4 h-4 text-blue-600" />
                         </button>
                         <button
                           onClick={() => handleDeleteTeacher(teacher.id)}
                           className="p-2 hover:bg-red-50 rounded-lg transition-colors"
                         >
-                          <Trash2 className="w-4 h-4 md:w-5 md:h-5 text-red-600" />
+                          <Trash2 className="w-4 h-4 text-red-600" />
                         </button>
                       </div>
                     </div>
-                    <div className="mt-3 md:mt-4 pt-3 md:pt-4 border-t border-gray-100 flex flex-wrap gap-4 md:gap-6">
-                      <div className="text-xs md:text-sm">
-                        <span className="text-gray-600">Students: </span>
+                    <div className="mt-3 pt-3 border-t border-gray-100 flex flex-wrap gap-4 text-xs">
+                      <span className="text-gray-600">
+                        Students:{" "}
                         <span className="font-semibold text-gray-900">
                           {teacher.students}
                         </span>
-                      </div>
-                      <div className="text-xs md:text-sm">
-                        <span className="text-gray-600">Status: </span>
+                      </span>
+                      <span className="text-gray-600">
+                        Status:{" "}
                         <span
                           className={`font-semibold ${teacher.status === "active" ? "text-green-600" : "text-gray-600"}`}
                         >
                           {teacher.status}
                         </span>
-                      </div>
+                      </span>
                     </div>
                   </div>
                 ))
@@ -1632,20 +1423,13 @@ export default function AdminDashboard() {
       case "classes":
         return (
           <div>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-green-900">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-green-900">
                 Classes Management
               </h2>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-2 sm:gap-3">
                 <button
                   onClick={() => {
-                    setClassForm({
-                      name: "",
-                      teacher: "",
-                      students: 0,
-                      schedule: "",
-                      room: "",
-                    });
                     setEditingClass({
                       id: "",
                       name: "",
@@ -1659,46 +1443,40 @@ export default function AdminDashboard() {
                       strand: "",
                     });
                   }}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                  className="flex items-center justify-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm flex-1 sm:flex-none"
                 >
-                  <Plus className="w-5 h-5" />
-                  Add Class
+                  <Plus className="w-4 h-4" /> Add Class
                 </button>
                 <button
                   onClick={handleExportData}
-                  className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
+                  className="flex items-center justify-center gap-2 px-3 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 text-sm flex-1 sm:flex-none"
                 >
-                  <Download className="w-5 h-5" />
-                  Export
+                  <Download className="w-4 h-4" /> Export
                 </button>
               </div>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {classes.length === 0 ? (
                 <div className="md:col-span-2 bg-indigo-50 rounded-2xl p-8 text-center border-2 border-dashed border-indigo-300">
                   <BookOpen className="w-12 h-12 text-indigo-400 mx-auto mb-3" />
                   <p className="text-gray-600 font-medium">No classes yet</p>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Add a new class to get started
-                  </p>
                 </div>
               ) : (
                 classes.map((cls) => (
                   <div
                     key={cls.id}
-                    className="bg-white rounded-2xl shadow-md p-6 border border-green-100"
+                    className="bg-white rounded-2xl shadow-md p-4 sm:p-6 border border-green-100"
                   >
                     <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <h3 className="text-xl font-bold text-gray-900">
+                      <div className="min-w-0 flex-1 mr-3">
+                        <h3 className="text-lg font-bold text-gray-900 break-words">
                           {cls.name}
                         </h3>
                         <p className="text-sm text-gray-600 mt-1">
                           Teacher: {cls.teacher}
                         </p>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 flex-shrink-0">
                         <button
                           onClick={() => setEditingClass(cls)}
                           className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
@@ -1715,40 +1493,35 @@ export default function AdminDashboard() {
                     </div>
                     <div className="space-y-2">
                       <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Users className="w-4 h-4" />
+                        <Users className="w-4 h-4 flex-shrink-0" />
                         <span>{cls.students} students</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Calendar className="w-4 h-4" />
-                        <span>{cls.schedule}</span>
+                        <Calendar className="w-4 h-4 flex-shrink-0" />
+                        <span className="break-words">{cls.schedule}</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <BookOpen className="w-4 h-4" />
+                        <BookOpen className="w-4 h-4 flex-shrink-0" />
                         <span>{cls.room}</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <GraduationCap className="w-4 h-4" />
-                        <span>{cls.gradeLevel}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <span className="w-4 h-4 flex items-center justify-center text-xs font-bold">
-                          Sec
+                        <GraduationCap className="w-4 h-4 flex-shrink-0" />
+                        <span>
+                          {cls.gradeLevel} • Sec {cls.section}
                         </span>
-                        <span>{cls.section}</span>
                       </div>
                       {(cls.gradeLevel === "Grade 11" ||
                         cls.gradeLevel === "Grade 12") &&
                         cls.strand && (
                           <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <FileText className="w-4 h-4" />
+                            <FileText className="w-4 h-4 flex-shrink-0" />
                             <span>{cls.strand}</span>
                           </div>
                         )}
                     </div>
-
                     <div className="mt-4 pt-4 border-t border-gray-100">
-                      <div className="flex items-center justify-between gap-3 mb-2">
-                        <div>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                        <div className="min-w-0">
                           <p className="text-sm font-semibold text-gray-900">
                             Finalize Grades
                           </p>
@@ -1763,16 +1536,7 @@ export default function AdminDashboard() {
                           const approved = status?.approved;
                           return (
                             <span
-                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                                approved
-                                  ? "bg-green-100 text-green-700"
-                                  : "bg-yellow-100 text-yellow-800"
-                              }`}
-                              title={
-                                approved && status?.approvedAt
-                                  ? `Approved at ${new Date(status.approvedAt).toLocaleString()}`
-                                  : "Not finalized yet"
-                              }
+                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold flex-shrink-0 ${approved ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-800"}`}
                             >
                               {approved ? (
                                 <Check className="w-3.5 h-3.5" />
@@ -1784,8 +1548,7 @@ export default function AdminDashboard() {
                           );
                         })()}
                       </div>
-
-                      <div className="flex flex-col sm:flex-row gap-2">
+                      <div className="flex flex-col xs:flex-row gap-2">
                         <select
                           value={getSelectedFinalizePeriod(cls)}
                           onChange={(e) =>
@@ -1801,7 +1564,7 @@ export default function AdminDashboard() {
                             )
                           }
                           disabled={finalizingKey !== null}
-                          className="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-50 disabled:text-gray-500"
+                          className="flex-1 min-w-0 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-50"
                         >
                           {getFinalizeOptionsForClass(cls).map((o) => (
                             <option key={o.value} value={o.value}>
@@ -1809,38 +1572,36 @@ export default function AdminDashboard() {
                             </option>
                           ))}
                         </select>
-
-                        <button
-                          type="button"
-                          onClick={() =>
-                            void ensureFinalizeStatus(
-                              String(cls.id),
-                              getSelectedFinalizePeriod(cls),
-                            )
-                          }
-                          disabled={finalizingKey !== null}
-                          className="px-3 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 text-sm inline-flex items-center justify-center gap-2 disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed"
-                          title="Check finalize status"
-                        >
-                          <RefreshCw className="w-4 h-4" />
-                          Check
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => void handleFinalizeGrades(cls)}
-                          disabled={finalizingKey !== null}
-                          className="px-3 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 text-sm inline-flex items-center justify-center gap-2 disabled:bg-green-400 disabled:cursor-not-allowed"
-                          title="Finalize grades for this period"
-                        >
-                          {finalizingKey ===
-                          `${cls.id}:${getSelectedFinalizePeriod(cls)}` ? (
-                            <RefreshCw className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <Check className="w-4 h-4" />
-                          )}
-                          Finalize
-                        </button>
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              void ensureFinalizeStatus(
+                                String(cls.id),
+                                getSelectedFinalizePeriod(cls),
+                              )
+                            }
+                            disabled={finalizingKey !== null}
+                            className="px-3 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 text-sm inline-flex items-center justify-center gap-1 flex-1 xs:flex-none"
+                          >
+                            <RefreshCw className="w-4 h-4" />
+                            <span className="xs:hidden">Check</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => void handleFinalizeGrades(cls)}
+                            disabled={finalizingKey !== null}
+                            className="px-3 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 text-sm inline-flex items-center justify-center gap-1 disabled:bg-green-400 flex-1 xs:flex-none"
+                          >
+                            {finalizingKey ===
+                            `${cls.id}:${getSelectedFinalizePeriod(cls)}` ? (
+                              <RefreshCw className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Check className="w-4 h-4" />
+                            )}
+                            <span>Finalize</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1853,7 +1614,7 @@ export default function AdminDashboard() {
       case "reports":
         return (
           <div>
-            <h2 className="text-2xl font-bold text-green-900 mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-green-900 mb-6">
               Reports & Analytics
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1862,88 +1623,96 @@ export default function AdminDashboard() {
                   Student Performance
                 </h3>
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">
-                      Excellent (90-100)
-                    </span>
-                    <span className="font-semibold text-green-600">45%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-green-600 h-2 rounded-full"
-                      style={{ width: "45%" }}
-                    ></div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Good (80-89)</span>
-                    <span className="font-semibold text-blue-600">35%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-blue-600 h-2 rounded-full"
-                      style={{ width: "35%" }}
-                    ></div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">
-                      Average (70-79)
-                    </span>
-                    <span className="font-semibold text-yellow-600">15%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-yellow-600 h-2 rounded-full"
-                      style={{ width: "15%" }}
-                    ></div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">
-                      Below Average (&lt;70)
-                    </span>
-                    <span className="font-semibold text-red-600">5%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-red-600 h-2 rounded-full"
-                      style={{ width: "5%" }}
-                    ></div>
-                  </div>
+                  {[
+                    {
+                      label: "Excellent (90-100)",
+                      pct: 45,
+                      color: "bg-green-600",
+                      textColor: "text-green-600",
+                    },
+                    {
+                      label: "Good (80-89)",
+                      pct: 35,
+                      color: "bg-blue-600",
+                      textColor: "text-blue-600",
+                    },
+                    {
+                      label: "Average (70-79)",
+                      pct: 15,
+                      color: "bg-yellow-600",
+                      textColor: "text-yellow-600",
+                    },
+                    {
+                      label: "Below Average (<70)",
+                      pct: 5,
+                      color: "bg-red-600",
+                      textColor: "text-red-600",
+                    },
+                  ].map((item) => (
+                    <div key={item.label}>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-sm text-gray-600">
+                          {item.label}
+                        </span>
+                        <span
+                          className={`font-semibold ${item.textColor} text-sm`}
+                        >
+                          {item.pct}%
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className={`${item.color} h-2 rounded-full`}
+                          style={{ width: `${item.pct}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-
               <div className="bg-white rounded-2xl shadow-md p-6 border border-green-100">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">
                   System Statistics
                 </h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center p-4 bg-green-50 rounded-lg">
-                    <span className="text-sm text-gray-700">
-                      Total Students
-                    </span>
-                    <span className="text-2xl font-bold text-green-600">
-                      {students.length}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center p-4 bg-emerald-50 rounded-lg">
-                    <span className="text-sm text-gray-700">
-                      Total Teachers
-                    </span>
-                    <span className="text-2xl font-bold text-emerald-600">
-                      {teachers.length}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center p-4 bg-teal-50 rounded-lg">
-                    <span className="text-sm text-gray-700">Total Classes</span>
-                    <span className="text-2xl font-bold text-teal-600">
-                      {classes.length}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center p-4 bg-blue-50 rounded-lg">
-                    <span className="text-sm text-gray-700">Announcements</span>
-                    <span className="text-2xl font-bold text-blue-600">
-                      {announcements.length}
-                    </span>
-                  </div>
+                <div className="space-y-3">
+                  {[
+                    {
+                      label: "Total Students",
+                      val: students.length,
+                      bg: "bg-green-50",
+                      color: "text-green-600",
+                    },
+                    {
+                      label: "Total Teachers",
+                      val: teachers.length,
+                      bg: "bg-emerald-50",
+                      color: "text-emerald-600",
+                    },
+                    {
+                      label: "Total Classes",
+                      val: classes.length,
+                      bg: "bg-teal-50",
+                      color: "text-teal-600",
+                    },
+                    {
+                      label: "Announcements",
+                      val: announcements.length,
+                      bg: "bg-blue-50",
+                      color: "text-blue-600",
+                    },
+                  ].map((item) => (
+                    <div
+                      key={item.label}
+                      className={`flex justify-between items-center p-3 ${item.bg} rounded-lg`}
+                    >
+                      <span className="text-sm text-gray-700">
+                        {item.label}
+                      </span>
+                      <span className={`text-xl font-bold ${item.color}`}>
+                        {item.val}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -1953,7 +1722,7 @@ export default function AdminDashboard() {
       case "settings":
         return (
           <div>
-            <h2 className="text-2xl font-bold text-green-900 mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-green-900 mb-6">
               System Settings
             </h2>
             <div className="space-y-6">
@@ -1990,70 +1759,55 @@ export default function AdminDashboard() {
                   </div>
                   <button
                     onClick={handleSaveSettings}
-                    className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                    className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 w-full sm:w-auto"
                   >
                     Save Changes
                   </button>
                 </div>
               </div>
-
               <div className="bg-white rounded-2xl shadow-md p-6 border border-green-100">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">
                   Notifications
                 </h3>
                 <div className="space-y-3">
-                  <label className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={settings.emailNotifications || false}
-                      onChange={(e) =>
-                        setSettings({
-                          ...settings,
-                          emailNotifications: e.target.checked,
-                        })
-                      }
-                      className="w-5 h-5 text-green-600 rounded"
-                    />
-                    <span className="text-sm text-gray-700">
-                      Email notifications for new enrollments
-                    </span>
-                  </label>
-                  <label className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={settings.classNotifications || false}
-                      onChange={(e) =>
-                        setSettings({
-                          ...settings,
-                          classNotifications: e.target.checked,
-                        })
-                      }
-                      className="w-5 h-5 text-green-600 rounded"
-                    />
-                    <span className="text-sm text-gray-700">
-                      Daily attendance reports
-                    </span>
-                  </label>
-                  <label className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={settings.smsNotifications || false}
-                      onChange={(e) =>
-                        setSettings({
-                          ...settings,
-                          smsNotifications: e.target.checked,
-                        })
-                      }
-                      className="w-5 h-5 text-green-600 rounded"
-                    />
-                    <span className="text-sm text-gray-700">
-                      Grade submission reminders
-                    </span>
-                  </label>
+                  {[
+                    {
+                      label: "Email notifications for new enrollments",
+                      key: "emailNotifications" as const,
+                    },
+                    {
+                      label: "Daily attendance reports",
+                      key: "classNotifications" as const,
+                    },
+                    {
+                      label: "Grade submission reminders",
+                      key: "smsNotifications" as const,
+                    },
+                  ].map((item) => (
+                    <label
+                      key={item.key}
+                      className="flex items-center gap-3 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={(settings as any)[item.key] || false}
+                        onChange={(e) =>
+                          setSettings({
+                            ...settings,
+                            [item.key]: e.target.checked,
+                          })
+                        }
+                        className="w-5 h-5 text-green-600 rounded"
+                      />
+                      <span className="text-sm text-gray-700">
+                        {item.label}
+                      </span>
+                    </label>
+                  ))}
                 </div>
                 <button
                   onClick={handleSaveSettings}
-                  className="mt-4 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                  className="mt-4 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 w-full sm:w-auto"
                 >
                   Save Notification Settings
                 </button>
@@ -2065,110 +1819,102 @@ export default function AdminDashboard() {
       default:
         return (
           <div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-10">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-8">
               {stats.map((stat, i) => (
                 <div
                   key={i}
-                  className="bg-white rounded-2xl shadow-md p-4 md:p-6 border border-green-100 hover:border-teal-400 transition-all duration-300 cursor-pointer"
+                  className="bg-white rounded-2xl shadow-md p-3 md:p-6 border border-green-100 hover:border-teal-400 transition-all cursor-pointer"
                 >
-                  <div className="flex items-center justify-between mb-3 md:mb-4">
-                    <div className={`${stat.color} p-3 md:p-4 rounded-xl`}>
-                      <stat.icon className="w-5 h-5 md:w-7 md:h-7 text-white" />
+                  <div className="flex items-center justify-between mb-3">
+                    <div className={`${stat.color} p-2 md:p-4 rounded-xl`}>
+                      <stat.icon className="w-4 h-4 md:w-7 md:h-7 text-white" />
                     </div>
-                    <span className="text-green-600 font-semibold text-xs md:text-sm">
+                    <span className="text-green-600 font-semibold text-xs">
                       {stat.change}
                     </span>
                   </div>
-                  <h3 className="text-xs md:text-sm font-medium text-gray-600 mb-1">
+                  <h3 className="text-xs font-medium text-gray-600 mb-1 leading-tight">
                     {stat.label}
                   </h3>
-                  <p className="text-2xl md:text-3xl font-bold text-teal-800">
+                  <p className="text-xl md:text-3xl font-bold text-teal-800">
                     {stat.value}
                   </p>
                 </div>
               ))}
             </div>
-
-            <div className="mb-10">
-              <h2 className="text-2xl font-bold text-green-900 mb-6">
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-green-900 mb-4">
                 Quick Actions
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                <button
-                  onClick={() => handleNavigation("announcements")}
-                  className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl p-4 md:p-6 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center gap-3 md:gap-5"
-                >
-                  <Bell className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0" />
-                  <div className="text-left min-w-0 flex-1">
-                    <h3 className="font-bold text-base md:text-lg truncate">
-                      Announcements
-                    </h3>
-                    <p className="text-blue-100 text-xs md:text-sm mt-1">
-                      Post updates & news
-                    </p>
-                  </div>
-                </button>
-                <button
-                  onClick={() => handleNavigation("students")}
-                  className="bg-gradient-to-r from-teal-700 to-green-700 text-white rounded-2xl p-4 md:p-6 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center gap-3 md:gap-5"
-                >
-                  <UserPlus className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0" />
-                  <div className="text-left min-w-0 flex-1">
-                    <h3 className="font-bold text-base md:text-lg truncate">
-                      Manage Students
-                    </h3>
-                    <p className="text-teal-100 text-xs md:text-sm mt-1">
-                      View all students
-                    </p>
-                  </div>
-                </button>
-                <button
-                  onClick={() => handleNavigation("teachers")}
-                  className="bg-gradient-to-r from-emerald-700 to-green-700 text-white rounded-2xl p-4 md:p-6 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center gap-3 md:gap-5"
-                >
-                  <GraduationCap className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0" />
-                  <div className="text-left min-w-0 flex-1">
-                    <h3 className="font-bold text-base md:text-lg truncate">
-                      Manage Teachers
-                    </h3>
-                    <p className="text-emerald-100 text-xs md:text-sm mt-1">
-                      View all teachers
-                    </p>
-                  </div>
-                </button>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-6">
+                {[
+                  {
+                    key: "announcements",
+                    icon: Bell,
+                    title: "Announcements",
+                    sub: "Post updates & news",
+                    gradient: "from-blue-600 to-blue-700",
+                    textColor: "text-blue-100",
+                  },
+                  {
+                    key: "students",
+                    icon: UserPlus,
+                    title: "Manage Students",
+                    sub: "View all students",
+                    gradient: "from-teal-700 to-green-700",
+                    textColor: "text-teal-100",
+                  },
+                  {
+                    key: "teachers",
+                    icon: GraduationCap,
+                    title: "Manage Teachers",
+                    sub: "View all teachers",
+                    gradient: "from-emerald-700 to-green-700",
+                    textColor: "text-emerald-100",
+                  },
+                ].map((item) => (
+                  <button
+                    key={item.key}
+                    onClick={() => handleNavigation(item.key)}
+                    className={`bg-gradient-to-r ${item.gradient} text-white rounded-2xl p-4 md:p-6 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center gap-3 md:gap-5 text-left`}
+                  >
+                    <item.icon className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0" />
+                    <div className="min-w-0">
+                      <h3 className="font-bold text-base truncate">
+                        {item.title}
+                      </h3>
+                      <p className={`${item.textColor} text-xs mt-1`}>
+                        {item.sub}
+                      </p>
+                    </div>
+                  </button>
+                ))}
               </div>
             </div>
-
             <div className="bg-white rounded-2xl shadow-md p-4 md:p-7 border border-green-100">
-              <h2 className="text-lg md:text-xl font-bold text-green-900 mb-4 md:mb-6">
+              <h2 className="text-lg font-bold text-green-900 mb-4 md:mb-6">
                 Recent Announcements
               </h2>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {announcements.slice(0, 5).map((announcement) => (
                   <div
                     key={announcement.id}
-                    className="flex flex-col sm:flex-row sm:items-start justify-between py-3 md:py-4 border-b last:border-b-0 hover:bg-green-50 px-2 md:px-4 rounded-lg transition-colors gap-2 sm:gap-4"
+                    className="flex flex-col sm:flex-row sm:items-start justify-between py-3 border-b last:border-b-0 hover:bg-green-50 px-3 rounded-lg gap-2"
                   >
-                    <div className="flex items-start space-x-3 md:space-x-4 min-w-0 flex-1">
+                    <div className="flex items-start gap-3 min-w-0 flex-1">
                       <div
-                        className={`w-2 h-2 md:w-3 md:h-3 rounded-full mt-1 md:mt-1.5 flex-shrink-0 ${
-                          announcement.type === "success"
-                            ? "bg-green-500"
-                            : announcement.type === "warning"
-                              ? "bg-yellow-500"
-                              : "bg-blue-500"
-                        }`}
+                        className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${announcement.type === "success" ? "bg-green-500" : announcement.type === "warning" ? "bg-yellow-500" : "bg-blue-500"}`}
                       />
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium text-gray-900 text-sm md:text-base truncate">
+                      <div className="min-w-0">
+                        <p className="font-medium text-gray-900 text-sm truncate">
                           {announcement.title}
                         </p>
-                        <p className="text-xs md:text-sm text-gray-600 mt-1">
+                        <p className="text-xs text-gray-600 mt-1 line-clamp-2">
                           {announcement.message.substring(0, 100)}...
                         </p>
                       </div>
                     </div>
-                    <span className="text-xs md:text-sm text-gray-500 flex-shrink-0">
+                    <span className="text-xs text-gray-500 flex-shrink-0">
                       {formatDate(announcement.date)}
                     </span>
                   </div>
@@ -2183,22 +1929,15 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-teal-50">
       {toast.open && (
-        <div className="fixed top-4 right-4 z-[100] max-w-sm">
+        <div className="fixed top-4 right-4 z-[100] max-w-xs sm:max-w-sm">
           <div
-            className={`rounded-xl shadow-xl border px-4 py-3 text-sm font-medium whitespace-pre-line ${
-              toast.type === "success"
-                ? "bg-green-50 border-green-200 text-green-800"
-                : toast.type === "error"
-                  ? "bg-red-50 border-red-200 text-red-800"
-                  : toast.type === "warning"
-                    ? "bg-yellow-50 border-yellow-200 text-yellow-800"
-                    : "bg-blue-50 border-blue-200 text-blue-800"
-            }`}
+            className={`rounded-xl shadow-xl border px-4 py-3 text-sm font-medium whitespace-pre-line ${toast.type === "success" ? "bg-green-50 border-green-200 text-green-800" : toast.type === "error" ? "bg-red-50 border-red-200 text-red-800" : toast.type === "warning" ? "bg-yellow-50 border-yellow-200 text-yellow-800" : "bg-blue-50 border-blue-200 text-blue-800"}`}
           >
             {toast.message}
           </div>
         </div>
       )}
+
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
@@ -2206,18 +1945,19 @@ export default function AdminDashboard() {
         />
       )}
 
+      {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full bg-gradient-to-b from-green-900 to-green-800 text-white transition-all duration-300 z-50 shadow-2xl ${
-          sidebarOpen ? "w-72 lg:w-72" : "w-0 lg:w-20"
-        } overflow-hidden lg:overflow-visible`}
+        className={`fixed top-0 left-0 h-full bg-gradient-to-b from-green-900 to-green-800 text-white transition-all duration-300 z-50 shadow-2xl ${sidebarOpen ? "w-64 sm:w-72" : "w-0 lg:w-20"} overflow-hidden`}
       >
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-10">
+        <div className="p-4 sm:p-6 h-full flex flex-col">
+          <div
+            className={`flex items-center mb-8 sm:mb-10 ${sidebarOpen ? "justify-between" : "justify-center"}`}
+          >
             <div
-              className={`flex items-center gap-3 ${!sidebarOpen && "justify-center w-full"}`}
+              className={`flex items-center gap-3 ${!sidebarOpen && "justify-center"}`}
             >
               <div
-                className={`flex items-center justify-center rounded-xl overflow-hidden shadow-lg ${sidebarOpen ? "w-12 h-12" : "w-10 h-10"}`}
+                className={`flex items-center justify-center rounded-xl overflow-hidden shadow-lg flex-shrink-0 ${sidebarOpen ? "w-10 h-10" : "w-10 h-10"}`}
               >
                 <img
                   src="/pnhs-logo.png"
@@ -2225,144 +1965,145 @@ export default function AdminDashboard() {
                   className="w-full h-full object-contain"
                 />
               </div>
-
               {sidebarOpen && (
-                <div className="flex flex-col">
-                  <h1 className="font-bold text-xl tracking-tight">PNHS</h1>
+                <div>
+                  <h1 className="font-bold text-lg sm:text-xl">PNHS</h1>
                   <p className="text-xs text-green-200">Admin Panel</p>
                 </div>
               )}
             </div>
-
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-            >
-              {sidebarOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
-            </button>
+            {sidebarOpen && (
+              <button
+                onClick={() => setSidebarOpen(false)}
+                className="p-2 hover:bg-white/10 rounded-lg lg:hidden"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
           </div>
-
-          <nav className="space-y-1.5">
+          <nav className="space-y-1 flex-1 overflow-y-auto">
             {navigationItems.map((item) => (
               <button
                 key={item.key}
                 onClick={() => handleNavigation(item.key)}
-                className={`w-full flex items-center ${sidebarOpen ? "justify-start gap-3 px-3 md:px-4" : "justify-center"} py-2.5 md:py-3 rounded-xl relative ${
-                  activeTab === item.key
-                    ? "bg-white/20 shadow-inner font-semibold"
-                    : "hover:bg-white/10 text-green-100"
-                } ${!sidebarOpen && "hidden lg:flex"}`}
+                className={`w-full flex items-center ${sidebarOpen ? "justify-start gap-3 px-3 sm:px-4" : "justify-center"} py-2.5 rounded-xl ${activeTab === item.key ? "bg-white/20 font-semibold" : "hover:bg-white/10 text-green-100"} ${!sidebarOpen && "hidden lg:flex"}`}
               >
                 <item.icon className="w-5 h-5 flex-shrink-0" />
                 {sidebarOpen && (
-                  <span className="text-sm md:text-base truncate">
-                    {item.label}
-                  </span>
+                  <span className="text-sm truncate">{item.label}</span>
                 )}
               </button>
             ))}
           </nav>
-        </div>
-
-        <div className="absolute bottom-0 w-full p-6 border-t border-white/15">
-          <button
-            onClick={handleLogout}
-            className={`w-full flex items-center ${sidebarOpen ? "gap-3 px-3 md:px-4" : "justify-center"} py-2.5 md:py-3 rounded-xl hover:bg-white/10 transition-colors text-green-100 ${!sidebarOpen && "hidden lg:flex"}`}
-          >
-            <LogOut className="w-5 h-5 flex-shrink-0" />
-            {sidebarOpen && (
-              <span className="text-sm md:text-base">Logout</span>
-            )}
-          </button>
+          <div className="border-t border-white/15 pt-4">
+            <button
+              onClick={handleLogout}
+              className={`w-full flex items-center ${sidebarOpen ? "gap-3 px-3 sm:px-4" : "justify-center"} py-2.5 rounded-xl hover:bg-white/10 text-green-100 ${!sidebarOpen && "hidden lg:flex"}`}
+            >
+              <LogOut className="w-5 h-5 flex-shrink-0" />
+              {sidebarOpen && <span className="text-sm">Logout</span>}
+            </button>
+          </div>
         </div>
       </aside>
 
+      {/* Main Content */}
       <div
         className={`transition-all duration-300 ${sidebarOpen ? "lg:ml-72" : "lg:ml-20"} ml-0`}
       >
+        {/* Header */}
         <header className="bg-white/90 backdrop-blur-sm shadow-sm sticky top-0 z-40 border-b border-green-100">
-          <div className="px-3 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-3 md:py-4">
-            <div className="flex items-center justify-between gap-3">
+          <div className="px-3 sm:px-4 md:px-6 lg:px-8 py-2.5 sm:py-3">
+            <div className="flex items-center justify-between gap-2">
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 className="p-2 hover:bg-gray-100 rounded-lg flex-shrink-0"
               >
                 <Menu className="w-5 h-5 md:w-6 md:h-6" />
               </button>
-
-              <div className="flex-1 max-w-md md:max-w-2xl mx-2 md:mx-4 hidden md:block">
+              <div className="flex-1 max-w-xs sm:max-w-md md:max-w-2xl mx-2 hidden sm:block">
                 <div className="relative">
-                  <Search className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type="text"
                     placeholder="Search..."
-                    className="w-full pl-9 md:pl-12 pr-3 md:pr-4 py-2 md:py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm md:text-base"
+                    className="w-full pl-9 pr-3 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                 </div>
               </div>
-
-              <div className="flex items-center gap-2 md:gap-3">
+              <div className="flex items-center gap-2">
                 {activeTab === "students" && (
                   <div className="relative hidden sm:block">
                     <select
                       value={selectedFilter}
                       onChange={(e) => setSelectedFilter(e.target.value)}
-                      className="px-3 md:px-4 py-2 bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-teal-500 appearance-none pr-8 md:pr-10 text-sm md:text-base"
+                      className="pl-3 pr-8 py-2 bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-teal-500 appearance-none text-sm"
                     >
                       <option value="all">All Grades</option>
-                      <option value="Grade 7">Grade 7</option>
-                      <option value="Grade 8">Grade 8</option>
-                      <option value="Grade 9">Grade 9</option>
-                      <option value="Grade 10">Grade 10</option>
-                      <option value="Grade 11">Grade 11</option>
-                      <option value="Grade 12">Grade 12</option>
+                      {[
+                        "Grade 7",
+                        "Grade 8",
+                        "Grade 9",
+                        "Grade 10",
+                        "Grade 11",
+                        "Grade 12",
+                      ].map((g) => (
+                        <option key={g} value={g}>
+                          {g}
+                        </option>
+                      ))}
                     </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                    <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                   </div>
                 )}
-
-                <button className="relative p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <button className="relative p-2 hover:bg-gray-100 rounded-full">
                   <Bell className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
-                  <span className="absolute top-1 right-1 w-2 h-2 md:w-2.5 md:h-2.5 bg-red-500 rounded-full"></span>
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                 </button>
-                <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-green-800 to-teal-700 rounded-full flex items-center justify-center text-white font-bold text-lg md:text-xl shadow-md">
+                <div className="w-9 h-9 md:w-11 md:h-11 bg-gradient-to-br from-green-800 to-teal-700 rounded-full flex items-center justify-center text-white font-bold text-base shadow-md">
                   {user?.fullName?.charAt(0) || "A"}
                 </div>
               </div>
             </div>
-
-            {/* Mobile tabs removed to match student dashboard */}
+            {/* Mobile search */}
+            <div className="mt-2 sm:hidden">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className="w-full pl-9 pr-3 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+            </div>
           </div>
         </header>
 
         <main className="p-3 sm:p-4 md:p-6 lg:p-8">{renderContent()}</main>
       </div>
 
-      {/* Student Attendance Modal (Admin) */}
+      {/* Student Attendance Modal */}
       {showStudentAttendance && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white rounded-xl md:rounded-2xl shadow-2xl max-w-3xl w-full p-3 md:p-6 max-h-[90vh] overflow-y-auto mx-2">
-            <div className="flex justify-between items-center mb-3 md:mb-6">
-              <h3 className="text-lg md:text-2xl font-bold text-green-900 truncate">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4">
+          <div className="bg-white rounded-xl md:rounded-2xl shadow-2xl max-w-3xl w-full p-4 md:p-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4 md:mb-6">
+              <h3 className="text-lg md:text-2xl font-bold text-green-900 truncate mr-3">
                 {showStudentAttendance.student.name} — Attendance
               </h3>
               <button
                 onClick={() => setShowStudentAttendance(null)}
-                className="p-1 md:p-2 hover:bg-gray-100 rounded-lg flex-shrink-0"
+                className="p-2 hover:bg-gray-100 rounded-lg flex-shrink-0"
               >
-                <X className="w-4 h-4 md:w-6 md:h-6" />
+                <X className="w-5 h-5" />
               </button>
             </div>
-
-            <div className="space-y-3 md:space-y-6">
-              <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
-                <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+            <div className="space-y-4 md:space-y-6">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex-1 grid grid-cols-1 xs:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs text-gray-600 mb-1">
                       From
@@ -2384,7 +2125,7 @@ export default function AdminDashboard() {
                           prev ? { ...prev, rows } : prev,
                         );
                       }}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
                     />
                   </div>
                   <div>
@@ -2408,136 +2149,91 @@ export default function AdminDashboard() {
                           prev ? { ...prev, rows } : prev,
                         );
                       }}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
                     />
                   </div>
                 </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={async () => {
-                      const rows = await fetchStudentAttendanceRange(
-                        showStudentAttendance.student.id,
-                        showStudentAttendance.from,
-                        showStudentAttendance.to,
-                      );
-                      setShowStudentAttendance((prev) =>
-                        prev ? { ...prev, rows } : prev,
-                      );
-                    }}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                  >
-                    Refresh
-                  </button>
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 md:p-6 rounded-xl">
-                <div className="text-center">
-                  {/* aggregated counts */}
-                  {(() => {
-                    const rows = showStudentAttendance.rows || [];
-                    const total = rows.length;
-                    const present = rows.filter(
-                      (r) => r.status === "present",
-                    ).length;
-                    const late = rows.filter((r) => r.status === "late").length;
-                    const absent = rows.filter(
-                      (r) => r.status === "absent",
-                    ).length;
-                    const percent = total
-                      ? `${Math.round(((present + late * 0.5) / total) * 100)}%`
-                      : "0%";
-                    return (
-                      <>
-                        <div className="text-4xl md:text-5xl font-bold text-green-600 mb-2">
-                          {percent}
-                        </div>
-                        <div className="text-base md:text-lg font-semibold text-gray-900">
-                          Overall Attendance Rate
-                        </div>
-                        <div className="text-sm md:text-base text-gray-600">
-                          Student ID: {showStudentAttendance.student.studentId}
-                        </div>
-                        <div className="text-sm md:text-base text-gray-600">
-                          {showStudentAttendance.student.gradeLevel} • Section{" "}
-                          {showStudentAttendance.student.section}
-                          {(showStudentAttendance.student.gradeLevel ===
-                            "Grade 11" ||
-                            showStudentAttendance.student.gradeLevel ===
-                              "Grade 12") &&
-                            showStudentAttendance.student.strand && (
-                              <> • {showStudentAttendance.student.strand}</>
-                            )}
-                        </div>
-                      </>
+                <button
+                  onClick={async () => {
+                    const rows = await fetchStudentAttendanceRange(
+                      showStudentAttendance.student.id,
+                      showStudentAttendance.from,
+                      showStudentAttendance.to,
                     );
-                  })()}
-                </div>
+                    setShowStudentAttendance((prev) =>
+                      prev ? { ...prev, rows } : prev,
+                    );
+                  }}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm self-end"
+                >
+                  Refresh
+                </button>
               </div>
-
-              <div className="grid grid-cols-3 gap-3 md:gap-4">
-                {(() => {
-                  const rows = showStudentAttendance.rows || [];
-                  const present = rows.filter(
-                    (r) => r.status === "present",
-                  ).length;
-                  const late = rows.filter((r) => r.status === "late").length;
-                  const absent = rows.filter(
-                    (r) => r.status === "absent",
-                  ).length;
-                  return (
-                    <>
-                      <div className="text-center p-3 md:p-4 bg-green-50 rounded-xl">
-                        <div className="text-2xl md:text-3xl font-bold text-green-600">
+              {(() => {
+                const rows = showStudentAttendance.rows || [];
+                const total = rows.length;
+                const present = rows.filter(
+                  (r) => r.status === "present",
+                ).length;
+                const late = rows.filter((r) => r.status === "late").length;
+                const absent = rows.filter((r) => r.status === "absent").length;
+                const percent = total
+                  ? `${Math.round(((present + late * 0.5) / total) * 100)}%`
+                  : "0%";
+                return (
+                  <>
+                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl text-center">
+                      <div className="text-4xl font-bold text-green-600 mb-2">
+                        {percent}
+                      </div>
+                      <div className="text-lg font-semibold text-gray-900">
+                        Overall Attendance Rate
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {showStudentAttendance.student.gradeLevel} • Section{" "}
+                        {showStudentAttendance.student.section}
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="text-center p-3 bg-green-50 rounded-xl">
+                        <div className="text-2xl font-bold text-green-600">
                           {present}
                         </div>
-                        <div className="text-xs md:text-sm text-gray-600 mt-1">
+                        <div className="text-xs text-gray-600 mt-1">
                           Present
                         </div>
                       </div>
-                      <div className="text-center p-3 md:p-4 bg-yellow-50 rounded-xl">
-                        <div className="text-2xl md:text-3xl font-bold text-yellow-600">
+                      <div className="text-center p-3 bg-yellow-50 rounded-xl">
+                        <div className="text-2xl font-bold text-yellow-600">
                           {late}
                         </div>
-                        <div className="text-xs md:text-sm text-gray-600 mt-1">
-                          Late
-                        </div>
+                        <div className="text-xs text-gray-600 mt-1">Late</div>
                       </div>
-                      <div className="text-center p-3 md:p-4 bg-red-50 rounded-xl">
-                        <div className="text-2xl md:text-3xl font-bold text-red-600">
+                      <div className="text-center p-3 bg-red-50 rounded-xl">
+                        <div className="text-2xl font-bold text-red-600">
                           {absent}
                         </div>
-                        <div className="text-xs md:text-sm text-gray-600 mt-1">
-                          Absent
-                        </div>
+                        <div className="text-xs text-gray-600 mt-1">Absent</div>
                       </div>
-                    </>
-                  );
-                })()}
-              </div>
-
+                    </div>
+                  </>
+                );
+              })()}
               <div>
-                <h4 className="font-bold text-gray-900 mb-3 text-sm md:text-base">
+                <h4 className="font-bold text-gray-900 mb-3 text-sm">
                   Daily records
                 </h4>
                 <div className="space-y-2">
                   {(showStudentAttendance.rows || []).map((row) => (
                     <div
                       key={row.id}
-                      className="flex items-center justify-between p-2 md:p-3 bg-gray-50 rounded-lg"
+                      className="flex items-center justify-between p-2 bg-gray-50 rounded-lg"
                     >
-                      <div className="flex items-center gap-2 md:gap-3">
+                      <div className="flex items-center gap-2">
                         <div
-                          className={`w-2 h-2 md:w-3 md:h-3 rounded-full ${
-                            row.status === "present"
-                              ? "bg-green-500"
-                              : row.status === "late"
-                                ? "bg-yellow-500"
-                                : "bg-red-500"
-                          }`}
+                          className={`w-2 h-2 rounded-full flex-shrink-0 ${row.status === "present" ? "bg-green-500" : row.status === "late" ? "bg-yellow-500" : "bg-red-500"}`}
                         />
-                        <div className="text-gray-900 text-xs md:text-sm">
+                        <div className="text-gray-900 text-xs">
                           {new Date(row.date).toLocaleDateString("en-US", {
                             weekday: "long",
                             month: "short",
@@ -2550,13 +2246,7 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                       <span
-                        className={`px-2 md:px-3 py-1 rounded-full text-xs font-semibold ${
-                          row.status === "present"
-                            ? "bg-green-100 text-green-700"
-                            : row.status === "late"
-                              ? "bg-yellow-100 text-yellow-700"
-                              : "bg-red-100 text-red-700"
-                        }`}
+                        className={`px-2 py-1 rounded-full text-xs font-semibold ${row.status === "present" ? "bg-green-100 text-green-700" : row.status === "late" ? "bg-yellow-100 text-yellow-700" : "bg-red-100 text-red-700"}`}
                       >
                         {row.status.charAt(0).toUpperCase() +
                           row.status.slice(1)}
@@ -2565,15 +2255,12 @@ export default function AdminDashboard() {
                   ))}
                 </div>
               </div>
-
-              <div className="pt-4">
-                <button
-                  onClick={() => setShowStudentAttendance(null)}
-                  className="w-full py-2.5 md:py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 font-semibold text-sm md:text-base"
-                >
-                  Close
-                </button>
-              </div>
+              <button
+                onClick={() => setShowStudentAttendance(null)}
+                className="w-full py-2.5 bg-green-600 text-white rounded-xl hover:bg-green-700 font-semibold text-sm"
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>
@@ -2581,20 +2268,19 @@ export default function AdminDashboard() {
 
       {/* Announcement Modal */}
       {showAnnouncementModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold text-green-900">
+              <h3 className="text-xl font-bold text-green-900">
                 New Announcement
               </h3>
               <button
                 onClick={() => setShowAnnouncementModal(false)}
                 className="p-2 hover:bg-gray-100 rounded-lg"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5" />
               </button>
             </div>
-
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -2609,11 +2295,10 @@ export default function AdminDashboard() {
                       title: e.target.value,
                     })
                   }
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none"
                   placeholder="Enter announcement title"
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Message
@@ -2626,12 +2311,11 @@ export default function AdminDashboard() {
                       message: e.target.value,
                     })
                   }
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none resize-none"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none resize-none"
                   rows={5}
                   placeholder="Enter announcement message"
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Type
@@ -2641,28 +2325,26 @@ export default function AdminDashboard() {
                   onChange={(e) =>
                     setAnnouncementForm({
                       ...announcementForm,
-                      type: e.target.value as "info" | "warning" | "success",
+                      type: e.target.value as any,
                     })
                   }
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none"
                 >
                   <option value="info">Information</option>
                   <option value="warning">Warning</option>
                   <option value="success">Success</option>
                 </select>
               </div>
-
-              <div className="flex gap-3 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <button
                   onClick={handleAddAnnouncement}
-                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 font-semibold"
+                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 font-semibold text-sm"
                 >
-                  <Send className="w-5 h-5" />
-                  Publish Announcement
+                  <Send className="w-4 h-4" /> Publish
                 </button>
                 <button
                   onClick={() => setShowAnnouncementModal(false)}
-                  className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 font-semibold"
+                  className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 font-semibold text-sm"
                 >
                   Cancel
                 </button>
@@ -2674,85 +2356,68 @@ export default function AdminDashboard() {
 
       {/* Add Student Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold text-green-900">
+              <h3 className="text-xl font-bold text-green-900">
                 Add New Student
               </h3>
               <button
                 onClick={() => setShowAddModal(false)}
                 className="p-2 hover:bg-gray-100 rounded-lg"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5" />
               </button>
             </div>
-
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Full Name *
-                </label>
-                <input
-                  type="text"
-                  value={studentForm.name}
-                  onChange={(e) =>
-                    setStudentForm({ ...studentForm, name: e.target.value })
-                  }
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
-                  placeholder="Enter student name"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Email *
-                </label>
-                <input
-                  type="email"
-                  value={studentForm.email}
-                  onChange={(e) =>
-                    setStudentForm({ ...studentForm, email: e.target.value })
-                  }
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
-                  placeholder="student@pnhs.edu.ph"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Username *
-                </label>
-                <input
-                  type="text"
-                  value={studentForm.username}
-                  onChange={(e) =>
-                    setStudentForm({ ...studentForm, username: e.target.value })
-                  }
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
-                  placeholder="Login username"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Password *
-                </label>
-                <input
-                  type="password"
-                  value={studentForm.password}
-                  onChange={(e) =>
-                    setStudentForm({ ...studentForm, password: e.target.value })
-                  }
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
-                  placeholder="Login password"
-                />
-              </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                <div>
+              {[
+                {
+                  label: "Full Name *",
+                  type: "text",
+                  field: "name",
+                  placeholder: "Enter student name",
+                },
+                {
+                  label: "Email *",
+                  type: "email",
+                  field: "email",
+                  placeholder: "student@pnhs.edu.ph",
+                },
+                {
+                  label: "Username *",
+                  type: "text",
+                  field: "username",
+                  placeholder: "Login username",
+                },
+                {
+                  label: "Password *",
+                  type: "password",
+                  field: "password",
+                  placeholder: "Login password",
+                },
+              ].map((item) => (
+                <div key={item.field}>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Grade Level
+                    {item.label}
+                  </label>
+                  <input
+                    type={item.type}
+                    value={(studentForm as any)[item.field]}
+                    onChange={(e) =>
+                      setStudentForm({
+                        ...studentForm,
+                        [item.field]: e.target.value,
+                      })
+                    }
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none"
+                    placeholder={item.placeholder}
+                  />
+                </div>
+              ))}
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-2">
+                    Grade
                   </label>
                   <select
                     value={studentForm.gradeLevel}
@@ -2768,19 +2433,24 @@ export default function AdminDashboard() {
                             : "",
                       });
                     }}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
+                    className="w-full px-2 py-2.5 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none text-sm"
                   >
-                    <option value="Grade 7">Grade 7</option>
-                    <option value="Grade 8">Grade 8</option>
-                    <option value="Grade 9">Grade 9</option>
-                    <option value="Grade 10">Grade 10</option>
-                    <option value="Grade 11">Grade 11</option>
-                    <option value="Grade 12">Grade 12</option>
+                    {[
+                      "Grade 7",
+                      "Grade 8",
+                      "Grade 9",
+                      "Grade 10",
+                      "Grade 11",
+                      "Grade 12",
+                    ].map((g) => (
+                      <option key={g} value={g}>
+                        {g}
+                      </option>
+                    ))}
                   </select>
                 </div>
-
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-xs font-semibold text-gray-700 mb-2">
                     Section
                   </label>
                   <select
@@ -2791,18 +2461,17 @@ export default function AdminDashboard() {
                         section: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
+                    className="w-full px-2 py-2.5 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none text-sm"
                   >
-                    {["A", "B", "C", "D", "E"].map((section) => (
-                      <option key={section} value={section}>
-                        Section {section}
+                    {["A", "B", "C", "D", "E"].map((s) => (
+                      <option key={s} value={s}>
+                        {s}
                       </option>
                     ))}
                   </select>
                 </div>
-
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-xs font-semibold text-gray-700 mb-2">
                     Strand
                   </label>
                   <select
@@ -2816,7 +2485,7 @@ export default function AdminDashboard() {
                         studentForm.gradeLevel === "Grade 12"
                       )
                     }
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none disabled:opacity-60"
+                    className="w-full px-2 py-2.5 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none text-sm disabled:opacity-60"
                   >
                     <option value="">(none)</option>
                     {STRANDS.map((s) => (
@@ -2825,62 +2494,46 @@ export default function AdminDashboard() {
                       </option>
                     ))}
                   </select>
-                  <p className="text-xs text-gray-400 mt-1">
-                    Strand is used for Grade 11–12.
-                  </p>
                 </div>
               </div>
-
-              {/* Auto-select subjects based on Grade / Section / Strand */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Subjects
                 </label>
                 <div className="space-y-2 max-h-40 overflow-y-auto border border-gray-100 rounded-md p-3 bg-gray-50">
                   {(() => {
-                    // Filter classes based on grade/section/strand (matching the auto-select logic)
                     const filteredClasses = classes.filter((c) => {
                       if (c.gradeLevel !== studentForm.gradeLevel) return false;
-
-                      // For Senior High (Grade 11-12), match both section AND strand
                       if (
                         studentForm.gradeLevel === "Grade 11" ||
                         studentForm.gradeLevel === "Grade 12"
                       ) {
-                        const sectionMatch =
+                        return (
                           (c.section || "").toUpperCase() ===
-                          (studentForm.section || "").toUpperCase();
-                        const strandMatch =
+                            (studentForm.section || "").toUpperCase() &&
                           (c.strand || "").toUpperCase() ===
-                          (studentForm.strand || "").toUpperCase();
-                        return sectionMatch && strandMatch;
+                            (studentForm.strand || "").toUpperCase()
+                        );
                       }
-
-                      // For Junior High (Grade 7-10), match section only
                       return (c.section || "") === (studentForm.section || "");
                     });
-
-                    if (filteredClasses.length === 0) {
+                    if (filteredClasses.length === 0)
                       return (
                         <p className="text-xs text-gray-500">
-                          No matching subjects for selected
-                          grade/section/strand.
+                          No matching subjects.
                         </p>
                       );
-                    }
-
                     return filteredClasses.map((c) => (
                       <label
                         key={c.id}
-                        className="flex items-center gap-2 text-sm"
+                        className="flex items-center gap-2 text-sm cursor-pointer"
                       >
                         <input
                           type="checkbox"
                           checked={studentSelectedClassIds.includes(c.id)}
                           onChange={(e) => {
-                            const checked = e.target.checked;
                             setStudentSelectedClassIds((cur) =>
-                              checked
+                              e.target.checked
                                 ? [...cur, c.id]
                                 : cur.filter((id) => id !== c.id),
                             );
@@ -2896,12 +2549,7 @@ export default function AdminDashboard() {
                     ));
                   })()}
                 </div>
-                <p className="text-xs text-gray-400 mt-1">
-                  Selected subjects will be enrolled automatically when the
-                  student is created.
-                </p>
               </div>
-
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Student ID (Optional)
@@ -2915,22 +2563,20 @@ export default function AdminDashboard() {
                       studentId: e.target.value,
                     })
                   }
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none"
                   placeholder="Leave blank to auto-generate"
                 />
               </div>
-
-              <div className="flex gap-3 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <button
                   onClick={handleAddStudent}
-                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 font-semibold"
+                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 font-semibold text-sm"
                 >
-                  <Plus className="w-5 h-5" />
-                  Add Student
+                  <Plus className="w-4 h-4" /> Add Student
                 </button>
                 <button
                   onClick={() => setShowAddModal(false)}
-                  className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 font-semibold"
+                  className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 font-semibold text-sm"
                 >
                   Cancel
                 </button>
@@ -2942,20 +2588,17 @@ export default function AdminDashboard() {
 
       {/* Edit Student Modal */}
       {editingStudent && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold text-green-900">
-                Edit Student
-              </h3>
+              <h3 className="text-xl font-bold text-green-900">Edit Student</h3>
               <button
                 onClick={() => setEditingStudent(null)}
                 className="p-2 hover:bg-gray-100 rounded-lg"
               >
-                <XIcon className="w-6 h-6" />
+                <XIcon className="w-5 h-5" />
               </button>
             </div>
-
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -2965,10 +2608,9 @@ export default function AdminDashboard() {
                   type="text"
                   value={editingStudent.studentId}
                   disabled
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-50"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-50 text-sm"
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Full Name
@@ -2982,10 +2624,9 @@ export default function AdminDashboard() {
                       name: e.target.value,
                     })
                   }
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none text-sm"
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Email
@@ -2999,13 +2640,12 @@ export default function AdminDashboard() {
                       email: e.target.value,
                     })
                   }
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none text-sm"
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Username (for login)
+                  Username
                 </label>
                 <input
                   type="text"
@@ -3016,13 +2656,12 @@ export default function AdminDashboard() {
                       username: e.target.value,
                     })
                   }
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none text-sm"
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Password (for login)
+                  Password
                 </label>
                 <input
                   type="password"
@@ -3034,17 +2673,13 @@ export default function AdminDashboard() {
                     })
                   }
                   placeholder="Leave blank to keep current password"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none text-sm"
                 />
-                <p className="text-xs text-gray-400 mt-1">
-                  Leave blank to keep the current password unchanged.
-                </p>
               </div>
-
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Grade Level
+                  <label className="block text-xs font-semibold text-gray-700 mb-2">
+                    Grade
                   </label>
                   <select
                     value={editingStudent.gradeLevel}
@@ -3060,19 +2695,24 @@ export default function AdminDashboard() {
                             : "",
                       });
                     }}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
+                    className="w-full px-2 py-2.5 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none text-sm"
                   >
-                    <option value="Grade 7">Grade 7</option>
-                    <option value="Grade 8">Grade 8</option>
-                    <option value="Grade 9">Grade 9</option>
-                    <option value="Grade 10">Grade 10</option>
-                    <option value="Grade 11">Grade 11</option>
-                    <option value="Grade 12">Grade 12</option>
+                    {[
+                      "Grade 7",
+                      "Grade 8",
+                      "Grade 9",
+                      "Grade 10",
+                      "Grade 11",
+                      "Grade 12",
+                    ].map((g) => (
+                      <option key={g} value={g}>
+                        {g}
+                      </option>
+                    ))}
                   </select>
                 </div>
-
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-xs font-semibold text-gray-700 mb-2">
                     Section
                   </label>
                   <select
@@ -3083,18 +2723,17 @@ export default function AdminDashboard() {
                         section: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
+                    className="w-full px-2 py-2.5 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none text-sm"
                   >
-                    {["A", "B", "C", "D", "E"].map((section) => (
-                      <option key={section} value={section}>
-                        Section {section}
+                    {["A", "B", "C", "D", "E"].map((s) => (
+                      <option key={s} value={s}>
+                        {s}
                       </option>
                     ))}
                   </select>
                 </div>
-
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-xs font-semibold text-gray-700 mb-2">
                     Strand
                   </label>
                   <select
@@ -3105,7 +2744,7 @@ export default function AdminDashboard() {
                         strand: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
+                    className="w-full px-2 py-2.5 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none text-sm"
                   >
                     <option value="">(none)</option>
                     {STRANDS.map((s) => (
@@ -3114,24 +2753,18 @@ export default function AdminDashboard() {
                       </option>
                     ))}
                   </select>
-                  <p className="text-xs text-gray-400 mt-1">
-                    Strand is optional for non‑senior grades; set for Grade
-                    11–12.
-                  </p>
                 </div>
               </div>
-
-              <div className="flex gap-3 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <button
                   onClick={handleUpdateStudent}
-                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 font-semibold"
+                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 font-semibold text-sm"
                 >
-                  <Check className="w-5 h-5" />
-                  Save Changes
+                  <Check className="w-4 h-4" /> Save Changes
                 </button>
                 <button
                   onClick={() => setEditingStudent(null)}
-                  className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 font-semibold"
+                  className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 font-semibold text-sm"
                 >
                   Cancel
                 </button>
@@ -3143,111 +2776,70 @@ export default function AdminDashboard() {
 
       {/* Edit Teacher Modal */}
       {editingTeacher && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold text-green-900">
+              <h3 className="text-xl font-bold text-green-900">
                 {editingTeacher.id ? "Edit Teacher" : "Add Teacher"}
               </h3>
               <button
                 onClick={() => setEditingTeacher(null)}
                 className="p-2 hover:bg-gray-100 rounded-lg"
               >
-                <XIcon className="w-6 h-6" />
+                <XIcon className="w-5 h-5" />
               </button>
             </div>
-
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Full Name *
-                </label>
-                <input
-                  type="text"
-                  value={editingTeacher.name}
-                  onChange={(e) =>
-                    setEditingTeacher({
-                      ...editingTeacher,
-                      name: e.target.value,
-                    })
-                  }
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
-                  placeholder="Enter teacher name"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Email *
-                </label>
-                <input
-                  type="email"
-                  value={editingTeacher.email}
-                  onChange={(e) =>
-                    setEditingTeacher({
-                      ...editingTeacher,
-                      email: e.target.value,
-                    })
-                  }
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
-                  placeholder="teacher@pnhs.edu.ph"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Username (for login)
-                </label>
-                <input
-                  type="text"
-                  value={(editingTeacher as any).username || ""}
-                  onChange={(e) =>
-                    setEditingTeacher({
-                      ...(editingTeacher as any),
-                      username: e.target.value,
-                    })
-                  }
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
-                  placeholder="Login username"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Password (for login)
-                </label>
-                <input
-                  type="password"
-                  value={(editingTeacher as any).password || ""}
-                  onChange={(e) =>
-                    setEditingTeacher({
-                      ...(editingTeacher as any),
-                      password: e.target.value,
-                    })
-                  }
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
-                  placeholder="Login password (leave blank to keep current)"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Department
-                </label>
-                <input
-                  type="text"
-                  value={editingTeacher.department}
-                  onChange={(e) =>
-                    setEditingTeacher({
-                      ...editingTeacher,
-                      department: e.target.value,
-                    })
-                  }
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
-                  placeholder="e.g., Mathematics"
-                />
-              </div>
-
+              {[
+                {
+                  label: "Full Name *",
+                  type: "text",
+                  field: "name",
+                  placeholder: "Enter teacher name",
+                },
+                {
+                  label: "Email *",
+                  type: "email",
+                  field: "email",
+                  placeholder: "teacher@pnhs.edu.ph",
+                },
+                {
+                  label: "Username",
+                  type: "text",
+                  field: "username",
+                  placeholder: "Login username",
+                },
+                {
+                  label: "Password",
+                  type: "password",
+                  field: "password",
+                  placeholder: "Login password",
+                },
+                {
+                  label: "Department",
+                  type: "text",
+                  field: "department",
+                  placeholder: "e.g., Mathematics",
+                },
+              ].map((item) => (
+                <div key={item.field}>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    {item.label}
+                  </label>
+                  <input
+                    type={item.type}
+                    value={(editingTeacher as any)[item.field] || ""}
+                    onChange={(e) =>
+                      setEditingTeacher({
+                        ...(editingTeacher as any),
+                        [item.field]: e.target.value,
+                      })
+                    }
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none text-sm"
+                    placeholder={item.placeholder}
+                  />
+                </div>
+              ))}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Subjects
@@ -3268,10 +2860,7 @@ export default function AdminDashboard() {
                         const val = (
                           (editingTeacher as any).__newSubject || ""
                         ).trim();
-                        if (!val) {
-                          showToast("Please enter a subject name", "warning");
-                          return;
-                        }
+                        if (!val) return;
                         const existing = (editingTeacher.subjects ||
                           []) as string[];
                         if (!existing.includes(val)) {
@@ -3280,12 +2869,7 @@ export default function AdminDashboard() {
                             subjects: [...existing, val],
                             __newSubject: "",
                           } as any);
-                          showToast(`Subject "${val}" added`, "success");
                         } else {
-                          showToast(
-                            `Subject "${val}" is already added`,
-                            "warning",
-                          );
                           setEditingTeacher({
                             ...(editingTeacher as any),
                             __newSubject: "",
@@ -3293,8 +2877,8 @@ export default function AdminDashboard() {
                         }
                       }
                     }}
-                    className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
-                    placeholder="Type subject and press Enter or click Add (e.g., Algebra)"
+                    className="flex-1 px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none text-sm"
+                    placeholder="Type subject & press Enter"
                   />
                   <button
                     type="button"
@@ -3302,77 +2886,57 @@ export default function AdminDashboard() {
                       const val = (
                         (editingTeacher as any).__newSubject || ""
                       ).trim();
-                      if (!val) {
-                        showToast("Please enter a subject name", "warning");
-                        return;
-                      }
+                      if (!val) return;
                       const existing = (editingTeacher.subjects ||
                         []) as string[];
-                      if (!existing.includes(val)) {
+                      if (!existing.includes(val))
                         setEditingTeacher({
                           ...(editingTeacher as any),
                           subjects: [...existing, val],
                           __newSubject: "",
                         } as any);
-                        showToast(`Subject "${val}" added`, "success");
-                      } else {
-                        showToast(
-                          `Subject "${val}" is already added`,
-                          "warning",
-                        );
-                        setEditingTeacher({
-                          ...(editingTeacher as any),
-                          __newSubject: "",
-                        } as any);
-                      }
                     }}
-                    className="px-4 py-2 bg-green-50 text-green-700 rounded-lg border border-green-100 hover:bg-green-100"
+                    className="px-3 py-2 bg-green-50 text-green-700 rounded-lg border border-green-100 hover:bg-green-100 text-sm"
                   >
                     Add
                   </button>
                 </div>
-
                 <div className="flex gap-2 flex-wrap mt-3">
                   {(editingTeacher.subjects || []).map((sub, idx) => (
                     <span
                       key={idx}
-                      className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium flex items-center gap-2"
+                      className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium flex items-center gap-1"
                     >
                       <span>{sub}</span>
                       <button
                         type="button"
-                        onClick={() => {
+                        onClick={() =>
                           setEditingTeacher({
                             ...(editingTeacher as any),
                             subjects: (editingTeacher.subjects || []).filter(
                               (s) => s !== sub,
                             ),
-                          } as any);
-                        }}
-                        className="p-1 rounded-full hover:bg-green-200"
+                          } as any)
+                        }
+                        className="hover:bg-green-200 rounded-full p-0.5"
                       >
-                        <X className="w-3 h-3 text-green-700" />
+                        <X className="w-3 h-3" />
                       </button>
                     </span>
                   ))}
                 </div>
-                <p className="text-xs text-gray-400 mt-1">
-                  Assign subjects this teacher will handle. These are used when
-                  creating classes and managing grades.
-                </p>
               </div>
-
-              <div className="flex gap-3 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <button
                   onClick={handleUpdateTeacher}
-                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 font-semibold"
+                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 font-semibold text-sm"
                 >
-                  <Check className="w-5 h-5" />
+                  <Check className="w-4 h-4" />{" "}
                   {editingTeacher.id ? "Save Changes" : "Add Teacher"}
                 </button>
                 <button
                   onClick={() => setEditingTeacher(null)}
-                  className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 font-semibold"
+                  className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 font-semibold text-sm"
                 >
                   Cancel
                 </button>
@@ -3384,20 +2948,19 @@ export default function AdminDashboard() {
 
       {/* Edit Class Modal */}
       {editingClass && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold text-green-900">
+              <h3 className="text-xl font-bold text-green-900">
                 {editingClass.id ? "Edit Class" : "Add Class"}
               </h3>
               <button
                 onClick={() => setEditingClass(null)}
                 className="p-2 hover:bg-gray-100 rounded-lg"
               >
-                <XIcon className="w-6 h-6" />
+                <XIcon className="w-5 h-5" />
               </button>
             </div>
-
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -3422,7 +2985,7 @@ export default function AdminDashboard() {
                         : editingClass.name,
                     });
                   }}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none text-sm"
                 >
                   <option value="">Select a teacher</option>
                   {teachers.map((t) => (
@@ -3431,15 +2994,7 @@ export default function AdminDashboard() {
                     </option>
                   ))}
                 </select>
-
-                {isNewClass && !editingClass.teacherId && (
-                  <div className="text-sm text-gray-500 mt-2">
-                    Select a teacher first to prefill subject & suggested
-                    students.
-                  </div>
-                )}
               </div>
-
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Class Name
@@ -3451,17 +3006,14 @@ export default function AdminDashboard() {
                     setEditingClass({ ...editingClass, name: e.target.value })
                   }
                   disabled={teacherMustBeSelectedFirst}
-                  className={`w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none ${
-                    teacherMustBeSelectedFirst ? "opacity-60" : ""
-                  }`}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none text-sm disabled:opacity-60"
                   placeholder="e.g., Grade 10 - Mathematics"
                 />
               </div>
-
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Grade Level
+                  <label className="block text-xs font-semibold text-gray-700 mb-2">
+                    Grade
                   </label>
                   <select
                     value={editingClass.gradeLevel}
@@ -3470,11 +3022,7 @@ export default function AdminDashboard() {
                       setEditingClass({
                         ...editingClass,
                         gradeLevel: grade,
-                        // set sensible defaults when grade changes
-                        section:
-                          grade === "Grade 11" || grade === "Grade 12"
-                            ? "A"
-                            : "A",
+                        section: "A",
                         strand:
                           grade === "Grade 11" || grade === "Grade 12"
                             ? STRANDS[0]
@@ -3482,21 +3030,24 @@ export default function AdminDashboard() {
                       });
                     }}
                     disabled={teacherMustBeSelectedFirst}
-                    className={`w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none ${
-                      teacherMustBeSelectedFirst ? "opacity-60" : ""
-                    }`}
+                    className="w-full px-2 py-2.5 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none text-sm disabled:opacity-60"
                   >
-                    <option value="Grade 7">Grade 7</option>
-                    <option value="Grade 8">Grade 8</option>
-                    <option value="Grade 9">Grade 9</option>
-                    <option value="Grade 10">Grade 10</option>
-                    <option value="Grade 11">Grade 11</option>
-                    <option value="Grade 12">Grade 12</option>
+                    {[
+                      "Grade 7",
+                      "Grade 8",
+                      "Grade 9",
+                      "Grade 10",
+                      "Grade 11",
+                      "Grade 12",
+                    ].map((g) => (
+                      <option key={g} value={g}>
+                        {g}
+                      </option>
+                    ))}
                   </select>
                 </div>
-
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-xs font-semibold text-gray-700 mb-2">
                     Section
                   </label>
                   <select
@@ -3508,20 +3059,17 @@ export default function AdminDashboard() {
                       })
                     }
                     disabled={teacherMustBeSelectedFirst}
-                    className={`w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none ${
-                      teacherMustBeSelectedFirst ? "opacity-60" : ""
-                    }`}
+                    className="w-full px-2 py-2.5 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none text-sm disabled:opacity-60"
                   >
-                    {["A", "B", "C", "D", "E"].map((section) => (
-                      <option key={section} value={section}>
-                        Section {section}
+                    {["A", "B", "C", "D", "E"].map((s) => (
+                      <option key={s} value={s}>
+                        {s}
                       </option>
                     ))}
                   </select>
                 </div>
-
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-xs font-semibold text-gray-700 mb-2">
                     Strand
                   </label>
                   {editingClass.gradeLevel === "Grade 11" ||
@@ -3535,9 +3083,7 @@ export default function AdminDashboard() {
                         })
                       }
                       disabled={teacherMustBeSelectedFirst}
-                      className={`w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none ${
-                        teacherMustBeSelectedFirst ? "opacity-60" : ""
-                      }`}
+                      className="w-full px-2 py-2.5 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none text-sm disabled:opacity-60"
                     >
                       {STRANDS.map((s) => (
                         <option key={s} value={s}>
@@ -3546,19 +3092,17 @@ export default function AdminDashboard() {
                       ))}
                     </select>
                   ) : (
-                    <div className="opacity-60 text-sm text-gray-500">
-                      Strand (senior only)
+                    <div className="text-xs text-gray-400 py-3">
+                      Senior only
                     </div>
                   )}
                 </div>
               </div>
-
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Schedule
                 </label>
                 <div className="grid grid-cols-3 gap-2">
-                  {/* Day combobox */}
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Day(s)</p>
                     <input
@@ -3573,9 +3117,7 @@ export default function AdminDashboard() {
                       }
                       disabled={teacherMustBeSelectedFirst}
                       placeholder="Mon/Wed/Fri"
-                      className={`w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none text-sm ${
-                        teacherMustBeSelectedFirst ? "opacity-60" : ""
-                      }`}
+                      className="w-full px-2 py-2.5 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none text-xs disabled:opacity-60"
                     />
                     <datalist id="admin-day-opts">
                       {DAY_OPTIONS.map((d) => (
@@ -3583,10 +3125,8 @@ export default function AdminDashboard() {
                       ))}
                     </datalist>
                   </div>
-
-                  {/* Start time combobox */}
                   <div>
-                    <p className="text-xs text-gray-500 mb-1">Start Time</p>
+                    <p className="text-xs text-gray-500 mb-1">Start</p>
                     <input
                       list="admin-start-opts"
                       value={scheduleStart}
@@ -3599,20 +3139,16 @@ export default function AdminDashboard() {
                       }
                       disabled={teacherMustBeSelectedFirst}
                       placeholder="7:30 AM"
-                      className={`w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none text-sm ${
-                        teacherMustBeSelectedFirst ? "opacity-60" : ""
-                      }`}
+                      className="w-full px-2 py-2.5 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none text-xs disabled:opacity-60"
                     />
                     <datalist id="admin-start-opts">
-                      {TIME_SLOTS.slice(0, TIME_SLOTS.length - 1).map((t) => (
+                      {TIME_SLOTS.slice(0, -1).map((t) => (
                         <option key={t} value={t} />
                       ))}
                     </datalist>
                   </div>
-
-                  {/* End time combobox */}
                   <div>
-                    <p className="text-xs text-gray-500 mb-1">End Time</p>
+                    <p className="text-xs text-gray-500 mb-1">End</p>
                     <input
                       list="admin-end-opts"
                       value={scheduleEnd}
@@ -3625,9 +3161,7 @@ export default function AdminDashboard() {
                       }
                       disabled={teacherMustBeSelectedFirst}
                       placeholder="8:30 AM"
-                      className={`w-full px-3 py-2.5 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none text-sm ${
-                        teacherMustBeSelectedFirst ? "opacity-60" : ""
-                      }`}
+                      className="w-full px-2 py-2.5 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none text-xs disabled:opacity-60"
                     />
                     <datalist id="admin-end-opts">
                       {TIME_SLOTS.filter(
@@ -3640,16 +3174,12 @@ export default function AdminDashboard() {
                     </datalist>
                   </div>
                 </div>
-
-                {/* Conflict warning */}
                 {scheduleConflict && (
                   <div className="mt-2 flex items-start gap-2 p-2.5 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700">
                     <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
                     <span>{scheduleConflict}</span>
                   </div>
                 )}
-
-                {/* Preview */}
                 {!scheduleConflict &&
                   scheduleDays &&
                   scheduleStart &&
@@ -3662,17 +3192,15 @@ export default function AdminDashboard() {
                     </p>
                   )}
               </div>
-
-              <div className="text-sm text-gray-600 mt-2">
-                Matches: <strong>{matchedStudentCount}</strong> active student
-                {matchedStudentCount !== 1 ? "s" : ""} for selected{" "}
-                {editingClass.gradeLevel}{" "}
+              <div className="text-sm text-gray-600">
+                Matches: <strong>{matchedStudentCount}</strong> student
+                {matchedStudentCount !== 1 ? "s" : ""} for{" "}
+                {editingClass.gradeLevel} • Sec {editingClass.section || "-"}
                 {editingClass.gradeLevel === "Grade 11" ||
                 editingClass.gradeLevel === "Grade 12"
-                  ? `• Section ${editingClass.section || "-"} • ${editingClass.strand || "-"}`
-                  : `• Section ${editingClass.section || "-"}`}
+                  ? ` • ${editingClass.strand || "-"}`
+                  : ""}
               </div>
-
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Students
@@ -3688,29 +3216,21 @@ export default function AdminDashboard() {
                     });
                   }}
                   disabled={teacherMustBeSelectedFirst}
-                  className={`w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none ${
-                    teacherMustBeSelectedFirst ? "opacity-60" : ""
-                  }`}
-                  placeholder="0"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 outline-none text-sm disabled:opacity-60"
                 />
               </div>
-
-              <div className="flex gap-3 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <button
                   onClick={handleUpdateClass}
                   disabled={teacherMustBeSelectedFirst && !editingClass?.id}
-                  className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold ${
-                    teacherMustBeSelectedFirst && !editingClass?.id
-                      ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                      : "bg-green-600 text-white hover:bg-green-700"
-                  }`}
+                  className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm ${teacherMustBeSelectedFirst && !editingClass?.id ? "bg-gray-300 text-gray-600 cursor-not-allowed" : "bg-green-600 text-white hover:bg-green-700"}`}
                 >
-                  <Check className="w-5 h-5" />
+                  <Check className="w-4 h-4" />{" "}
                   {editingClass.id ? "Save Changes" : "Add Class"}
                 </button>
                 <button
                   onClick={() => setEditingClass(null)}
-                  className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 font-semibold"
+                  className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 font-semibold text-sm"
                 >
                   Cancel
                 </button>

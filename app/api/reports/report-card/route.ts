@@ -39,8 +39,12 @@ function avgSafe(values: number[]): number | null {
   return values.reduce((s, n) => s + n, 0) / values.length;
 }
 
-function computeGeneralAverage(rows: Array<{ final: number | null }>): number | null {
-  const vals = rows.map((r) => r.final).filter((n): n is number => Number.isFinite(n as number));
+function computeGeneralAverage(
+  rows: Array<{ final: number | null }>,
+): number | null {
+  const vals = rows
+    .map((r) => r.final)
+    .filter((n): n is number => Number.isFinite(n as number));
   return avgSafe(vals);
 }
 
@@ -66,7 +70,10 @@ export async function GET(req: NextRequest) {
   const url = new URL(req.url);
   const period = normalizePeriod(url.searchParams.get("period"));
   if (!period) {
-    return NextResponse.json({ message: "period is required" }, { status: 400 });
+    return NextResponse.json(
+      { message: "period is required" },
+      { status: 400 },
+    );
   }
 
   const settings = await prisma.settings.findFirst().catch(() => null);
@@ -154,7 +161,7 @@ export async function GET(req: NextRequest) {
       studentId: student.id,
       classId: { in: classIds },
       ...(isSeniorHigh
-        ? { quarter: { in: [`${period}-P1`, `${period}-P2`, `${period}-P3`] } }
+        ? { quarter: { in: period === "S1" ? ["Q1", "Q2"] : ["Q3", "Q4"] } }
         : { quarter: period }),
     } as any,
     orderBy: { createdAt: "desc" },
@@ -174,12 +181,15 @@ export async function GET(req: NextRequest) {
     return n === null ? null : Math.round(n);
   };
 
-  type RowJunior = { subject: string; grade: number | null; final: number | null };
+  type RowJunior = {
+    subject: string;
+    grade: number | null;
+    final: number | null;
+  };
   type RowSenior = {
     subject: string;
     p1: number | null;
     p2: number | null;
-    p3: number | null;
     final: number | null;
   };
 
@@ -190,22 +200,24 @@ export async function GET(req: NextRequest) {
 
   const rows: Array<RowJunior | RowSenior> = isSeniorHigh
     ? classes.map((c) => {
-        const p1 = pickGrade(c.id, `${period}-P1`);
-        const p2 = pickGrade(c.id, `${period}-P2`);
-        const p3 = pickGrade(c.id, `${period}-P3`);
-        const values = [p1, p2, p3].filter((n): n is number => n !== null);
+        const p1 = pickGrade(c.id, period === "S1" ? "Q1" : "Q3");
+        const p2 = pickGrade(c.id, period === "S1" ? "Q2" : "Q4");
+        const values = [p1, p2].filter((n): n is number => n !== null);
         const semAvg = avgSafe(values);
         return {
           subject: subjectLabel(c),
           p1,
           p2,
-          p3,
           final: semAvg === null ? null : Math.round(semAvg),
         } satisfies RowSenior;
       })
     : classes.map((c) => {
         const q = pickGrade(c.id, period);
-        return { subject: subjectLabel(c), grade: q, final: q } satisfies RowJunior;
+        return {
+          subject: subjectLabel(c),
+          grade: q,
+          final: q,
+        } satisfies RowJunior;
       });
 
   const generalAverage = computeGeneralAverage(
@@ -247,13 +259,18 @@ export async function GET(req: NextRequest) {
 
   label("Student Name:", student.name);
   label("Student ID:", student.studentId || student.id);
-  label("Grade / Section:", `${student.gradeLevel} • ${student.section || "-"}`);
+  label(
+    "Grade / Section:",
+    `${student.gradeLevel} • ${student.section || "-"}`,
+  );
   if (isSeniorHigh) {
     label("Strand:", student.strand || "-");
   }
   label(
     "Period:",
-    isSeniorHigh ? `Semester ${period === "S1" ? "1" : "2"}` : `Quarter ${period.replace("Q", "")}`,
+    isSeniorHigh
+      ? `Semester ${period === "S1" ? "1" : "2"}`
+      : `Quarter ${period.replace("Q", "")}`,
   );
   y -= 8;
 
@@ -265,9 +282,8 @@ export async function GET(req: NextRequest) {
   const columns = isSeniorHigh
     ? [
         { key: "subject", label: "Subject", w: 250 },
-        { key: "p1", label: "P1", w: 60 },
-        { key: "p2", label: "P2", w: 60 },
-        { key: "p3", label: "P3", w: 60 },
+        { key: "p1", label: "1st Qtr", w: 70 },
+        { key: "p2", label: "2nd Qtr", w: 70 },
         { key: "final", label: "Sem Avg", w: 80 },
       ]
     : [

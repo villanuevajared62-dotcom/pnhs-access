@@ -1558,13 +1558,10 @@ export default function StudentDashboard() {
                           {isSeniorHigh ? (
                             <>
                               <th className="px-4 py-3 text-left text-xs font-semibold text-green-900">
-                                P1
+                                1st Qtr
                               </th>
                               <th className="px-4 py-3 text-left text-xs font-semibold text-green-900">
-                                P2
-                              </th>
-                              <th className="px-4 py-3 text-left text-xs font-semibold text-green-900">
-                                P3
+                                2nd Qtr
                               </th>
                             </>
                           ) : (
@@ -1607,19 +1604,13 @@ export default function StudentDashboard() {
                                 <td className="px-4 py-3 text-xs font-bold text-green-700">
                                   {getGradeForPeriod(
                                     subject.id,
-                                    `${selectedSemester}-P1`,
+                                    selectedSemester === "S1" ? "Q1" : "Q3",
                                   )}
                                 </td>
                                 <td className="px-4 py-3 text-xs font-bold text-green-700">
                                   {getGradeForPeriod(
                                     subject.id,
-                                    `${selectedSemester}-P2`,
-                                  )}
-                                </td>
-                                <td className="px-4 py-3 text-xs font-bold text-green-700">
-                                  {getGradeForPeriod(
-                                    subject.id,
-                                    `${selectedSemester}-P3`,
+                                    selectedSemester === "S1" ? "Q2" : "Q4",
                                   )}
                                 </td>
                               </>

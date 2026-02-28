@@ -2925,25 +2925,25 @@ export default function TeacherDashboard() {
               <div className="bg-white rounded-2xl p-4 border border-green-100">
                 <p className="text-xs text-gray-500">Students</p>
                 <p className="text-2xl font-bold text-green-700">
-                  {gradeSummary.total}
+                  {filterClass === "all" ? "—" : gradeSummary.total}
                 </p>
               </div>
               <div className="bg-white rounded-2xl p-4 border border-blue-100">
                 <p className="text-xs text-gray-500">Average Grade</p>
                 <p className="text-2xl font-bold text-blue-700">
-                  {gradeSummary.average}
+                  {filterClass === "all" ? "—" : gradeSummary.average}
                 </p>
               </div>
               <div className="bg-white rounded-2xl p-4 border border-emerald-100">
                 <p className="text-xs text-gray-500">Passing (&gt;=75)</p>
                 <p className="text-2xl font-bold text-emerald-700">
-                  {gradeSummary.passing}
+                  {filterClass === "all" ? "—" : gradeSummary.passing}
                 </p>
               </div>
               <div className="bg-white rounded-2xl p-4 border border-red-100">
                 <p className="text-xs text-gray-500">Needs Support (&lt;75)</p>
                 <p className="text-2xl font-bold text-red-700">
-                  {gradeSummary.atRisk}
+                  {filterClass === "all" ? "—" : gradeSummary.atRisk}
                 </p>
               </div>
             </div>
@@ -3034,67 +3034,74 @@ export default function TeacherDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredGradeStudents.map((student) => {
-                      const displayed = getDisplayedGradeValue(student);
-                      const displayedNum = Number(displayed);
-                      return (
-                      <tr
-                        key={student.id}
-                        className="border-t border-green-100 hover:bg-green-50"
-                      >
-                        <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900">
-                          {student.name}
-                        </td>
-                        <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-600 hidden sm:table-cell">
-                          {student.class}
-                        </td>
-                        <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-bold text-green-600">
-                          {filterClass === "all" ? student.grade : displayed}
-                        </td>
-                        <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm hidden md:table-cell">
-                          <span
-                            className={`px-2 md:px-3 py-1 rounded-full text-xs font-semibold ${
-                              displayedNum >= 90
-                                ? "bg-green-100 text-green-700"
-                                : displayedNum >= 80
-                                  ? "bg-blue-100 text-blue-700"
-                                  : "bg-yellow-100 text-yellow-700"
-                            }`}
-                          >
-                            {displayedNum >= 90
-                              ? "Excellent"
-                              : displayedNum >= 80
-                                ? "Good"
-                                : "Average"}
-                          </span>
-                        </td>
-                        <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm">
-                          <button
-                            onClick={() => {
-                              if (filterClass === "all") {
-                                showToast("Select a class first.", "warning");
-                                return;
-                              }
-                              const rec = getGradeRecordForStudent(
-                                String(student.id),
-                                String(filterClass),
-                                String(selectedGradePeriod),
-                              );
-                              setEditingStudent({
-                                ...student,
-                                grade: String(rec?.grade ?? displayed ?? ""),
-                              });
-                            }}
-                            className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-lg hover:bg-green-100"
-                          >
-                            <Edit className="w-4 h-4" />
-                            Edit Grade
-                          </button>
+                    {filterClass === "all" ? (
+                      <tr>
+                        <td
+                          colSpan={5}
+                          className="px-3 md:px-6 py-10 text-center text-gray-600 text-sm"
+                        >
+                          Select a class to view and manage grades by quarter/semester.
                         </td>
                       </tr>
-                      );
-                    })}
-                    {filteredGradeStudents.length === 0 && (
+                    ) : (
+                      filteredGradeStudents.map((student) => {
+                        const displayed = getDisplayedGradeValue(student);
+                        const displayedNum = Number(displayed);
+                        return (
+                          <tr
+                            key={student.id}
+                            className="border-t border-green-100 hover:bg-green-50"
+                          >
+                            <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900">
+                              {student.name}
+                            </td>
+                            <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-600 hidden sm:table-cell">
+                              {student.class}
+                            </td>
+                            <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-bold text-green-600">
+                              {displayed}
+                            </td>
+                            <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm hidden md:table-cell">
+                              <span
+                                className={`px-2 md:px-3 py-1 rounded-full text-xs font-semibold ${
+                                  displayedNum >= 90
+                                    ? "bg-green-100 text-green-700"
+                                    : displayedNum >= 80
+                                      ? "bg-blue-100 text-blue-700"
+                                      : "bg-yellow-100 text-yellow-700"
+                                }`}
+                              >
+                                {displayedNum >= 90
+                                  ? "Excellent"
+                                  : displayedNum >= 80
+                                    ? "Good"
+                                    : "Average"}
+                              </span>
+                            </td>
+                            <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm">
+                              <button
+                                onClick={() => {
+                                  const rec = getGradeRecordForStudent(
+                                    String(student.id),
+                                    String(filterClass),
+                                    String(selectedGradePeriod),
+                                  );
+                                  setEditingStudent({
+                                    ...student,
+                                    grade: String(rec?.grade ?? displayed ?? ""),
+                                  });
+                                }}
+                                className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-lg hover:bg-green-100"
+                              >
+                                <Edit className="w-4 h-4" />
+                                Edit Grade
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                    {filterClass !== "all" && filteredGradeStudents.length === 0 && (
                       <tr>
                         <td
                           colSpan={5}

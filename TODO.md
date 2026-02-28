@@ -1,35 +1,26 @@
-# TODO: Show Grade Level, Section, and Strand in Class Display
+# Responsive Dashboard Improvements
 
-## Problem
+## Task: Make Admin, Student, and Teacher Dashboards Responsive on Any Screen Layout
 
-When admin adds a class, the grade level, section, and strand are saved but not displayed in the class cards. Users can only see the class name.
+### Improvements to implement:
 
-## Plan
+1. **Tables** - Add `overflow-x-auto` wrapper for horizontal scrolling on mobile
+2. **Grid layouts** - Improve responsive breakpoints (sm, md, lg, xl)
+3. **Text overflow** - Add `truncate` class to long text elements
+4. **Modal widths** - Better max-width handling for mobile devices
+5. **Spacing** - Adjust padding/margins for mobile screens
+6. **Sidebar** - Ensure proper collapse/expand behavior
+7. **Cards** - Make card layouts responsive
+8. **Buttons** - Ensure proper sizing on mobile
 
-### Information Gathered:
+### Files to edit:
 
-- `Class` interface in `lib/shared-data.ts` already has `gradeLevel`, `section`, and `strand` properties
-- Admin dashboard's "Add/Edit Class" modal already has fields for these values
-- The classes ARE being saved with these values
-- The issue is only in the DISPLAY of class cards in the "Classes" tab
+- app/admin/dashboard/page.tsx
+- app/student/dashboard/page.tsx
+- app/teacher/dashboard/page.tsx
 
-### Files to Edit:
+### Status:
 
-1. `app/admin/dashboard/page.tsx`
-   - Update the class card display in the "classes" case to show:
-     - `cls.gradeLevel`
-     - `cls.section`
-     - `cls.strand` (for Grade 11-12)
-
-### Implementation:
-
-Add display items in the class card showing:
-
-- Grade Level with BookOpen icon
-- Section with Users icon
-- Strand (conditionally, only for Grade 11-12) with GraduationCap icon
-
-### Changes:
-
-- Find the classes display section (around line 1080-1117)
-- Add gradeLevel, section, and strand display items to the card
+- [ ] Admin Dashboard - Responsive improvements
+- [ ] Student Dashboard - Responsive improvements
+- [ ] Teacher Dashboard - Responsive improvements

@@ -1375,7 +1375,7 @@ export default function AdminDashboard() {
 
             <div className="bg-white rounded-2xl shadow-md border border-green-100 overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[768px]">
+                <table className="w-full min-w-[600px] sm:min-w-[768px]">
                   <thead className="bg-green-50">
                     <tr>
                       <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900">
@@ -1758,7 +1758,8 @@ export default function AdminDashboard() {
                         </div>
                         {(() => {
                           const period = getSelectedFinalizePeriod(cls);
-                          const status = finalizeStatusByKey[`${cls.id}:${period}`];
+                          const status =
+                            finalizeStatusByKey[`${cls.id}:${period}`];
                           const approved = status?.approved;
                           return (
                             <span
@@ -1832,7 +1833,8 @@ export default function AdminDashboard() {
                           className="px-3 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 text-sm inline-flex items-center justify-center gap-2 disabled:bg-green-400 disabled:cursor-not-allowed"
                           title="Finalize grades for this period"
                         >
-                          {finalizingKey === `${cls.id}:${getSelectedFinalizePeriod(cls)}` ? (
+                          {finalizingKey ===
+                          `${cls.id}:${getSelectedFinalizePeriod(cls)}` ? (
                             <RefreshCw className="w-4 h-4 animate-spin" />
                           ) : (
                             <Check className="w-4 h-4" />
@@ -2283,7 +2285,7 @@ export default function AdminDashboard() {
         className={`transition-all duration-300 ${sidebarOpen ? "lg:ml-72" : "lg:ml-20"} ml-0`}
       >
         <header className="bg-white/90 backdrop-blur-sm shadow-sm sticky top-0 z-40 border-b border-green-100">
-          <div className="px-4 md:px-6 lg:px-8 py-3 md:py-4">
+          <div className="px-3 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-3 md:py-4">
             <div className="flex items-center justify-between gap-3">
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}

@@ -800,10 +800,15 @@ export default function StudentDashboard() {
         // Update enrolled subjects (preferred: match by classId === subject.id)
         for (let i = 0; i < copy.length; i++) {
           const subj = copy[i];
-          const items = byKey.get(String(subj.id)) || byKey.get(String(subj.name));
+          const items =
+            byKey.get(String(subj.id)) || byKey.get(String(subj.name));
           if (!items) continue;
           const gradeStr = computeAverage(items);
-          copy[i] = { ...subj, grade: gradeStr, status: statusFromGrade(gradeStr) };
+          copy[i] = {
+            ...subj,
+            grade: gradeStr,
+            status: statusFromGrade(gradeStr),
+          };
         }
 
         // Add any grade entries that don't map to known enrolled subjects (rare)
@@ -1086,9 +1091,15 @@ export default function StudentDashboard() {
   const handleSubmitAssignment = async (assignmentId: string) => {
     try {
       if (!user || user.role !== "student") {
-        showToast("Session is not a student account. Please log in again.", "error");
+        showToast(
+          "Session is not a student account. Please log in again.",
+          "error",
+        );
         try {
-          await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+          await fetch("/api/auth/logout", {
+            method: "POST",
+            credentials: "include",
+          });
         } catch {
           // ignore
         }
@@ -1170,7 +1181,10 @@ export default function StudentDashboard() {
       setShowAssignmentModal(null);
       showToast("Assignment submitted successfully!", "success");
     } catch (error) {
-      showToast(`Error submitting assignment: ${getErrorMessage(error)}`, "error");
+      showToast(
+        `Error submitting assignment: ${getErrorMessage(error)}`,
+        "error",
+      );
       console.error(error);
     } finally {
       setSubmittingAssignment(false);
@@ -1213,7 +1227,9 @@ export default function StudentDashboard() {
     return (total / subjects.length).toFixed(1);
   };
 
-  const studentGradeLevelNum = parseGradeLevelNumber(String(user?.gradeLevel || ""));
+  const studentGradeLevelNum = parseGradeLevelNumber(
+    String(user?.gradeLevel || ""),
+  );
   const isSeniorHigh = (studentGradeLevelNum ?? 0) >= 11;
 
   const getGradeForPeriod = (classId: string, period: string): string => {
@@ -1224,7 +1240,8 @@ export default function StudentDashboard() {
     );
     if (items.length === 0) return "—";
     const rec =
-      items.find((g: any) => String(g?.subjectId || "") === "general") || items[0];
+      items.find((g: any) => String(g?.subjectId || "") === "general") ||
+      items[0];
     const n = Number(rec?.grade);
     return Number.isFinite(n) ? String(Math.round(n)) : "—";
   };
@@ -1605,7 +1622,9 @@ export default function StudentDashboard() {
                   onClick={async () => {
                     if (downloadingReport) return;
                     if (!user?.id) return;
-                    const period = isSeniorHigh ? selectedSemester : selectedQuarter;
+                    const period = isSeniorHigh
+                      ? selectedSemester
+                      : selectedQuarter;
                     try {
                       setDownloadingReport(true);
                       const res = await fetch(
@@ -1614,14 +1633,19 @@ export default function StudentDashboard() {
                       );
 
                       if (res.status === 401 || res.status === 403) {
-                        showToast("Session expired. Please log in again.", "warning");
+                        showToast(
+                          "Session expired. Please log in again.",
+                          "warning",
+                        );
                         router.push("/login");
                         return;
                       }
 
-                       if (res.status === 409) {
-                        const body = await res.json().catch(() => ({} as any));
-                        const unapproved = Array.isArray(body?.unapprovedClasses)
+                      if (res.status === 409) {
+                        const body = await res.json().catch(() => ({}) as any);
+                        const unapproved = Array.isArray(
+                          body?.unapprovedClasses,
+                        )
                           ? (body.unapprovedClasses as any[])
                           : [];
 
@@ -1632,11 +1656,17 @@ export default function StudentDashboard() {
                         if (unapproved.length > 0) {
                           const lines = unapproved.slice(0, 5).map((u) => {
                             const name = String(u?.name || "").trim();
-                            const gradeLevel = String(u?.gradeLevel || "").trim();
+                            const gradeLevel = String(
+                              u?.gradeLevel || "",
+                            ).trim();
                             const section = String(u?.section || "").trim();
                             const strand = String(u?.strand || "").trim();
-                            const main = [gradeLevel, name].filter(Boolean).join(" - ");
-                            const extra = [section, strand].filter(Boolean).join(" • ");
+                            const main = [gradeLevel, name]
+                              .filter(Boolean)
+                              .join(" - ");
+                            const extra = [section, strand]
+                              .filter(Boolean)
+                              .join(" • ");
                             return `- ${main || "Class"}${extra ? ` (${extra})` : ""}`;
                           });
                           const more =
@@ -1659,7 +1689,8 @@ export default function StudentDashboard() {
                       if (!res.ok) {
                         const body = await res.json().catch(() => ({}));
                         showToast(
-                          body.message || `Failed to generate report (HTTP ${res.status})`,
+                          body.message ||
+                            `Failed to generate report (HTTP ${res.status})`,
                           "error",
                         );
                         return;
@@ -1691,7 +1722,9 @@ export default function StudentDashboard() {
                   <Download
                     className={`w-4 h-4 md:w-5 md:h-5 ${downloadingReport ? "animate-pulse" : ""}`}
                   />
-                  {downloadingReport ? "Preparing PDF..." : "Download Report (PDF)"}
+                  {downloadingReport
+                    ? "Preparing PDF..."
+                    : "Download Report (PDF)"}
                 </button>
               </div>
             </div>
@@ -1825,7 +1858,9 @@ export default function StudentDashboard() {
                             className="border-t border-green-100 hover:bg-green-50"
                           >
                             <td className="px-4 md:px-6 py-3 md:py-4 text-sm text-gray-900">
-                              <div className="font-semibold">{subject.name}</div>
+                              <div className="font-semibold">
+                                {subject.name}
+                              </div>
                               <div className="text-xs text-gray-500">
                                 {subject.teacher || "Teacher not set"}
                               </div>
@@ -1836,13 +1871,22 @@ export default function StudentDashboard() {
                             {isSeniorHigh ? (
                               <>
                                 <td className="px-4 md:px-6 py-3 md:py-4 text-sm font-bold text-green-700">
-                                  {getGradeForPeriod(subject.id, `${selectedSemester}-P1`)}
+                                  {getGradeForPeriod(
+                                    subject.id,
+                                    `${selectedSemester}-P1`,
+                                  )}
                                 </td>
                                 <td className="px-4 md:px-6 py-3 md:py-4 text-sm font-bold text-green-700">
-                                  {getGradeForPeriod(subject.id, `${selectedSemester}-P2`)}
+                                  {getGradeForPeriod(
+                                    subject.id,
+                                    `${selectedSemester}-P2`,
+                                  )}
                                 </td>
                                 <td className="px-4 md:px-6 py-3 md:py-4 text-sm font-bold text-green-700">
-                                  {getGradeForPeriod(subject.id, `${selectedSemester}-P3`)}
+                                  {getGradeForPeriod(
+                                    subject.id,
+                                    `${selectedSemester}-P3`,
+                                  )}
                                 </td>
                               </>
                             ) : (
@@ -2073,15 +2117,16 @@ export default function StudentDashboard() {
                                 <Clock className="w-4 h-4" />
                                 <span>
                                   Due:{" "}
-                                  {new Date(
-                                    assignment.dueDate,
-                                  ).toLocaleString("en-US", {
-                                    month: "short",
-                                    day: "numeric",
-                                    year: "numeric",
-                                    hour: "numeric",
-                                    minute: "2-digit",
-                                  })}
+                                  {new Date(assignment.dueDate).toLocaleString(
+                                    "en-US",
+                                    {
+                                      month: "short",
+                                      day: "numeric",
+                                      year: "numeric",
+                                      hour: "numeric",
+                                      minute: "2-digit",
+                                    },
+                                  )}
                                 </span>
                               </div>
                               {assignment.attachmentPath && (
@@ -3123,7 +3168,7 @@ export default function StudentDashboard() {
           </div>
         </header>
 
-        <main className="p-4 md:p-6 lg:p-8">
+        <main className="p-3 sm:p-4 md:p-6 lg:p-8">
           <div className="mb-4 md:mb-6">
             <nav className="flex items-center gap-2 text-xs md:text-sm text-gray-600">
               <button className="hover:text-green-700">Dashboard</button>

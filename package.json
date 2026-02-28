@@ -19,6 +19,7 @@
     "jose": "^5.2.3",
     "lucide-react": "^0.263.1",
     "next": "15.4.8",
+    "pdf-lib": "^1.17.1",
     "react": "^18",
     "react-dom": "^18",
     "recharts": "^2.12.0"

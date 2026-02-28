@@ -167,6 +167,10 @@ export default function StudentDashboard() {
     useState<Subject | null>(null);
   const [gradeRecords, setGradeRecords] = useState<any[]>([]);
   const [selectedSemester, setSelectedSemester] = useState<"S1" | "S2">("S1");
+  const [selectedQuarter, setSelectedQuarter] = useState<
+    "Q1" | "Q2" | "Q3" | "Q4"
+  >("Q1");
+  const [downloadingReport, setDownloadingReport] = useState(false);
   const [teachers, setTeachers] = useState<TeacherContact[]>([]);
   const [teacherSearchTerm, setTeacherSearchTerm] = useState("");
   const [messageTeacher, setMessageTeacher] = useState<TeacherContact | null>(
@@ -1564,28 +1568,100 @@ export default function StudentDashboard() {
                   View your academic performance
                 </p>
               </div>
-              <button
-                onClick={() => {
-                  const data = {
-                    student: user?.fullName || "Student",
-                    gpa: calculateGPA(),
-                    attendance: calculateAttendance(),
-                    subjects: subjects,
-                    date: new Date().toISOString(),
-                  };
-                  const json = JSON.stringify(data, null, 2);
-                  const blob = new Blob([json], { type: "application/json" });
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement("a");
-                  a.href = url;
-                  a.download = `grades-report-${(user?.fullName || "Student").replace(/\s+/g, "-")}-${new Date().toISOString().split("T")[0]}.json`;
-                  a.click();
-                }}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl hover:from-green-700 hover:to-green-800 text-sm md:text-base"
-              >
-                <Download className="w-4 h-4 md:w-5 md:h-5" />
-                Download Report
-              </button>
+              <div className="w-full sm:w-auto flex flex-col sm:flex-row gap-2">
+                {isSeniorHigh ? (
+                  <select
+                    value={selectedSemester}
+                    onChange={(e) =>
+                      setSelectedSemester(e.target.value as "S1" | "S2")
+                    }
+                    disabled={downloadingReport}
+                    className="w-full sm:w-auto px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm md:text-base disabled:bg-gray-50 disabled:text-gray-500"
+                    title="Select semester for report card"
+                  >
+                    <option value="S1">Semester 1</option>
+                    <option value="S2">Semester 2</option>
+                  </select>
+                ) : (
+                  <select
+                    value={selectedQuarter}
+                    onChange={(e) =>
+                      setSelectedQuarter(
+                        e.target.value as "Q1" | "Q2" | "Q3" | "Q4",
+                      )
+                    }
+                    disabled={downloadingReport}
+                    className="w-full sm:w-auto px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm md:text-base disabled:bg-gray-50 disabled:text-gray-500"
+                    title="Select quarter for report card"
+                  >
+                    <option value="Q1">Quarter 1</option>
+                    <option value="Q2">Quarter 2</option>
+                    <option value="Q3">Quarter 3</option>
+                    <option value="Q4">Quarter 4</option>
+                  </select>
+                )}
+
+                <button
+                  onClick={async () => {
+                    if (downloadingReport) return;
+                    if (!user?.id) return;
+                    const period = isSeniorHigh ? selectedSemester : selectedQuarter;
+                    try {
+                      setDownloadingReport(true);
+                      const res = await fetch(
+                        `/api/reports/report-card?period=${encodeURIComponent(period)}`,
+                        { credentials: "include" },
+                      );
+
+                      if (res.status === 401 || res.status === 403) {
+                        showToast("Session expired. Please log in again.", "warning");
+                        router.push("/login");
+                        return;
+                      }
+
+                      if (res.status === 409) {
+                        showToast("Grades not yet finalized", "warning");
+                        return;
+                      }
+
+                      if (!res.ok) {
+                        const body = await res.json().catch(() => ({}));
+                        showToast(
+                          body.message || `Failed to generate report (HTTP ${res.status})`,
+                          "error",
+                        );
+                        return;
+                      }
+
+                      const blob = await res.blob();
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      a.href = url;
+                      a.download = `report-card-${(user?.fullName || "Student").replace(/\s+/g, "-")}-${period}.pdf`;
+                      document.body.appendChild(a);
+                      a.click();
+                      a.remove();
+                      URL.revokeObjectURL(url);
+                    } catch (error) {
+                      console.error(error);
+                      showToast(
+                        `Failed to download report: ${getErrorMessage(error)}`,
+                        "error",
+                      );
+                    } finally {
+                      setDownloadingReport(false);
+                    }
+                  }}
+                  disabled={downloadingReport}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl hover:from-green-700 hover:to-green-800 disabled:from-green-400 disabled:to-green-400 disabled:cursor-not-allowed text-sm md:text-base"
+                  title="Download Report Card PDF"
+                >
+                  <Download
+                    className={`w-4 h-4 md:w-5 md:h-5 ${downloadingReport ? "animate-pulse" : ""}`}
+                  />
+                  {downloadingReport ? "Preparing PDF..." : "Download Report (PDF)"}
+                </button>
+              </div>
             </div>
 
             <div className="bg-white/95 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-lg p-4 md:p-6 border border-green-100 mb-4 md:mb-6">

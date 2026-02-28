@@ -1674,7 +1674,7 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {classes.length === 0 ? (
                 <div className="md:col-span-2 bg-indigo-50 rounded-2xl p-8 text-center border-2 border-dashed border-indigo-300">
                   <BookOpen className="w-12 h-12 text-indigo-400 mx-auto mb-3" />
@@ -1856,7 +1856,7 @@ export default function AdminDashboard() {
             <h2 className="text-2xl font-bold text-green-900 mb-6">
               Reports & Analytics
             </h2>
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-white rounded-2xl shadow-md p-6 border border-green-100">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">
                   Student Performance

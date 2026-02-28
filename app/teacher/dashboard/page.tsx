@@ -540,7 +540,11 @@ export default function TeacherDashboard() {
       const email = String(s.email || "").toLowerCase();
       return name.includes(q) || email.includes(q);
     });
-  }, [studentRecords, newAssignmentStudentClassFilter, newAssignmentStudentSearch]);
+  }, [
+    studentRecords,
+    newAssignmentStudentClassFilter,
+    newAssignmentStudentSearch,
+  ]);
 
   const filteredAssignments = useMemo(() => {
     const query = assignmentListSearch.trim().toLowerCase();
@@ -1408,8 +1412,9 @@ export default function TeacherDashboard() {
             const key = String(classId || "");
             const fromRecords = enrolledCountByClassId[key] || 0;
             if (fromRecords > 0) return sum + fromRecords;
-            const fallback = myClasses.find((c) => String(c.id) === key)
-              ?.students;
+            const fallback = myClasses.find(
+              (c) => String(c.id) === key,
+            )?.students;
             return sum + (Number(fallback) || 0);
           }, 0)
         : newAssignmentSelectedStudentIds.length;
@@ -1444,7 +1449,10 @@ export default function TeacherDashboard() {
       }
     } catch (error: unknown) {
       console.error(error);
-      showToast(`Error creating assignment: ${getErrorMessage(error)}`, "error");
+      showToast(
+        `Error creating assignment: ${getErrorMessage(error)}`,
+        "error",
+      );
     }
   };
 
@@ -1482,7 +1490,10 @@ export default function TeacherDashboard() {
         const pathname = `assignments/${user?.id || "teacher"}/${Date.now()}_${cleanedName}`;
 
         try {
-          const blob = await uploadToBlobIfPossible(editAttachmentFile, pathname);
+          const blob = await uploadToBlobIfPossible(
+            editAttachmentFile,
+            pathname,
+          );
           attachmentPath = blob.url;
           attachmentName = editAttachmentFile.name || null;
         } catch (e) {
@@ -1552,7 +1563,10 @@ export default function TeacherDashboard() {
       showToast("Assignment updated", "success");
     } catch (error: unknown) {
       console.error(error);
-      showToast(`Error updating assignment: ${getErrorMessage(error)}`, "error");
+      showToast(
+        `Error updating assignment: ${getErrorMessage(error)}`,
+        "error",
+      );
     }
   };
 
@@ -2127,7 +2141,8 @@ export default function TeacherDashboard() {
         String(filterClass),
         String(selectedGradePeriod),
       );
-      const n = rec && Number.isFinite(Number(rec.grade)) ? Number(rec.grade) : NaN;
+      const n =
+        rec && Number.isFinite(Number(rec.grade)) ? Number(rec.grade) : NaN;
       return Number.isFinite(n) ? String(Math.round(n)) : "0";
     },
     [filterClass, getGradeRecordForStudent, selectedGradePeriod],
@@ -2973,10 +2988,55 @@ export default function TeacherDashboard() {
                   </option>
                 ))}
               </select>
+              {selectedClassGradeLevel && selectedClassGradeLevel >= 11 && (
+                <div className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-green-50 to-blue-50 rounded-xl border border-green-200">
+                  <span className="text-xs font-medium text-green-700">
+                    Semester:
+                  </span>
+                  <div className="flex gap-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const q1Option = gradePeriodOptions.find(
+                          (o) => o.value === "Q1",
+                        );
+                        if (q1Option) setSelectedGradePeriod("Q1");
+                      }}
+                      className={`px-2 py-1 text-xs rounded-md ${
+                        selectedGradePeriod === "Q1" ||
+                        selectedGradePeriod === "Q2"
+                          ? "bg-green-600 text-white"
+                          : "bg-white text-green-700 border border-green-300 hover:bg-green-50"
+                      }`}
+                    >
+                      1st Sem
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const q3Option = gradePeriodOptions.find(
+                          (o) => o.value === "Q3",
+                        );
+                        if (q3Option) setSelectedGradePeriod("Q3");
+                      }}
+                      className={`px-2 py-1 text-xs rounded-md ${
+                        selectedGradePeriod === "Q3" ||
+                        selectedGradePeriod === "Q4"
+                          ? "bg-green-600 text-white"
+                          : "bg-white text-green-700 border border-green-300 hover:bg-green-50"
+                      }`}
+                    >
+                      2nd Sem
+                    </button>
+                  </div>
+                </div>
+              )}
               <select
                 value={selectedGradePeriod}
                 onChange={(e) => setSelectedGradePeriod(e.target.value)}
-                disabled={filterClass === "all" || gradePeriodOptions.length === 0}
+                disabled={
+                  filterClass === "all" || gradePeriodOptions.length === 0
+                }
                 className="px-3 md:px-4 py-2.5 md:py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm md:text-base disabled:bg-gray-50 disabled:text-gray-500"
                 title={
                   filterClass === "all"
@@ -2997,8 +3057,8 @@ export default function TeacherDashboard() {
                 )}
               </select>
               <div className="rounded-xl border border-blue-100 bg-blue-50 px-3 py-2 text-xs md:text-sm text-blue-800">
-                Flow: 1) Select a class + grading period, 2) Click Edit Grade, 3)
-                Save changes in the modal.
+                Flow: 1) Select a class + grading period, 2) Click Edit Grade,
+                3) Save changes in the modal.
               </div>
             </div>
 
@@ -3022,9 +3082,36 @@ export default function TeacherDashboard() {
                               (o) => o.value === selectedGradePeriod,
                             )?.label || selectedGradePeriod}
                             )
+                            {selectedClassGradeLevel &&
+                              selectedClassGradeLevel >= 11 && (
+                                <span className="block text-xs text-blue-600 font-normal mt-1">
+                                  {selectedGradePeriod === "Q1" ||
+                                  selectedGradePeriod === "Q2"
+                                    ? "Semester 1"
+                                    : selectedGradePeriod === "Q3" ||
+                                        selectedGradePeriod === "Q4"
+                                      ? "Semester 2"
+                                      : ""}
+                                </span>
+                              )}
                           </span>
                         )}
                       </th>
+                      {selectedClassGradeLevel &&
+                        selectedClassGradeLevel >= 11 && (
+                          <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900 hidden md:table-cell">
+                            Semester Grade
+                            <span className="block text-xs text-blue-600 font-normal mt-1">
+                              {selectedGradePeriod === "Q1" ||
+                              selectedGradePeriod === "Q2"
+                                ? "Semester 1"
+                                : selectedGradePeriod === "Q3" ||
+                                    selectedGradePeriod === "Q4"
+                                  ? "Semester 2"
+                                  : ""}
+                            </span>
+                          </th>
+                        )}
                       <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-semibold text-green-900 hidden md:table-cell">
                         Performance
                       </th>
@@ -3040,7 +3127,8 @@ export default function TeacherDashboard() {
                           colSpan={5}
                           className="px-3 md:px-6 py-10 text-center text-gray-600 text-sm"
                         >
-                          Select a class to view and manage grades by quarter/semester.
+                          Select a class to view and manage grades by
+                          quarter/semester.
                         </td>
                       </tr>
                     ) : (
@@ -3061,6 +3149,18 @@ export default function TeacherDashboard() {
                             <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-bold text-green-600">
                               {displayed}
                             </td>
+                            {selectedClassGradeLevel &&
+                              selectedClassGradeLevel >= 11 && (
+                                <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-bold text-blue-600 hidden md:table-cell">
+                                  {getSemesterGrade(
+                                    student,
+                                    selectedGradePeriod === "Q1" ||
+                                      selectedGradePeriod === "Q2"
+                                      ? "S1"
+                                      : "S2",
+                                  )}
+                                </td>
+                              )}
                             <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm hidden md:table-cell">
                               <span
                                 className={`px-2 md:px-3 py-1 rounded-full text-xs font-semibold ${
@@ -3088,7 +3188,9 @@ export default function TeacherDashboard() {
                                   );
                                   setEditingStudent({
                                     ...student,
-                                    grade: String(rec?.grade ?? displayed ?? ""),
+                                    grade: String(
+                                      rec?.grade ?? displayed ?? "",
+                                    ),
                                   });
                                 }}
                                 className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-lg hover:bg-green-100"
@@ -3101,16 +3203,17 @@ export default function TeacherDashboard() {
                         );
                       })
                     )}
-                    {filterClass !== "all" && filteredGradeStudents.length === 0 && (
-                      <tr>
-                        <td
-                          colSpan={5}
-                          className="px-3 md:px-6 py-8 text-center text-gray-500 text-sm"
-                        >
-                          No students found for current filters
-                        </td>
-                      </tr>
-                    )}
+                    {filterClass !== "all" &&
+                      filteredGradeStudents.length === 0 && (
+                        <tr>
+                          <td
+                            colSpan={5}
+                            className="px-3 md:px-6 py-8 text-center text-gray-500 text-sm"
+                          >
+                            No students found for current filters
+                          </td>
+                        </tr>
+                      )}
                   </tbody>
                 </table>
               </div>
@@ -4023,7 +4126,9 @@ export default function TeacherDashboard() {
                         myClasses.find(
                           (c) => String(c.id) === String(filterClass),
                         ) || null;
-                      return cls ? getSimplifiedClassLabel(cls) : "selected class";
+                      return cls
+                        ? getSimplifiedClassLabel(cls)
+                        : "selected class";
                     })()}
                   </p>
                 )}
@@ -4204,10 +4309,10 @@ export default function TeacherDashboard() {
                   </div>
                   {newAssignmentSubmitAttempted &&
                     newAssignment.selectedClassIds.length === 0 && (
-                    <p className="text-xs text-red-500 mt-1">
-                      Please select at least one class
-                    </p>
-                  )}
+                      <p className="text-xs text-red-500 mt-1">
+                        Please select at least one class
+                      </p>
+                    )}
                 </div>
               )}
 
@@ -4235,7 +4340,9 @@ export default function TeacherDashboard() {
                       type="text"
                       placeholder="Search students..."
                       value={newAssignmentStudentSearch}
-                      onChange={(e) => setNewAssignmentStudentSearch(e.target.value)}
+                      onChange={(e) =>
+                        setNewAssignmentStudentSearch(e.target.value)
+                      }
                       className="w-full px-3 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
                     />
                   </div>
@@ -4286,10 +4393,10 @@ export default function TeacherDashboard() {
                   </p>
                   {newAssignmentSubmitAttempted &&
                     newAssignmentSelectedStudentIds.length === 0 && (
-                    <p className="text-xs text-red-500 mt-1">
-                      Please select at least one student
-                    </p>
-                  )}
+                      <p className="text-xs text-red-500 mt-1">
+                        Please select at least one student
+                      </p>
+                    )}
                 </div>
               )}
 
@@ -4417,7 +4524,8 @@ export default function TeacherDashboard() {
                   Edit Assignment
                 </h3>
                 <p className="text-xs md:text-sm text-gray-600 mt-1">
-                  Expected recipients: {getExpectedSubmissionCount(editingAssignment)}
+                  Expected recipients:{" "}
+                  {getExpectedSubmissionCount(editingAssignment)}
                 </p>
               </div>
               <button
@@ -4509,7 +4617,8 @@ export default function TeacherDashboard() {
                         rel="noreferrer"
                         className="text-sm text-blue-700 underline truncate"
                       >
-                        {editingAssignment.attachmentName || "Current attachment"}
+                        {editingAssignment.attachmentName ||
+                          "Current attachment"}
                       </a>
                       <button
                         type="button"

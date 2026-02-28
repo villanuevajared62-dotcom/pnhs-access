@@ -2341,7 +2341,7 @@ export default function AdminDashboard() {
           </div>
         </header>
 
-        <main className="p-3 md:p-6 lg:p-10">{renderContent()}</main>
+        <main className="p-3 sm:p-4 md:p-6 lg:p-8">{renderContent()}</main>
       </div>
 
       {/* Student Attendance Modal (Admin) */}

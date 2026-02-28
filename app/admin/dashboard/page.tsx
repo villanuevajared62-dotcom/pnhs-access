@@ -257,30 +257,59 @@ export default function AdminDashboard() {
 
   const handleFinalizeGrades = async (cls: Class) => {
     const period = getSelectedFinalizePeriod(cls);
-    const key = `${cls.id}:${period}`;
+    const gradeNum = parseGradeLevelNumber(cls.gradeLevel) ?? 0;
+    const isSeniorHigh = gradeNum >= 11;
+
+    // For SHS, we need to finalize both quarters in the semester
+    let periodsToFinalize: string[] = [];
+    if (isSeniorHigh && period === "S1") {
+      periodsToFinalize = ["Q1", "Q2"];
+    } else if (isSeniorHigh && period === "S2") {
+      periodsToFinalize = ["Q3", "Q4"];
+    } else {
+      periodsToFinalize = [period];
+    }
+
     if (finalizingKey) return;
     try {
-      setFinalizingKey(key);
-      const res = await fetch("/api/grades/finalize", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ classId: cls.id, period }),
-      });
-      if (res.status === 401 || res.status === 403) {
-        router.push("/login");
-        return;
+      // Finalize all required periods
+      for (const p of periodsToFinalize) {
+        const key = `${cls.id}:${p}`;
+        setFinalizingKey(key);
+        const res = await fetch("/api/grades/finalize", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ classId: cls.id, period: p }),
+        });
+        if (res.status === 401 || res.status === 403) {
+          router.push("/login");
+          return;
+        }
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          showToast(
+            body.message || `Failed to finalize grades for ${p}`,
+            "error",
+          );
+          setFinalizingKey(null);
+          return;
+        }
+        setFinalizeStatusByKey((prev) => ({
+          ...prev,
+          [key]: { approved: true, approvedAt: new Date().toISOString() },
+        }));
       }
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        showToast(body.message || "Failed to finalize grades", "error");
-        return;
+
+      // Show success message
+      if (isSeniorHigh) {
+        showToast(
+          `Grades finalized for Semester ${period === "S1" ? "1" : "2"} (${periodsToFinalize.join(" & ")})`,
+          "success",
+        );
+      } else {
+        showToast(`Grades finalized for ${period}`, "success");
       }
-      setFinalizeStatusByKey((prev) => ({
-        ...prev,
-        [key]: { approved: true, approvedAt: new Date().toISOString() },
-      }));
-      showToast(`Grades finalized for ${period}`, "success");
     } catch (e) {
       console.error(e);
       showToast("Failed to finalize grades", "error");

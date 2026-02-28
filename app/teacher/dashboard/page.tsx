@@ -243,6 +243,7 @@ export default function TeacherDashboard() {
     null,
   );
   const [selectedGradePeriod, setSelectedGradePeriod] = useState<string>("Q1");
+  const [savingGrade, setSavingGrade] = useState(false);
 
   const [myClasses, setMyClasses] = useState<ClassData[]>([
     {
@@ -1623,6 +1624,7 @@ export default function TeacherDashboard() {
 
   const handleUpdateStudentGrade = async () => {
     if (!editingStudent) return;
+    if (savingGrade) return;
     const numericGrade = Number(editingStudent.grade);
     if (
       !Number.isFinite(numericGrade) ||
@@ -1638,6 +1640,7 @@ export default function TeacherDashboard() {
     }
 
     try {
+      setSavingGrade(true);
       const teacherClassIds = new Set(myClasses.map((c) => String(c.id || "")));
       const preferredClassId = String(takeAttendanceClass || "").trim();
       const candidateClassId = preferredClassId
@@ -1691,6 +1694,8 @@ export default function TeacherDashboard() {
     } catch (error: unknown) {
       console.error("Error updating grade:", error);
       showToast("An error occurred while updating the grade.", "error");
+    } finally {
+      setSavingGrade(false);
     }
   };
 
@@ -3961,8 +3966,9 @@ export default function TeacherDashboard() {
                 Edit Grade: {editingStudent?.name}
               </h3>
               <button
-                onClick={() => setEditingStudent(null)}
-                className="p-2 hover:bg-gray-100 rounded-lg"
+                onClick={() => (savingGrade ? null : setEditingStudent(null))}
+                disabled={savingGrade}
+                className="p-2 hover:bg-gray-100 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <X className="w-5 h-5 md:w-6 md:h-6" />
               </button>
@@ -3989,7 +3995,11 @@ export default function TeacherDashboard() {
                       grade: String(rec?.grade ?? ""),
                     });
                   }}
-                  disabled={filterClass === "all" || gradePeriodOptions.length === 0}
+                  disabled={
+                    savingGrade ||
+                    filterClass === "all" ||
+                    gradePeriodOptions.length === 0
+                  }
                   className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-50 disabled:text-gray-500"
                 >
                   {gradePeriodOptions.map((o) => (
@@ -4026,20 +4036,26 @@ export default function TeacherDashboard() {
                       grade: e.target.value,
                     })
                   }
-                  className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
+                  disabled={savingGrade}
+                  className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-50 disabled:text-gray-500"
                 />
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3 pt-4">
                 <button
                   onClick={handleUpdateStudentGrade}
-                  className="flex-1 px-4 md:px-6 py-2.5 md:py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 font-semibold text-sm md:text-base"
+                  disabled={savingGrade}
+                  className="flex-1 px-4 md:px-6 py-2.5 md:py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 disabled:bg-green-400 disabled:cursor-not-allowed font-semibold text-sm md:text-base inline-flex items-center justify-center gap-2"
                 >
-                  Save Changes
+                  {savingGrade && (
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                  )}
+                  {savingGrade ? "Saving..." : "Save Changes"}
                 </button>
                 <button
                   onClick={() => setEditingStudent(null)}
-                  className="px-4 md:px-6 py-2.5 md:py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 font-semibold text-sm md:text-base"
+                  disabled={savingGrade}
+                  className="px-4 md:px-6 py-2.5 md:py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed font-semibold text-sm md:text-base"
                 >
                   Cancel
                 </button>

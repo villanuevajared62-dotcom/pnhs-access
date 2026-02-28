@@ -342,12 +342,10 @@ export default function TeacherDashboard() {
     if (!selectedClassGradeLevel) return [];
     if (selectedClassGradeLevel >= 11) {
       return [
-        { value: "S1-P1", label: "Semester 1 • P1" },
-        { value: "S1-P2", label: "Semester 1 • P2" },
-        { value: "S1-P3", label: "Semester 1 • P3" },
-        { value: "S2-P1", label: "Semester 2 • P1" },
-        { value: "S2-P2", label: "Semester 2 • P2" },
-        { value: "S2-P3", label: "Semester 2 • P3" },
+        { value: "Q1", label: "1st Quarter (Q1)" },
+        { value: "Q2", label: "2nd Quarter (Q2)" },
+        { value: "Q3", label: "3rd Quarter (Q3)" },
+        { value: "Q4", label: "4th Quarter (Q4)" },
       ];
     }
     return [
@@ -2146,6 +2144,34 @@ export default function TeacherDashboard() {
       return Number.isFinite(n) ? String(Math.round(n)) : "0";
     },
     [filterClass, getGradeRecordForStudent, selectedGradePeriod],
+  );
+
+  // Calculate semester grade (average of Q1+Q2 for Sem 1, Q3+Q4 for Sem 2)
+  const getSemesterGrade = useCallback(
+    (student: StudentRecord, semester: "S1" | "S2"): string => {
+      if (filterClass === "all") return "—";
+
+      const quarters = semester === "S1" ? ["Q1", "Q2"] : ["Q3", "Q4"];
+      const grades: number[] = [];
+
+      for (const q of quarters) {
+        const rec = getGradeRecordForStudent(
+          String(student.id),
+          String(filterClass),
+          q,
+        );
+        if (rec && Number.isFinite(Number(rec.grade))) {
+          grades.push(Number(rec.grade));
+        }
+      }
+
+      if (grades.length === 0) return "—";
+      const avg = Math.round(
+        grades.reduce((sum, n) => sum + n, 0) / grades.length,
+      );
+      return String(avg);
+    },
+    [filterClass, getGradeRecordForStudent],
   );
 
   const gradeSummary = (() => {

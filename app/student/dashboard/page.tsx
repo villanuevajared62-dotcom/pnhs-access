@@ -1619,8 +1619,40 @@ export default function StudentDashboard() {
                         return;
                       }
 
-                      if (res.status === 409) {
-                        showToast("Grades not yet finalized", "warning");
+                       if (res.status === 409) {
+                        const body = await res.json().catch(() => ({} as any));
+                        const unapproved = Array.isArray(body?.unapprovedClasses)
+                          ? (body.unapprovedClasses as any[])
+                          : [];
+
+                        const periodLabel = isSeniorHigh
+                          ? `Semester ${period === "S1" ? "1" : "2"}`
+                          : `Quarter ${String(period).replace("Q", "")}`;
+
+                        if (unapproved.length > 0) {
+                          const lines = unapproved.slice(0, 5).map((u) => {
+                            const name = String(u?.name || "").trim();
+                            const gradeLevel = String(u?.gradeLevel || "").trim();
+                            const section = String(u?.section || "").trim();
+                            const strand = String(u?.strand || "").trim();
+                            const main = [gradeLevel, name].filter(Boolean).join(" - ");
+                            const extra = [section, strand].filter(Boolean).join(" • ");
+                            return `- ${main || "Class"}${extra ? ` (${extra})` : ""}`;
+                          });
+                          const more =
+                            unapproved.length > 5
+                              ? `\n… and ${unapproved.length - 5} more`
+                              : "";
+                          showToast(
+                            `Grades not yet finalized for ${periodLabel}.\nPlease ask the admin to finalize:\n${lines.join("\n")}${more}`,
+                            "warning",
+                          );
+                        } else {
+                          showToast(
+                            `Grades not yet finalized for ${periodLabel}. Please ask the admin to finalize your grades.`,
+                            "warning",
+                          );
+                        }
                         return;
                       }
 

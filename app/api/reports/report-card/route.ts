@@ -123,13 +123,27 @@ export async function GET(req: NextRequest) {
   const approvals = await Promise.all(
     classes.map(async (c) => ({
       classId: c.id,
+      className: String(c.name || ""),
+      gradeLevel: String(c.gradeLevel || ""),
+      section: String(c.section || ""),
+      strand: c.strand ? String(c.strand) : null,
       ok: await isApprovedForClassPeriod(c.id, period),
     })),
   );
   const unapproved = approvals.filter((a) => !a.ok);
   if (unapproved.length > 0) {
     return NextResponse.json(
-      { message: "Grades not yet finalized" },
+      {
+        message: "Grades not yet finalized",
+        period,
+        unapprovedClasses: unapproved.map((u) => ({
+          id: u.classId,
+          name: u.className,
+          gradeLevel: u.gradeLevel,
+          section: u.section,
+          strand: u.strand,
+        })),
+      },
       { status: 409 },
     );
   }

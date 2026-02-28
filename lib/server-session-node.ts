@@ -49,6 +49,17 @@ function verifyAndParse(signed: string): User | null {
   }
 }
 
+function normalizeUser(candidate: any): User | null {
+  if (!candidate || typeof candidate !== "object") return null;
+  const roleRaw = (candidate as any).role;
+  const role =
+    typeof roleRaw === "string" ? roleRaw.trim().toLowerCase() : roleRaw;
+  if (role === "admin" || role === "teacher" || role === "student") {
+    return { ...(candidate as any), role } as User;
+  }
+  return candidate as User;
+}
+
 export function signSessionUser(user: User): string {
   return signPayload(JSON.stringify(user));
 }
@@ -92,7 +103,7 @@ export async function getSessionUser(req: NextRequest): Promise<User | null> {
         const session = await prisma.session.findUnique({ where: { token: tokenCookie } });
         if (session && !session.revoked && new Date(session.expiresAt) > new Date()) {
           try {
-            const parsed = JSON.parse(session.data) as User;
+            const parsed = normalizeUser(JSON.parse(session.data)) as User | null;
             const active = await ensureActiveUser(parsed);
             if (!active) {
               try {
@@ -127,7 +138,7 @@ export async function getSessionUser(req: NextRequest): Promise<User | null> {
         const session = await prisma.session.findUnique({ where: { token: cookie } });
         if (session && !session.revoked && new Date(session.expiresAt) > new Date()) {
           try {
-            const parsed = JSON.parse(session.data) as User;
+            const parsed = normalizeUser(JSON.parse(session.data)) as User | null;
             const active = await ensureActiveUser(parsed);
             if (!active) {
               try {
@@ -152,12 +163,12 @@ export async function getSessionUser(req: NextRequest): Promise<User | null> {
   }
 
   // 2) Prefer signed cookie (legacy path)
-  const signed = verifyAndParse(cookie);
+  const signed = normalizeUser(verifyAndParse(cookie));
   if (signed) return ensureActiveUser(signed);
 
   // 3) Backwards-compat fallback: parse raw JSON (deprecated)
   try {
-    const legacy = JSON.parse(cookie) as User;
+    const legacy = normalizeUser(JSON.parse(cookie));
     console.warn("[server-session-node] legacy unsigned cookie detected; rotate sessions");
     return ensureActiveUser(legacy);
   } catch {

@@ -1661,6 +1661,13 @@ export default function TeacherDashboard() {
         }),
       });
 
+      if (res.status === 401 || res.status === 403) {
+        removeUserFromStorage();
+        showToast("Session expired. Please log in again.", "warning");
+        router.push("/login");
+        return;
+      }
+
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         showToast(

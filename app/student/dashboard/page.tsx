@@ -1437,12 +1437,23 @@ export default function StudentDashboard() {
                           ? (body.unapprovedClasses as any[])
                           : [];
                         if (unapproved.length > 0) {
-                          const lines = unapproved
-                            .slice(0, 5)
-                            .map(
-                              (u) =>
-                                `- ${[String(u?.gradeLevel || ""), String(u?.name || "")].filter(Boolean).join(" - ")}`,
-                            );
+                          const lines = unapproved.slice(0, 5).map((u) => {
+                            const classInfo = [
+                              String(u?.gradeLevel || ""),
+                              String(u?.name || ""),
+                            ]
+                              .filter(Boolean)
+                              .join(" - ");
+                            const quartersPending = u?.quartersPending;
+                            if (
+                              isSeniorHigh &&
+                              Array.isArray(quartersPending) &&
+                              quartersPending.length > 0
+                            ) {
+                              return `- ${classInfo} (${quartersPending.join(", ")})`;
+                            }
+                            return `- ${classInfo}`;
+                          });
                           showToast(
                             `Grades not yet finalized for ${periodLabel}.\n${lines.join("\n")}`,
                             "warning",

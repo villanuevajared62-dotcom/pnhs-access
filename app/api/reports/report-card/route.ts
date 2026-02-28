@@ -126,29 +126,73 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // Approval: every enrolled class must be finalized for this quarter/semester.
-  const approvals = await Promise.all(
-    classes.map(async (c) => ({
-      classId: c.id,
-      className: String(c.name || ""),
-      gradeLevel: String(c.gradeLevel || ""),
-      section: String(c.section || ""),
-      strand: c.strand ? String(c.strand) : null,
-      ok: await isApprovedForClassPeriod(c.id, period),
-    })),
-  );
-  const unapproved = approvals.filter((a) => !a.ok);
+  // For Senior High (Grade 11-12), validate BOTH quarters within the semester are approved
+  // For Junior High, validate the single quarter is approved
+  let approvalPeriods: string[] = [];
+  if (isSeniorHigh) {
+    // Determine which quarters need approval based on semester
+    if (period === "S1") {
+      approvalPeriods = ["Q1", "Q2"];
+    } else if (period === "S2") {
+      approvalPeriods = ["Q3", "Q4"];
+    }
+  } else {
+    approvalPeriods = [period];
+  }
+
+  // Check approval for all required periods
+  type ApprovalCheck = {
+    classId: string;
+    className: string;
+    gradeLevel: string;
+    section: string;
+    strand: string | null;
+    quarter: string;
+    ok: boolean;
+  };
+
+  // Build approval checks sequentially
+  const allApprovals: ApprovalCheck[] = [];
+  for (const c of classes) {
+    for (const q of approvalPeriods) {
+      const isApproved = await isApprovedForClassPeriod(c.id, q);
+      allApprovals.push({
+        classId: c.id,
+        className: String(c.name || ""),
+        gradeLevel: String(c.gradeLevel || ""),
+        section: String(c.section || ""),
+        strand: c.strand ? String(c.strand) : null,
+        quarter: q,
+        ok: isApproved,
+      });
+    }
+  }
+
+  const unapproved = allApprovals.filter((a) => !a.ok);
   if (unapproved.length > 0) {
+    // Group unapproved by class for better error message
+    const unapprovedByClass = new Map<string, (typeof unapproved)[0]>();
+    for (const u of unapproved) {
+      if (!unapprovedByClass.has(u.classId)) {
+        unapprovedByClass.set(u.classId, u);
+      }
+    }
+
     return NextResponse.json(
       {
         message: "Grades not yet finalized",
         period,
-        unapprovedClasses: unapproved.map((u) => ({
+        unapprovedClasses: Array.from(unapprovedByClass.values()).map((u) => ({
           id: u.classId,
           name: u.className,
           gradeLevel: u.gradeLevel,
           section: u.section,
           strand: u.strand,
+          quartersPending: approvalPeriods.filter((q) =>
+            unapproved.some(
+              (un) => un.classId === u.classId && un.quarter === q,
+            ),
+          ),
         })),
       },
       { status: 409 },
@@ -279,11 +323,15 @@ export async function GET(req: NextRequest) {
   const tableW = 595.28 - marginX * 2;
   const rowH = 22;
 
+  // Determine column labels based on semester
+  const p1Label = period === "S1" ? "1st Qtr" : "3rd Qtr";
+  const p2Label = period === "S1" ? "2nd Qtr" : "4th Qtr";
+
   const columns = isSeniorHigh
     ? [
         { key: "subject", label: "Subject", w: 250 },
-        { key: "p1", label: "1st Qtr", w: 70 },
-        { key: "p2", label: "2nd Qtr", w: 70 },
+        { key: "p1", label: p1Label, w: 70 },
+        { key: "p2", label: p2Label, w: 70 },
         { key: "final", label: "Sem Avg", w: 80 },
       ]
     : [

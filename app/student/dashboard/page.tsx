@@ -1500,6 +1500,94 @@ export default function StudentDashboard() {
                   />
                   {downloadingReport ? "Preparing..." : "Download Report"}
                 </button>
+                <button
+                  onClick={async () => {
+                    if (downloadingReport || !user?.id) return;
+                    const fullPeriod = "ALL";
+                    try {
+                      setDownloadingReport(true);
+                      const res = await fetch(
+                        `/api/reports/report-card?period=${encodeURIComponent(fullPeriod)}`,
+                        { credentials: "include" },
+                      );
+                      if (res.status === 401 || res.status === 403) {
+                        showToast("Session expired.", "warning");
+                        router.push("/login");
+                        return;
+                      }
+                      if (res.status === 409) {
+                        const body = await res.json().catch(() => ({}) as any);
+                        const periodLabel = isSeniorHigh
+                          ? "Full Year (S1 & S2)"
+                          : "Full Year (Q1-Q4)";
+                        const unapproved = Array.isArray(
+                          body?.unapprovedClasses,
+                        )
+                          ? (body.unapprovedClasses as any[])
+                          : [];
+                        if (unapproved.length > 0) {
+                          const lines = unapproved.slice(0, 5).map((u: any) => {
+                            const classInfo = [
+                              String(u?.gradeLevel || ""),
+                              String(u?.name || ""),
+                            ]
+                              .filter(Boolean)
+                              .join(" - ");
+                            const quartersPending = u?.quartersPending;
+                            if (
+                              Array.isArray(quartersPending) &&
+                              quartersPending.length > 0
+                            ) {
+                              return `- ${classInfo} (${quartersPending.join(", ")})`;
+                            }
+                            return `- ${classInfo}`;
+                          });
+                          showToast(
+                            `Grades not yet finalized for ${periodLabel}.\n${lines.join("\n")}`,
+                            "warning",
+                          );
+                        } else {
+                          showToast(
+                            `Grades not yet finalized for ${periodLabel}.`,
+                            "warning",
+                          );
+                        }
+                        return;
+                      }
+                      if (!res.ok) {
+                        const body = await res.json().catch(() => ({}));
+                        showToast(
+                          body.message || `Failed to generate report`,
+                          "error",
+                        );
+                        return;
+                      }
+                      const blob = await res.blob();
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      a.href = url;
+                      a.download = `report-card-${(user?.fullName || "Student").replace(/\s+/g, "-")}-FullYear.pdf`;
+                      document.body.appendChild(a);
+                      a.click();
+                      a.remove();
+                      URL.revokeObjectURL(url);
+                    } catch (err) {
+                      showToast(
+                        `Failed to download report: ${getErrorMessage(err)}`,
+                        "error",
+                      );
+                    } finally {
+                      setDownloadingReport(false);
+                    }
+                  }}
+                  disabled={downloadingReport}
+                  className="w-full xs:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-xl hover:from-yellow-600 hover:to-yellow-700 disabled:from-yellow-400 text-sm"
+                >
+                  <Download
+                    className={`w-4 h-4 ${downloadingReport ? "animate-pulse" : ""}`}
+                  />
+                  {downloadingReport ? "Preparing..." : "Download Full Report"}
+                </button>
               </div>
             </div>
             <div className="bg-white/95 rounded-2xl shadow-lg p-4 border border-green-100">

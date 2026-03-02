@@ -11,11 +11,33 @@ export async function GET(req: NextRequest) {
   const prisma = await prismaPromise;
   const teachersRaw: any = await prisma.teacher.findMany({
     where: { deletedAt: null },
+    include: {
+      classes: {
+        where: { deletedAt: null },
+        select: {
+          students: true,
+          _count: {
+            select: { enrollments: true },
+          },
+        },
+      },
+    },
   });
   const teachers = teachersRaw.map((t: any) => {
-    const { password, subjects, teacherSubjects, ...rest } = t;
+    const { password, subjects, teacherSubjects, classes, ...rest } = t;
+
+    // Calculate total students from classes (use max of static count or real enrollments)
+    const calculatedStudents = Array.isArray(classes)
+      ? classes.reduce(
+          (acc: number, c: any) =>
+            acc + Math.max(c.students || 0, c._count?.enrollments || 0),
+          0,
+        )
+      : rest.students || 0;
+
     return {
       ...rest,
+      students: calculatedStudents,
       subjects: (() => {
         try {
           return JSON.parse(subjects || "[]");
